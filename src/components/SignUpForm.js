@@ -26,9 +26,9 @@ export const SignUpForm = {
             if (!email())
                 return 'Please enter valid email address.';
             if (!pwd())
-                return 'Please enter password';
+                return 'Please enter a password.';
             if (!confirmPwd())
-                return 'Please confirm password';
+                return 'Please confirm your password.';
             if (confirmPwd() !== pwd())
                 return 'Passwords must match.';
 
@@ -58,15 +58,15 @@ export const SignUpForm = {
                 oninput: m.withAttr('value', state.confirmPwd)
             }),
 
+            m('button.btn.btn-outline.my1', {
+                onclick: () => signUpAction(state.email(), state.pwd()),
+                disabled: !state.isFormValid()
+            }, 'Submit'),
+
             state.message()
                 ? m('p.p2.rounded.bg-lighten', state.message())
                 : null
             ,
-
-            m('button.btn.btn-outline.my1', {
-                onclick: () => signUpAction(state.email(), state.pwd()),
-                disabled: !state.isFormValid()
-            }, 'Submit')
         ];
     }
 };

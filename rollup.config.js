@@ -4,6 +4,7 @@ import commonjs from 'rollup-plugin-commonjs';
 import buble from 'rollup-plugin-buble';
 import uglify from 'rollup-plugin-uglify';
 import alias from 'rollup-plugin-alias';
+// import replace from 'rollup-plugin-replace';
 
 const aliases = {
     'components': path.resolve(__dirname, 'src/components'),
@@ -20,6 +21,9 @@ export default {
         format: 'iife'
     },
     plugins: [
+        // replace({
+        //     'process.env.NODE_ENV': JSON.stringify('production')
+        // }),
         nodeResolve(),
         commonjs(),
         alias(aliases),
