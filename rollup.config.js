@@ -11,7 +11,8 @@ const aliases = {
     'views': path.resolve(__dirname, 'src/views'),
     'services': path.resolve(__dirname, 'src/services'),
     'config': path.resolve(__dirname, 'src/config'),
-    'gstate': path.resolve(__dirname, 'src/gstate')
+    'util': path.resolve(__dirname, 'src/util'),
+    'model': path.resolve(__dirname, 'src/model')
 };
 
 export default {
