@@ -1,3 +1,3 @@
 export default {
-    route: 'IndexPage'
+    page: 'IndexPage'
 };
