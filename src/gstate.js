@@ -1,4 +1,6 @@
 export default {
+    config: 100,
+
     Index: {
         name: 'Kevin',
         age: 26

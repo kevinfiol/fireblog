@@ -1429,6 +1429,8 @@
 	var stream$1 = stream;
 
 	var gstate = {
+	    config: 100,
+
 	    Index: {
 	        name: 'Kevin',
 	        age: 26
@@ -1531,34 +1533,33 @@
 	var Index = function (init) {
 	    return function (update) {
 	        var model = function () { return Object.assign({ name: 'NotKevin', age: 2 }, init); };
-	        
-	        var increase = function (model, amount) {
-	            return function (_ev) { return update({ age: model.age + amount }); };
-	        };
 
 	        var view = function (model) {
-	            return mithril('div', [
-	                mithril('p', model.age),
-	                mithril('button', { onclick: increase(model, 1) }, 'increase'),
-	                mithril('p', 'totally unrelated element'),
+	            return mithril('p', ("global config: " + (model.config)));
 
-	                mithril('a', { href: '/profiles', oncreate: mithril.route.link }, 'profiles')
-	            ]);
+	            // return m('div', [
+	            //     m('p', model.age),
+	            //     m('button', { onclick: increase(model, 1) }, 'increase'),
+	            //     m('p', 'totally unrelated element'),
+
+	            //     m('a', { href: '/profiles', oncreate: m.route.link }, 'profiles')
+	            // ]);
 	        };
 
 	        return { model: model, view: view };
 	    };
 	};
 
-	// export const Index = (update) => {    
-	//     const increase = (model, amount) => {
-	//         return (_ev) => update({ age: model.age + amount });
-	//     };
+	// export const Index = (update) => {
+	//     const add = (amount) => (_ev) => update((model) => {
+	//         model.age += amount;
+	//         return model;
+	//     });
 
 	//     return (model) => {
 	//         return m('div', [
 	//             m('p', model.age),
-	//             m('button', { onclick: increase(model, 1) }, 'increase'),
+	//             m('button', { onclick: add(1) }, 'add'),
 	//             m('p', 'totally unrelated element'),
 
 	//             m('a', { href: '/profiles', oncreate: m.route.link }, 'profiles')
@@ -1566,38 +1567,89 @@
 	//     };
 	// };
 
-	var Profiles = function (update) {    
-	    var increase = function (model, amount) {
-	        return function (_ev) { return update({ count: model.count + amount }); };
-	    };
+	var Profiles = function () {
+	    return function (update) {
+	        var increase = function (model, amount) {
+	            return function () { return update({ count: model.count + amount }); };
+	        };
 
-	    return function (model) {
-	        return mithril('div', [
-	            mithril('p', model.count),
-	            mithril('button', { onclick: increase(model, 1) }, 'increase'),
-	            mithril('p', ("title: " + (model.title))),
+	        var view = function (model) {
+	            return mithril('div', [
+	                mithril('p', model.count),
+	                mithril('button', { onclick: increase(model, 1) }, 'increase'),
+	                mithril('p', ("title: " + (model.title))),
 
-	            mithril('a', { href: '/', oncreate: mithril.route.link }, 'index')
-	        ]);
+	                mithril('a', { href: '/', oncreate: mithril.route.link }, 'index')
+	            ]);
+	        };
+
+	        return { view: view };
 	    };
 	};
 
+	// export const Profiles = (update) => {    
+	//     const increase = (model, amount) => {
+	//         return (_ev) => update({ count: model.count + amount });
+	//     };
+
+	//     return (model) => {
+	//         return m('div', [
+	//             m('p', model.count),
+	//             m('button', { onclick: increase(model, 1) }, 'increase'),
+	//             m('p', `title: ${model.title}`),
+
+	//             m('a', { href: '/', oncreate: m.route.link }, 'index')
+	//         ]);
+	//     };
+	// };
+
 	var update = stream$1();
 	var models = stream$1.scan(deepmerge_1, gstate, update);
+	// const models = stream.scan((model, f) => f(model), gstate, update);
 	var nest = function (update, prop) { return function (obj) {
 	    var obj$1;
 
 	    return update(( obj$1 = {}, obj$1[prop] = obj, obj$1 ));
 	 }    };
+	// const nest = (update, prop) => {
+	//     return (f) => {
+	//         update((model) => {
+	//             model[prop] = f(model[prop]);
+	//             return model;
+	//         });
+	//     };
+	// };
+
+	var nestComponent = function (create, update, prop) {
+	    var component = create( nest(update, prop) );
+	    var res = Object.assign({}, component);
+
+	    if (component.model) { res.model = function () {
+	        var obj;
+
+	        return (( obj = {}, obj[prop] = component.model(), obj ));
+	        }; }
+	    if (component.view) { res.view = function (model) { return component.view(model[prop]); }; }
+
+	    return res;
+	};
+
+	// const IndexView = Index( nest(update, 'Index') );
+	// const ProfilesView = Profiles( nest(update, 'Profiles') );
+
+	var IndexView = nestComponent(Index(), update, 'Index');
+	var ProfilesView = nestComponent(Profiles(), update, 'Profiles');
 
 	models.map(function (model) {
 	    mithril.route(document.getElementById('app'), '/', {
 	        '/': {
-	            render: function () { return Index( nest(update, 'Index') )(model.Index); }
+	            render: function () { return IndexView.view(model); }
+	            // render: () => IndexView(model.Index)
 	        },
 
 	        '/profiles': {
-	            render: function () { return Profiles( nest(update, 'Profiles') )(model.Profiles); }
+	            render: function () { return ProfilesView.view(model); }
+	            // render: () => ProfilesView(model.Profiles)
 	        }
 	    });
 	});
