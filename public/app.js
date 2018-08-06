@@ -1428,20 +1428,6 @@
 
 	var stream$1 = stream;
 
-	var gstate = {
-	    config: 100,
-
-	    Index: {
-	        name: 'Kevin',
-	        age: 26
-	    },
-
-	    Profiles: {
-	        count: 52,
-	        title: 'Profiles'
-	    }
-	};
-
 	var isMergeableObject = function isMergeableObject(value) {
 		return isNonNullObject(value)
 			&& !isSpecial(value)
@@ -1530,25 +1516,95 @@
 
 	var deepmerge_1 = deepmerge;
 
-	var Index = function (init) {
-	    return function (update) {
-	        var model = function () { return Object.assign({ name: 'NotKevin', age: 2 }, init); };
+	var initialState = {
+	    global: {
+	        number: 100
+	    },
 
-	        var view = function (model) {
-	            return mithril('p', ("global config: " + (model.config)));
+	    Index: {
+	        name: 'Kevin',
+	        age: 26
+	    },
 
-	            // return m('div', [
-	            //     m('p', model.age),
-	            //     m('button', { onclick: increase(model, 1) }, 'increase'),
-	            //     m('p', 'totally unrelated element'),
-
-	            //     m('a', { href: '/profiles', oncreate: m.route.link }, 'profiles')
-	            // ]);
-	        };
-
-	        return { model: model, view: view };
-	    };
+	    Profiles: {
+	        count: 52,
+	        title: 'Profiles'
+	    }
 	};
+
+	var nestPatch = function (patch, prop) {
+	    var obj;
+
+	    return (( obj = {}, obj[prop] = patch, obj ));
+	};
+
+	var nestUpdate = function (update, prop) { return function (patch) { return update( nestPatch(patch, prop) ); }; };
+
+	var nestComponent = function (create, update, prop) {
+	    var component = create( nestUpdate(update, prop) );
+	    return function (model) { return component(Object.assign({ global: model.global }, model[prop])); };
+	};
+
+	var Counter = function (update) {
+	    var increase = function (model, amount) {
+	        return function () { return update({ age: model.age + amount }); };
+	    };
+
+	    return function (model) { return ({
+	        view: function view() {
+	            return mithril('div', [
+	                mithril('p', model.age),
+	                mithril('button', { onclick: increase(model, 1) }, 'increase'),
+	                mithril('p', 'totally unrelated element') ]);   
+	        }
+	    }); };
+	};
+
+	var Index = function (update) {
+	    var counter = Counter(update);
+
+	    return function (model) { return ({
+	        oninit: function oninit() {
+	            console.log(model);
+	        },
+
+	        view: function view() {
+	            return mithril(counter(model));
+	        }
+	    }); };
+	};
+
+	// export const Index = () => (update) => {
+	//     return {
+	//         render: (model) => ({
+	//             oninit() {
+	//                 console.log(model);
+	//             },
+
+	//             view(v) {
+	//                 console.log(v);
+	//                 return m('p', 'index comp');
+	//             }
+	//         })
+	//     };
+	// };
+
+	// export const Index = () => {
+	//     return (update) => {
+	//         const counter = Counter()(update);
+
+	//         const view = (model) => {
+	//             return m('div', [
+	//                 counter.view(model),
+	//                 m('a', { href: '/profiles', oncreate: m.route.link }, 'profiles')
+	//             ]);
+	//         };
+
+	//         return { view };
+	//     };
+	// };
+
+
 
 	// export const Index = (update) => {
 	//     const add = (amount) => (_ev) => update((model) => {
@@ -1567,90 +1623,21 @@
 	//     };
 	// };
 
-	var Profiles = function () {
-	    return function (update) {
-	        var increase = function (model, amount) {
-	            return function () { return update({ count: model.count + amount }); };
-	        };
-
-	        var view = function (model) {
-	            return mithril('div', [
-	                mithril('p', model.count),
-	                mithril('button', { onclick: increase(model, 1) }, 'increase'),
-	                mithril('p', ("title: " + (model.title))),
-
-	                mithril('a', { href: '/', oncreate: mithril.route.link }, 'index')
-	            ]);
-	        };
-
-	        return { view: view };
-	    };
-	};
-
-	// export const Profiles = (update) => {    
-	//     const increase = (model, amount) => {
-	//         return (_ev) => update({ count: model.count + amount });
-	//     };
-
-	//     return (model) => {
-	//         return m('div', [
-	//             m('p', model.count),
-	//             m('button', { onclick: increase(model, 1) }, 'increase'),
-	//             m('p', `title: ${model.title}`),
-
-	//             m('a', { href: '/', oncreate: m.route.link }, 'index')
-	//         ]);
-	//     };
-	// };
-
 	var update = stream$1();
-	var models = stream$1.scan(deepmerge_1, gstate, update);
-	// const models = stream.scan((model, f) => f(model), gstate, update);
-	var nest = function (update, prop) { return function (obj) {
-	    var obj$1;
+	var models = stream$1.scan(deepmerge_1, initialState, update);
 
-	    return update(( obj$1 = {}, obj$1[prop] = obj, obj$1 ));
-	 }    };
-	// const nest = (update, prop) => {
-	//     return (f) => {
-	//         update((model) => {
-	//             model[prop] = f(model[prop]);
-	//             return model;
-	//         });
-	//     };
-	// };
-
-	var nestComponent = function (create, update, prop) {
-	    var component = create( nest(update, prop) );
-	    var res = Object.assign({}, component);
-
-	    if (component.model) { res.model = function () {
-	        var obj;
-
-	        return (( obj = {}, obj[prop] = component.model(), obj ));
-	        }; }
-	    if (component.view) { res.view = function (model) { return component.view(model[prop]); }; }
-
-	    return res;
-	};
-
-	// const IndexView = Index( nest(update, 'Index') );
-	// const ProfilesView = Profiles( nest(update, 'Profiles') );
-
-	var IndexView = nestComponent(Index(), update, 'Index');
-	var ProfilesView = nestComponent(Profiles(), update, 'Profiles');
+	var IndexView = nestComponent(Index, update, 'Index');
+	// const ProfilesView = nestComponent(Profiles(), update, 'Profiles');
 
 	models.map(function (model) {
 	    mithril.route(document.getElementById('app'), '/', {
 	        '/': {
-	            render: function () { return IndexView.view(model); }
-	            // render: () => IndexView(model.Index)
+	            render: function () { return mithril( IndexView(model) ); }
 	        },
 
-	        '/profiles': {
-	            render: function () { return ProfilesView.view(model); }
-	            // render: () => ProfilesView(model.Profiles)
-	        }
+	        // '/profiles': {
+	        //     render: () => ProfilesView.view(model)
+	        // }
 	    });
 	});
 
