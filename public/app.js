@@ -1545,83 +1545,80 @@
 	    return function (model) { return component(Object.assign({ global: model.global }, model[prop])); };
 	};
 
-	var Counter = function (update) {
-	    var increase = function (model, amount) {
-	        return function () { return update({ age: model.age + amount }); };
-	    };
+	var SignUpForm = function () {
+	    var email = stream$1('');
+	    var pwd = stream$1('');
+	    var confirmPwd = stream$1('');
 
-	    return function (model) { return ({
-	        view: function view() {
-	            return mithril('div', [
-	                mithril('p', model.age),
-	                mithril('button', { onclick: increase(model, 1) }, 'increase'),
-	                mithril('p', 'totally unrelated element') ]);   
-	        }
-	    }); };
+	    var isFormValid = stream$1.combine(function (email, pwd, confirmPwd) {
+	        return (email() && pwd() && confirmPwd())
+	            && (pwd() === confirmPwd())
+	        ;
+	    }, [email, pwd, confirmPwd]);
+
+	    var message = stream$1.combine(function (email, pwd, confirmPwd) {
+	        if (!email() && !pwd() && !confirmPwd())
+	            { return null; }
+	        if (!email())
+	            { return 'Please enter valid email address.'; }
+	        if (!pwd())
+	            { return 'Please enter a password.'; }
+	        if (!confirmPwd())
+	            { return 'Please confirm your password.'; }
+	        if (confirmPwd() !== pwd())
+	            { return 'Passwords must match.'; }
+
+	        return null;
+	    }, [email, pwd, confirmPwd]);
+
+	    return function () {
+	        return mithril('div', [
+	            mithril('h3', 'Sign Up'),
+
+	            mithril('label', 'email:'),
+	            mithril('input.input.bg-black.white.my1', {
+	                placeholder: 'joe@website.com',
+	                oninput: mithril.withAttr('value', email)
+	            }),
+
+	            mithril('label', 'password:'),
+	            mithril('input.input.bg-black.white.my1', {
+	                type: 'password',
+	                oninput: mithril.withAttr('value', pwd)
+	            }),
+
+	            mithril('label', 'confirm password:'),
+	            mithril('input.input.bg-black.white.my1', {
+	                type: 'password',
+	                oninput: mithril.withAttr('value', confirmPwd)
+	            }),
+
+	            mithril('button.btn.btn-outline.my1', {
+	                onclick: function () { return signUpAction(email(), pwd()); },
+	                disabled: !isFormValid()
+	            }, 'Submit'),
+
+	            message()
+	                ? mithril('p.p2.rounded.bg-lighten', message())
+	                : null ]);
+	    };
 	};
+
+	function signUpAction(email, pwd) {
+	    console.log('email', email);
+	    console.log('pwd', pwd);
+	}
 
 	var Index = function (update) {
-	    var counter = Counter(update);
+	    var signUpForm = SignUpForm();
 
-	    return function (model) { return ({
-	        oninit: function oninit() {
-	            console.log(model);
-	        },
-
-	        view: function view() {
-	            return mithril(counter(model));
-	        }
-	    }); };
+	    return function (model) {
+	        return mithril('div', [
+	            signUpForm()
+	            // counter(model)
+	        ]);
+	    };
 	};
-
-	// export const Index = () => (update) => {
-	//     return {
-	//         render: (model) => ({
-	//             oninit() {
-	//                 console.log(model);
-	//             },
-
-	//             view(v) {
-	//                 console.log(v);
-	//                 return m('p', 'index comp');
-	//             }
-	//         })
-	//     };
-	// };
-
-	// export const Index = () => {
-	//     return (update) => {
-	//         const counter = Counter()(update);
-
-	//         const view = (model) => {
-	//             return m('div', [
-	//                 counter.view(model),
-	//                 m('a', { href: '/profiles', oncreate: m.route.link }, 'profiles')
-	//             ]);
-	//         };
-
-	//         return { view };
-	//     };
-	// };
-
-
-
-	// export const Index = (update) => {
-	//     const add = (amount) => (_ev) => update((model) => {
-	//         model.age += amount;
-	//         return model;
-	//     });
-
-	//     return (model) => {
-	//         return m('div', [
-	//             m('p', model.age),
-	//             m('button', { onclick: add(1) }, 'add'),
-	//             m('p', 'totally unrelated element'),
-
-	//             m('a', { href: '/profiles', oncreate: m.route.link }, 'profiles')
-	//         ]);
-	//     };
-	// };
 
 	var update = stream$1();
 	var models = stream$1.scan(deepmerge_1, initialState, update);
@@ -1632,7 +1629,7 @@
 	models.map(function (model) {
 	    mithril.route(document.getElementById('app'), '/', {
 	        '/': {
-	            render: function () { return mithril( IndexView(model) ); }
+	            render: function () { return IndexView(model); }
 	        },
 
 	        // '/profiles': {

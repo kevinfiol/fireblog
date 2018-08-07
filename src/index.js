@@ -14,7 +14,7 @@ const IndexView = nestComponent(Index, update, 'Index');
 models.map((model) => {
     m.route(document.getElementById('app'), '/', {
         '/': {
-            render: () => m( IndexView(model) )
+            render: () => IndexView(model)
         },
 
         // '/profiles': {
