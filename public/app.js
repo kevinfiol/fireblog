@@ -22414,19 +22414,6 @@
 	    messagingSenderId: '356833125001',
 	};
 
-	var Layout = {
-	    view: function view(ref) {
-	        var children = ref.children;
-
-	        return mithril('.clearfix', [
-	            mithril('a.mx3', { href: '/' }, 'dash'),
-	            mithril('a.mx3', { href: '/profiles' }, 'profiles'),
-
-	            children
-	        ]);
-	    }
-	};
-
 	var stream = createCommonjsModule(function (module) {
 	(function() {
 	/* eslint-enable */
@@ -22589,78 +22576,106 @@
 
 	var stream$1 = stream;
 
-	var SignUpForm = {
-	    email: null,
-	    pwd: null,
-	    confirmPwd: null,
+	var Modal = {
+	    onbeforeremove: function onbeforeremove(ref) {
+	        var dom = ref.dom;
 
-	    isFormValid: null,
-	    message: null,
-	    
-	    oninit: function oninit(ref) {
-	        var state = ref.state;
-
-	        state.email = stream$1('');
-	        state.pwd = stream$1('');
-	        state.confirmPwd = stream$1('');
-
-	        state.isFormValid = stream$1.combine(function (email, pwd, confirmPwd) {
-	            return  (email() && pwd() && confirmPwd())
-	                && (pwd() === confirmPwd())
-	            ;
-	        }, [state.email, state.pwd, state.confirmPwd]);
-
-	        state.message = stream$1.combine(function (email, pwd, confirmPwd) {
-	            if (!email() && !pwd() && !confirmPwd())
-	                { return null; }
-	            if (!email())
-	                { return 'Please enter valid email address.'; }
-	            if (!pwd())
-	                { return 'Please enter password'; }
-	            if (!confirmPwd())
-	                { return 'Please confirm password'; }
-	            if (confirmPwd() !== pwd())
-	                { return 'Passwords must match.'; }
-
-	            return null;
-	        }, [state.email, state.pwd, state.confirmPwd]);
+	        dom.classList.add('exit');
+	        return new Promise(function (res) { return setTimeout(res, 120); });
 	    },
 
 	    view: function view(ref) {
-	        var state = ref.state;
+	        var attrs = ref.attrs;
+	        var children = ref.children;
 
-	        return [
-	            mithril('h3', 'Sign Up'),
+	        return mithril('.z4.fixed.left-0.right-0.top-0.bottom-0.white.bg-black.p4.modal.overflow-auto', [
 
-	            mithril('label', 'email:'),
-	            mithril('input.input.bg-black.white.my1', {
-	                placeholder: 'joe@website.com',
-	                oninput: mithril.withAttr('value', state.email)
-	            }),
+	            mithril('.clearfix.max-width-3.mx-auto', { style: { minWidth: '768px' } }, [
+	                mithril('.clearfix.col.col-12.my3', [
+	                    mithril('button.btn.btn-outline.right.mx1', {
+	                        onclick: function () {
+	                            if (attrs.cancelMethod) { attrs.cancelMethod(); }
+	                            attrs.showModal(false);
+	                        }
+	                    }, 'cancel'),
 
-	            mithril('label', 'password:'),
-	            mithril('input.input.bg-black.white.my1', {
-	                type: 'password',
-	                oninput: mithril.withAttr('value', state.pwd)
-	            }),
+	                    attrs.saveMethod
+	                        ? mithril('button.btn.btn-outline.right.mx1', {
+	                            onclick: function () {
+	                                attrs.saveMethod();
+	                                attrs.showModal(false);
+	                            }
+	                        }, 'save')
+	                        : null ]),
 
-	            mithril('label', 'confirm password:'),
-	            mithril('input.input.bg-black.white.my1', {
-	                type: 'password',
-	                oninput: mithril.withAttr('value', state.confirmPwd)
-	            }),
-
-	            state.message()
-	                ? mithril('p.p2.rounded.bg-lighten', state.message())
-	                : null
-	            ,
-
-	            mithril('button.btn.btn-outline.my1', {
-	                onclick: function () { return signUpAction(state.email(), state.pwd()); },
-	                disabled: !state.isFormValid()
-	            }, 'Submit')
-	        ];
+	                children
+	            ])
+	        ]);
 	    }
+	};
+
+	var SignUpForm = function () {
+	    var email = stream$1('');
+	    var pwd = stream$1('');
+	    var confirmPwd = stream$1('');
+	    var emailRegex = new RegExp('\\S+@\\S+');
+
+	    var isFormValid = stream$1.combine(function (email, pwd, confirmPwd) {
+	        var allFieldsFilled = email() && pwd() && confirmPwd();
+	        var pwdsMatch = pwd() === confirmPwd();
+	        var emailValid = emailRegex.test(email());
+
+	        return allFieldsFilled && pwdsMatch && emailValid;
+	    }, [email, pwd, confirmPwd]);
+
+	    var message = stream$1.combine(function (email, pwd, confirmPwd) {
+	        if (!email() && !pwd() && !confirmPwd())
+	            { return null; }
+	        if (!email() || !emailRegex.test(email()))
+	            { return 'Please enter valid email address.'; }
+	        if (!pwd())
+	            { return 'Please enter a password.'; }
+	        if (!confirmPwd())
+	            { return 'Please confirm your password.'; }
+	        if (confirmPwd() !== pwd())
+	            { return 'Passwords must match.'; }
+
+	        return null;
+	    }, [email, pwd, confirmPwd]);
+
+	    return {
+	        view: function view() {
+	            return mithril('div', [
+	                mithril('h3', 'Sign Up'),
+	    
+	                mithril('label', 'email:'),
+	                mithril('input.input.bg-black.white.my1', {
+	                    placeholder: 'joe@website.com',
+	                    oninput: mithril.withAttr('value', email)
+	                }),
+	    
+	                mithril('label', 'password:'),
+	                mithril('input.input.bg-black.white.my1', {
+	                    type: 'password',
+	                    oninput: mithril.withAttr('value', pwd)
+	                }),
+	    
+	                mithril('label', 'confirm password:'),
+	                mithril('input.input.bg-black.white.my1', {
+	                    type: 'password',
+	                    oninput: mithril.withAttr('value', confirmPwd)
+	                }),
+	    
+	                mithril('button.btn.btn-outline.my1', {
+	                    onclick: function () { return signUpAction(email(), pwd()); },
+	                    disabled: !isFormValid()
+	                }, 'Submit'),
+	    
+	                message()
+	                    ? mithril('p.p2.rounded.bg-lighten', message())
+	                    : null ]);
+	        }
+	    };
 	};
 
 	function signUpAction(email, pwd) {
@@ -22668,65 +22683,51 @@
 	    console.log('pwd', pwd);
 	}
 
-	var SignInForm = {
-	    email: null,
-	    pwd: null,
+	var Layout = function (v) {
+	    var showSignUp = stream$1(false);
 	    
-	    oninit: function oninit(ref) {
-	        var state = ref.state;
+	    return {
+	        view: function view(ref) {
+	            var children = ref.children;
 
-	        state.email = stream$1('');
-	        state.pwd = stream$1('');
-	    },
+	            return mithril('.clearfix', [
+	                // m('a.mx3', { href: '/' }, 'dash'),
+	                // m('a.mx3', { href: '/profiles' }, 'profiles'),
+	                mithril('button.btn.btn-outline', { onclick: function () { return showSignUp(true); } }, 'Sign Up'),
 
-	    view: function view(ref) {
-	        var state = ref.state;
+	                showSignUp()
+	                    ? mithril(Modal, { showModal: showSignUp }, mithril(SignUpForm))
+	                    : null
+	                ,
+	    
+	                children
+	            ]);
+	        }
+	    };
 
-	        return [
-	            mithril('h3', 'Sign In'),
-
-	            mithril('label', 'email:'),
-	            mithril('input.input.bg-black.white.my1', {
-	                placeholder: 'joe@website.com',
-	                oninput: mithril.withAttr('value', state.email)
-	            }),
-
-	            mithril('label', 'password:'),
-	            mithril('input.input.bg-black.white.my1', {
-	                type: 'password',
-	                oninput: mithril.withAttr('value', state.pwd)
-	            })
-	        ];
-	    }
 	};
 
 	var Index = {
 	    view: function view() {
 	        return [
-	            mithril('p', 'index page'),
-	            mithril(SignUpForm),
-	            mithril(SignInForm)
+	            mithril('p', 'index page')
 	        ];
 	    }
 	};
 
-	var Profiles = {
-	    view: function view() {
-	        return mithril('p', 'this is the profiles page');
-	    }
-	};
+	// import { Profiles } from 'views/Profiles';
 
 	Firebase.init(FIREBASE_CONFIG);
-	mithril.route.prefix('');
+	// m.route.prefix('');
 
 	mithril.route(document.getElementById('app'), '/', {
 	    '/': {
 	        render: function () { return mithril(Layout, mithril(Index)); }
 	    },
 
-	    '/profiles': {
-	        render: function () { return mithril(Layout, mithril(Profiles)); }
-	    }
+	    // '/profiles': {
+	    //     render: () => m(Layout, m(Profiles))
+	    // }
 	});
 
 }());

@@ -1,31 +1,40 @@
-const initialState = {
+import Firebase from 'services/Firebase';
+
+const state = {
     global: {
-        number: 100
+        user: null,
     },
 
     Index: {
-        name: 'Kevin',
-        age: 26
+        count: 100
     },
 
     Profiles: {
-        count: 52,
-        title: 'Profiles'
+        count: 200
     }
 };
 
-const nestPatch = (patch, prop) => ({ [prop]: patch });
+const methods = {
+    global: {
+        assignUser(user) {
+            state.global.user = user;
+            return state.global.user;
+        }
+    },
 
-const nestUpdate = (update, prop) => (patch) => update( nestPatch(patch, prop) );
+    Index: {
+        addToCount(num) {
+            state.Index.count += num;
+            return state.Index.count;
+        },
 
-const nestComponent = (create, update, prop) => {
-    const component = create( nestUpdate(update, prop) );
-    return (model) => component(Object.assign({ global: model.global }, model[prop]));
+        subtractFromCount(num) {
+            state.Index.count -= num;
+            return state.Index.count;
+        }
+    }
 };
 
 export {
-    initialState,
-    nestPatch,
-    nestUpdate,
-    nestComponent
+    methods.global.assignUser as assignUser,
 };
