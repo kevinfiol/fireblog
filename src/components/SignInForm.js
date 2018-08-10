@@ -1,25 +1,30 @@
 import m from 'mithril';
 import stream from 'mithril/stream';
 
-export const SignInForm = () => {
-    const email = stream('');
-    const pwd = stream('');
+export const SignInForm = {
+    email: null,
+    pwd: null,
+    
+    oninit({state}) {
+        state.email = stream('');
+        state.pwd = stream('');
+    },
 
-    return () => {
-        return m('div', [
+    view({state}) {
+        return [
             m('h3', 'Sign In'),
 
             m('label', 'email:'),
             m('input.input.bg-black.white.my1', {
                 placeholder: 'joe@website.com',
-                oninput: m.withAttr('value', email)
+                oninput: m.withAttr('value', state.email)
             }),
 
             m('label', 'password:'),
             m('input.input.bg-black.white.my1', {
                 type: 'password',
-                oninput: m.withAttr('value', pwd)
+                oninput: m.withAttr('value', state.pwd)
             })
-        ]);
-    };
+        ];
+    }
 };

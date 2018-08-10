@@ -1,24 +1,21 @@
 import m from 'mithril';
-import stream from 'mithril/stream';
-import merge from 'deepmerge';
-import { initialState, nestComponent } from 'state';
+import Firebase from 'services/Firebase';
+import { FIREBASE_CONFIG } from 'config';
+
+import { Layout } from 'views/Layout';
 import { Index } from 'views/Index';
 import { Profiles } from 'views/Profiles';
 
-const update = stream();
-const models = stream.scan(merge, initialState, update);
 
-const IndexView = nestComponent(Index, update, 'Index');
-// const ProfilesView = nestComponent(Profiles(), update, 'Profiles');
+Firebase.init(FIREBASE_CONFIG);
+m.route.prefix('');
 
-models.map((model) => {
-    m.route(document.getElementById('app'), '/', {
-        '/': {
-            render: () => IndexView(model)
-        },
+m.route(document.getElementById('app'), '/', {
+    '/': {
+        render: () => m(Layout, m(Index))
+    },
 
-        // '/profiles': {
-        //     render: () => ProfilesView.view(model)
-        // }
-    });
+    '/profiles': {
+        render: () => m(Layout, m(Profiles))
+    }
 });

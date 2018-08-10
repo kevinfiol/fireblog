@@ -1,15 +1,13 @@
 import m from 'mithril';
 import { SignUpForm } from 'components/SignUpForm';
-import { Counter } from 'components/Index/Counter';
+import { SignInForm } from 'components/SignInForm';
 
-export const Index = (update) => {
-    const counter = Counter(update);
-    const signUpForm = SignUpForm();
-
-    return (model) => {
-        return m('div', [
-            signUpForm()
-            // counter(model)
-        ]);
-    };
+export const Index = {
+    view() {
+        return [
+            m('p', 'index page'),
+            m(SignUpForm),
+            m(SignInForm)
+        ];
+    }
 };

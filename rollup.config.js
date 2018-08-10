@@ -4,15 +4,13 @@ import commonjs from 'rollup-plugin-commonjs';
 import buble from 'rollup-plugin-buble';
 import uglify from 'rollup-plugin-uglify';
 import alias from 'rollup-plugin-alias';
-// import replace from 'rollup-plugin-replace';
 
 const aliases = {
     'components': path.resolve(__dirname, 'src/components'),
     'views': path.resolve(__dirname, 'src/views'),
     'services': path.resolve(__dirname, 'src/services'),
     'config': path.resolve(__dirname, 'src/config'),
-    'util': path.resolve(__dirname, 'src/util'),
-    'state': path.resolve(__dirname, 'src/state')
+    'gstate': path.resolve(__dirname, 'src/gstate')
 };
 
 export default {
@@ -22,9 +20,6 @@ export default {
         format: 'iife'
     },
     plugins: [
-        // replace({
-        //     'process.env.NODE_ENV': JSON.stringify('production')
-        // }),
         nodeResolve(),
         commonjs(),
         alias(aliases),
