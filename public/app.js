@@ -22666,10 +22666,13 @@
 	                    oninput: mithril.withAttr('value', confirmPwd)
 	                }),
 	    
-	                mithril('button.btn.btn-outline.my1', {
-	                    onclick: function () { return signUpAction(email(), pwd()); },
-	                    disabled: !isFormValid()
-	                }, 'Submit'),
+	                isFormValid()
+	                    ? mithril('button.btn.btn-outline.my1', {
+	                        onclick: function () { return signUpAction(email(), pwd()); },
+	                        disabled: !isFormValid()
+	                    }, 'Submit')
+	                    : null
+	                ,
 	    
 	                message()
 	                    ? mithril('p.p2.rounded.bg-lighten', message())
@@ -22710,8 +22713,7 @@
 	var Index = {
 	    view: function view() {
 	        return [
-	            mithril('p', 'index page')
-	        ];
+	            mithril('p', 'index page') ];
 	    }
 	};
 

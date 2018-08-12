@@ -3,7 +3,7 @@ import m from 'mithril';
 export const Index = {
     view() {
         return [
-            m('p', 'index page')
+            m('p', 'index page'),
         ];
     }
 };

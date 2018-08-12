@@ -1,6 +1,8 @@
-import Firebase from 'services/Firebase';
+import stream from 'mithril/stream';
+import merge from 'deepmerge';
+// import Firebase from 'services/Firebase';
 
-const state = {
+const initialState = {
     global: {
         user: null,
     },
@@ -14,27 +16,17 @@ const state = {
     }
 };
 
-const methods = {
+const update = stream();
+const model = stream.scan(merge, initialState, update);
+
+const store = {
     global: {
         assignUser(user) {
-            state.global.user = user;
-            return state.global.user;
+            return () => update({ 
+                global: { user: user } 
+            });
         }
     },
-
-    Index: {
-        addToCount(num) {
-            state.Index.count += num;
-            return state.Index.count;
-        },
-
-        subtractFromCount(num) {
-            state.Index.count -= num;
-            return state.Index.count;
-        }
-    }
 };
 
-export {
-    methods.global.assignUser as assignUser,
-};
+export { model, store };

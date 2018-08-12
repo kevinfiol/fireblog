@@ -53,10 +53,13 @@ export const SignUpForm = () => {
                     oninput: m.withAttr('value', confirmPwd)
                 }),
     
-                m('button.btn.btn-outline.my1', {
-                    onclick: () => signUpAction(email(), pwd()),
-                    disabled: !isFormValid()
-                }, 'Submit'),
+                isFormValid()
+                    ? m('button.btn.btn-outline.my1', {
+                        onclick: () => signUpAction(email(), pwd()),
+                        disabled: !isFormValid()
+                    }, 'Submit')
+                    : null
+                ,
     
                 message()
                     ? m('p.p2.rounded.bg-lighten', message())
