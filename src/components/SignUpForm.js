@@ -1,5 +1,11 @@
 import m from 'mithril';
 import stream from 'mithril/stream';
+import { store } from 'state';
+
+const methods = {
+    assignUser: store.global.assignUser,
+    createUser: store.global.createUser
+};
 
 export const SignUpForm = () => {
     const email = stream('');
@@ -55,7 +61,7 @@ export const SignUpForm = () => {
     
                 isFormValid()
                     ? m('button.btn.btn-outline.my1', {
-                        onclick: () => signUpAction(email(), pwd()),
+                        onclick: methods.createUser( email(), pwd() ),
                         disabled: !isFormValid()
                     }, 'Submit')
                     : null
@@ -69,8 +75,3 @@ export const SignUpForm = () => {
         }
     };
 };
-
-function signUpAction(email, pwd) {
-    console.log('email', email);
-    console.log('pwd', pwd);
-}

@@ -1,5 +1,6 @@
 import m from 'mithril';
 import stream from 'mithril/stream';
+import { model } from 'state';
 import { Modal } from 'components/Modal';
 import { SignUpForm } from 'components/SignUpForm';
 
@@ -19,6 +20,8 @@ export const Layout = (v) => {
                 ,
     
                 children
+
+                , m('code', JSON.stringify( model() )),
             ]);
         }
     };

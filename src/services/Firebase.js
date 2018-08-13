@@ -1,6 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
-// import 'firebase/auth';
+import 'firebase/auth';
 
 export default {
     db: null,
@@ -9,6 +9,13 @@ export default {
     init(config) {
         firebase.initializeApp(config);
         this.db = firebase.firestore();
-        // this.auth = firebase.auth();
+        this.auth = firebase.auth();
+    },
+
+    createUser(email, pwd) {
+        return this.auth.createUserWithEmailAndPassword(email, pwd)
+            .then(res => console.log(res))
+            .catch(error => error)
+        ;
     }
 };
