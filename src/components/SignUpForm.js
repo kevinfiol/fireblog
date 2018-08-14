@@ -1,40 +1,26 @@
 import m from 'mithril';
 import stream from 'mithril/stream';
-import { store } from 'state';
+import { model, mutators } from 'state';
 
 const methods = {
-    assignUser: store.global.assignUser,
-    createUser: store.global.createUser
+    assignUser: mutators.global.assignUser,
+    createUser: mutators.global.createUser,
+    updateSignUpMsg: mutators.global.updateSignUpMsg
 };
 
 export const SignUpForm = () => {
     const email = stream('');
     const pwd = stream('');
     const confirmPwd = stream('');
-    const emailRegex = new RegExp('\\S+@\\S+');
 
-    const isFormValid = stream.combine((email, pwd, confirmPwd) => {
+    const pwdsMatch = stream.combine((pwd, confirmPwd) => {
+        return pwd() === confirmPwd();
+    }, [pwd, confirmPwd]);
+
+    const isFormValid = stream.combine((email, pwdsMatch) => {
         const allFieldsFilled = email() && pwd() && confirmPwd();
-        const pwdsMatch = pwd() === confirmPwd();
-        const emailValid = emailRegex.test(email());
-
-        return allFieldsFilled && pwdsMatch && emailValid;
-    }, [email, pwd, confirmPwd]);
-
-    const message = stream.combine((email, pwd, confirmPwd) => {
-        if (!email() && !pwd() && !confirmPwd())
-            return null;
-        if (!email() || !emailRegex.test(email()))
-            return 'Please enter valid email address.';
-        if (!pwd())
-            return 'Please enter a password.';
-        if (!confirmPwd())
-            return 'Please confirm your password.';
-        if (confirmPwd() !== pwd())
-            return 'Passwords must match.';
-
-        return null;
-    }, [email, pwd, confirmPwd]);
+        return allFieldsFilled && pwdsMatch();
+    }, [email, pwdsMatch]);
 
     return {
         view() {
@@ -67,8 +53,13 @@ export const SignUpForm = () => {
                     : null
                 ,
     
-                message()
-                    ? m('p.p2.rounded.bg-lighten', message())
+                pwdsMatch()
+                    ? null
+                    : m('p.p2.rounded.bg-lighten', 'Passwords must match.')
+                ,
+
+                model().global.signUpMsg
+                    ? m('p.p2.rounded.bg-lighten', model().global.signUpMsg)
                     : null
                 ,
             ]);
