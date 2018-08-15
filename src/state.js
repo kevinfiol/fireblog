@@ -3,7 +3,7 @@ import Global from 'mutators/Global';
 import merge from 'deepmerge';
 
 const initialState = {
-    global: { user: null, signUpMsg: null },
+    global: { user: null, signUpMsg: null, showSignUp: false },
 };
 
 const update = stream();

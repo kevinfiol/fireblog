@@ -1,28 +1,26 @@
 import m from 'mithril';
 import stream from 'mithril/stream';
-import { model } from 'state';
+import { model, mutators } from 'state';
 import { Modal } from 'components/Modal';
 import { SignUpForm } from 'components/SignUpForm';
 
-export const Layout = (v) => {
-    const showSignUp = stream(false);
-    
-    return {
-        view({children}) {
-            return m('.clearfix', [
-                // m('a.mx3', { href: '/' }, 'dash'),
-                // m('a.mx3', { href: '/profiles' }, 'profiles'),
-                m('button.btn.btn-outline', { onclick: () => showSignUp(true) }, 'Sign Up'),
+const methods = { toggleSignUpForm: mutators.global.toggleSignUpForm };
 
-                showSignUp()
-                    ? m(Modal, { showModal: showSignUp }, m(SignUpForm))
-                    : null
-                ,
-    
-                children
+export const Layout = {
+    view({children}) {
+        return m('.clearfix', [
+            // m('a.mx3', { href: '/' }, 'dash'),
+            // m('a.mx3', { href: '/profiles' }, 'profiles'),
+            m('button.btn.btn-outline', { onclick: () => methods.toggleSignUpForm(true) }, 'Sign Up'),
 
-                , m('code', JSON.stringify( model() )),
-            ]);
-        }
-    };
+            model().global.showSignUp
+                ? m(Modal, { showModal: methods.toggleSignUpForm }, m(SignUpForm))
+                : null
+            ,
+
+            children
+
+            , m('code', { style: { zIndex: '9999', position: 'absolute', bottom: '0', left: '0' } }, JSON.stringify( model() )),
+        ]);        
+    }
 };

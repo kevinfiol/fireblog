@@ -13,9 +13,6 @@ export default {
     },
 
     createUser(email, pwd) {
-        return this.auth.createUserWithEmailAndPassword(email, pwd)
-            .then(res => res)
-            .catch(err => { throw err; })
-        ;
+        return this.auth.createUserWithEmailAndPassword(email, pwd);
     }
 };
