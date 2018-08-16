@@ -2,7 +2,7 @@ import m from 'mithril';
 import stream from 'mithril/stream';
 import { model, mutators } from 'state';
 
-const methods = { createUser: mutators.global.createUser };
+const { createUser } = mutators.global;
 
 export const SignUpForm = () => {
     const email = stream('');
@@ -43,7 +43,7 @@ export const SignUpForm = () => {
     
                 isFormValid()
                     ? m('button.btn.btn-outline.my1', {
-                        onclick: () => methods.createUser( email(), pwd() ),
+                        onclick: () => createUser( email(), pwd() ),
                         disabled: !isFormValid()
                     }, 'Submit')
                     : null

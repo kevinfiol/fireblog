@@ -1,38 +1,43 @@
-import m from 'mithril';
-import Firebase from 'services/Firebase';
-import 'core-js/modules/es7.promise.finally';
+const m = require('mithril');
+require('core-js/modules/es7.promise.finally');
 
-export default (update) => ({
-    toggleSignUpForm(toShow) {
-        update({
-            global: { showSignUp: toShow }
-        });
-    },
+/**
+ * Global Mutators
+ * @param {Stream} update 
+ * @param {Object} Firebase 
+ */
 
-    assignUser(user) {
-        update({
-            global: { user: user }
-        });
-    },
-
-    updateSignUpMsg(message) {
-        update({
-            global: { signUpMsg: message }
-        });
-    },
-
-    createUser(email, pwd) {
-        Firebase.createUser(email, pwd)
+module.exports = (update, firebase) => {
+    const toggleSignUpForm = toShow => update({
+        global: { showSignUp: toShow }
+    });
+    
+    const assignUser = user => update({
+        global: { user: user }
+    });
+    
+    const updateSignUpMsg = message => update({
+        global: { signUpMsg: message }
+    });
+    
+    const createUser = (email, pwd) => {
+        firebase.auth().createUserWithEmailAndPassword(email, pwd)
             .then(res => {
-                console.log('res', res);
-                this.updateSignUpMsg(null);
-                this.assignUser(email);
+                updateSignUpMsg(null);
+                assignUser(email);
+                toggleSignUpForm(false);
             })
             .catch(err => {
-                console.log('err', err);
-                this.updateSignUpMsg(err.message);
+                updateSignUpMsg(err.message);
             })
             .finally(m.redraw)
         ;
-    },
-});
+    };
+
+    return {
+        toggleSignUpForm,
+        assignUser,
+        updateSignUpMsg,
+        createUser
+    };
+};

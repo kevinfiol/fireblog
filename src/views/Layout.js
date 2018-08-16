@@ -4,17 +4,20 @@ import { model, mutators } from 'state';
 import { Modal } from 'components/Modal';
 import { SignUpForm } from 'components/SignUpForm';
 
-const methods = { toggleSignUpForm: mutators.global.toggleSignUpForm };
+const { toggleSignUpForm, updateSignUpMsg } = mutators.global;
 
 export const Layout = {
     view({children}) {
         return m('.clearfix', [
             // m('a.mx3', { href: '/' }, 'dash'),
             // m('a.mx3', { href: '/profiles' }, 'profiles'),
-            m('button.btn.btn-outline', { onclick: () => methods.toggleSignUpForm(true) }, 'Sign Up'),
+            m('button.btn.btn-outline', { onclick: () => toggleSignUpForm(true) }, 'Sign Up'),
 
             model().global.showSignUp
-                ? m(Modal, { showModal: methods.toggleSignUpForm }, m(SignUpForm))
+                ? m(Modal, {
+                    showModal: toggleSignUpForm,
+                    cancelMethod: () => updateSignUpMsg(null)
+                }, m(SignUpForm))
                 : null
             ,
 

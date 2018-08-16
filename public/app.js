@@ -1266,6 +1266,256 @@
 	}());
 	});
 
+	var stream = createCommonjsModule(function (module) {
+	(function() {
+	/* eslint-enable */
+
+	var guid = 0, HALT = {};
+	function createStream() {
+		function stream() {
+			if (arguments.length > 0 && arguments[0] !== HALT) { updateStream(stream, arguments[0]); }
+			return stream._state.value
+		}
+		initStream(stream);
+
+		if (arguments.length > 0 && arguments[0] !== HALT) { updateStream(stream, arguments[0]); }
+
+		return stream
+	}
+	function initStream(stream) {
+		stream.constructor = createStream;
+		stream._state = {id: guid++, value: undefined, state: 0, derive: undefined, recover: undefined, deps: {}, parents: [], endStream: undefined, unregister: undefined};
+		stream.map = stream["fantasy-land/map"] = map, stream["fantasy-land/ap"] = ap, stream["fantasy-land/of"] = createStream;
+		stream.valueOf = valueOf, stream.toJSON = toJSON, stream.toString = valueOf;
+
+		Object.defineProperties(stream, {
+			end: {get: function() {
+				if (!stream._state.endStream) {
+					var endStream = createStream();
+					endStream.map(function(value) {
+						if (value === true) {
+							unregisterStream(stream);
+							endStream._state.unregister = function(){unregisterStream(endStream);};
+						}
+						return value
+					});
+					stream._state.endStream = endStream;
+				}
+				return stream._state.endStream
+			}}
+		});
+	}
+	function updateStream(stream, value) {
+		updateState(stream, value);
+		for (var id in stream._state.deps) { updateDependency(stream._state.deps[id], false); }
+		if (stream._state.unregister != null) { stream._state.unregister(); }
+		finalize(stream);
+	}
+	function updateState(stream, value) {
+		stream._state.value = value;
+		stream._state.changed = true;
+		if (stream._state.state !== 2) { stream._state.state = 1; }
+	}
+	function updateDependency(stream, mustSync) {
+		var state = stream._state, parents = state.parents;
+		if (parents.length > 0 && parents.every(active) && (mustSync || parents.some(changed))) {
+			var value = stream._state.derive();
+			if (value === HALT) { return false }
+			updateState(stream, value);
+		}
+	}
+	function finalize(stream) {
+		stream._state.changed = false;
+		for (var id in stream._state.deps) { stream._state.deps[id]._state.changed = false; }
+	}
+
+	function combine(fn, streams) {
+		if (!streams.every(valid)) { throw new Error("Ensure that each item passed to stream.combine/stream.merge is a stream") }
+		return initDependency(createStream(), streams, function() {
+			return fn.apply(this, streams.concat([streams.filter(changed)]))
+		})
+	}
+
+	function initDependency(dep, streams, derive) {
+		var state = dep._state;
+		state.derive = derive;
+		state.parents = streams.filter(notEnded);
+
+		registerDependency(dep, state.parents);
+		updateDependency(dep, true);
+
+		return dep
+	}
+	function registerDependency(stream, parents) {
+		for (var i = 0; i < parents.length; i++) {
+			parents[i]._state.deps[stream._state.id] = stream;
+			registerDependency(stream, parents[i]._state.parents);
+		}
+	}
+	function unregisterStream(stream) {
+		for (var i = 0; i < stream._state.parents.length; i++) {
+			var parent = stream._state.parents[i];
+			delete parent._state.deps[stream._state.id];
+		}
+		for (var id in stream._state.deps) {
+			var dependent = stream._state.deps[id];
+			var index = dependent._state.parents.indexOf(stream);
+			if (index > -1) { dependent._state.parents.splice(index, 1); }
+		}
+		stream._state.state = 2; //ended
+		stream._state.deps = {};
+	}
+
+	function map(fn) {return combine(function(stream) {return fn(stream())}, [this])}
+	function ap(stream) {return combine(function(s1, s2) {return s1()(s2())}, [stream, this])}
+	function valueOf() {return this._state.value}
+	function toJSON() {return this._state.value != null && typeof this._state.value.toJSON === "function" ? this._state.value.toJSON() : this._state.value}
+
+	function valid(stream) {return stream._state }
+	function active(stream) {return stream._state.state === 1}
+	function changed(stream) {return stream._state.changed}
+	function notEnded(stream) {return stream._state.state !== 2}
+
+	function merge(streams) {
+		return combine(function() {
+			return streams.map(function(s) {return s()})
+		}, streams)
+	}
+
+	function scan(reducer, seed, stream) {
+		var newStream = combine(function (s) {
+			return seed = reducer(seed, s._state.value)
+		}, [stream]);
+
+		if (newStream._state.state === 0) { newStream(seed); }
+
+		return newStream
+	}
+
+	function scanMerge(tuples, seed) {
+		var streams = tuples.map(function(tuple) {
+			var stream = tuple[0];
+			if (stream._state.state === 0) { stream(undefined); }
+			return stream
+		});
+
+		var newStream = combine(function() {
+			var changed = arguments[arguments.length - 1];
+
+			streams.forEach(function(stream, idx) {
+				if (changed.indexOf(stream) > -1) {
+					seed = tuples[idx][1](seed, stream._state.value);
+				}
+			});
+
+			return seed
+		}, streams);
+
+		return newStream
+	}
+
+	createStream["fantasy-land/of"] = createStream;
+	createStream.merge = merge;
+	createStream.combine = combine;
+	createStream.scan = scan;
+	createStream.scanMerge = scanMerge;
+	createStream.HALT = HALT;
+
+	{ module["exports"] = createStream; }
+
+	}());
+	});
+
+	var stream$1 = stream;
+
+	var isMergeableObject = function isMergeableObject(value) {
+		return isNonNullObject(value)
+			&& !isSpecial(value)
+	};
+
+	function isNonNullObject(value) {
+		return !!value && typeof value === 'object'
+	}
+
+	function isSpecial(value) {
+		var stringValue = Object.prototype.toString.call(value);
+
+		return stringValue === '[object RegExp]'
+			|| stringValue === '[object Date]'
+			|| isReactElement(value)
+	}
+
+	// see https://github.com/facebook/react/blob/b5ac963fb791d1298e7f396236383bc955f916c1/src/isomorphic/classic/element/ReactElement.js#L21-L25
+	var canUseSymbol = typeof Symbol === 'function' && Symbol.for;
+	var REACT_ELEMENT_TYPE = canUseSymbol ? Symbol.for('react.element') : 0xeac7;
+
+	function isReactElement(value) {
+		return value.$$typeof === REACT_ELEMENT_TYPE
+	}
+
+	function emptyTarget(val) {
+		return Array.isArray(val) ? [] : {}
+	}
+
+	function cloneUnlessOtherwiseSpecified(value, options) {
+		return (options.clone !== false && options.isMergeableObject(value))
+			? deepmerge(emptyTarget(value), value, options)
+			: value
+	}
+
+	function defaultArrayMerge(target, source, options) {
+		return target.concat(source).map(function(element) {
+			return cloneUnlessOtherwiseSpecified(element, options)
+		})
+	}
+
+	function mergeObject(target, source, options) {
+		var destination = {};
+		if (options.isMergeableObject(target)) {
+			Object.keys(target).forEach(function(key) {
+				destination[key] = cloneUnlessOtherwiseSpecified(target[key], options);
+			});
+		}
+		Object.keys(source).forEach(function(key) {
+			if (!options.isMergeableObject(source[key]) || !target[key]) {
+				destination[key] = cloneUnlessOtherwiseSpecified(source[key], options);
+			} else {
+				destination[key] = deepmerge(target[key], source[key], options);
+			}
+		});
+		return destination
+	}
+
+	function deepmerge(target, source, options) {
+		options = options || {};
+		options.arrayMerge = options.arrayMerge || defaultArrayMerge;
+		options.isMergeableObject = options.isMergeableObject || isMergeableObject;
+
+		var sourceIsArray = Array.isArray(source);
+		var targetIsArray = Array.isArray(target);
+		var sourceAndTargetTypesMatch = sourceIsArray === targetIsArray;
+
+		if (!sourceAndTargetTypesMatch) {
+			return cloneUnlessOtherwiseSpecified(source, options)
+		} else if (sourceIsArray) {
+			return options.arrayMerge(target, source, options)
+		} else {
+			return mergeObject(target, source, options)
+		}
+	}
+
+	deepmerge.all = function deepmergeAll(array, options) {
+		if (!Array.isArray(array)) {
+			throw new Error('first argument should be an array')
+		}
+
+		return array.reduce(function(prev, next) {
+			return deepmerge(prev, next, options)
+		}, {})
+	};
+
+	var deepmerge_1 = deepmerge;
+
 	(function(self) {
 
 	  if (self.fetch) {
@@ -22743,21 +22993,6 @@
 	 * limitations under the License.
 	 */
 
-	var Firebase = {
-	    db: null,
-	    auth: null,
-
-	    init: function init(config) {
-	        firebase.initializeApp(config);
-	        this.db = firebase.firestore();
-	        this.auth = firebase.auth();
-	    },
-
-	    createUser: function createUser(email, pwd) {
-	        return this.auth.createUserWithEmailAndPassword(email, pwd);
-	    }
-	};
-
 	var FIREBASE_CONFIG = {
 	    apiKey: "AIzaSyB8lThKBHmL3dHARvI8mxA8WgGYDBYH4v4",
 	    authDomain: "egg-profiles.firebaseapp.com",
@@ -22766,168 +23001,6 @@
 	    storageBucket: "egg-profiles.appspot.com",
 	    messagingSenderId: "356833125001"
 	};
-
-	var stream = createCommonjsModule(function (module) {
-	(function() {
-	/* eslint-enable */
-
-	var guid = 0, HALT = {};
-	function createStream() {
-		function stream() {
-			if (arguments.length > 0 && arguments[0] !== HALT) { updateStream(stream, arguments[0]); }
-			return stream._state.value
-		}
-		initStream(stream);
-
-		if (arguments.length > 0 && arguments[0] !== HALT) { updateStream(stream, arguments[0]); }
-
-		return stream
-	}
-	function initStream(stream) {
-		stream.constructor = createStream;
-		stream._state = {id: guid++, value: undefined, state: 0, derive: undefined, recover: undefined, deps: {}, parents: [], endStream: undefined, unregister: undefined};
-		stream.map = stream["fantasy-land/map"] = map, stream["fantasy-land/ap"] = ap, stream["fantasy-land/of"] = createStream;
-		stream.valueOf = valueOf, stream.toJSON = toJSON, stream.toString = valueOf;
-
-		Object.defineProperties(stream, {
-			end: {get: function() {
-				if (!stream._state.endStream) {
-					var endStream = createStream();
-					endStream.map(function(value) {
-						if (value === true) {
-							unregisterStream(stream);
-							endStream._state.unregister = function(){unregisterStream(endStream);};
-						}
-						return value
-					});
-					stream._state.endStream = endStream;
-				}
-				return stream._state.endStream
-			}}
-		});
-	}
-	function updateStream(stream, value) {
-		updateState(stream, value);
-		for (var id in stream._state.deps) { updateDependency(stream._state.deps[id], false); }
-		if (stream._state.unregister != null) { stream._state.unregister(); }
-		finalize(stream);
-	}
-	function updateState(stream, value) {
-		stream._state.value = value;
-		stream._state.changed = true;
-		if (stream._state.state !== 2) { stream._state.state = 1; }
-	}
-	function updateDependency(stream, mustSync) {
-		var state = stream._state, parents = state.parents;
-		if (parents.length > 0 && parents.every(active) && (mustSync || parents.some(changed))) {
-			var value = stream._state.derive();
-			if (value === HALT) { return false }
-			updateState(stream, value);
-		}
-	}
-	function finalize(stream) {
-		stream._state.changed = false;
-		for (var id in stream._state.deps) { stream._state.deps[id]._state.changed = false; }
-	}
-
-	function combine(fn, streams) {
-		if (!streams.every(valid)) { throw new Error("Ensure that each item passed to stream.combine/stream.merge is a stream") }
-		return initDependency(createStream(), streams, function() {
-			return fn.apply(this, streams.concat([streams.filter(changed)]))
-		})
-	}
-
-	function initDependency(dep, streams, derive) {
-		var state = dep._state;
-		state.derive = derive;
-		state.parents = streams.filter(notEnded);
-
-		registerDependency(dep, state.parents);
-		updateDependency(dep, true);
-
-		return dep
-	}
-	function registerDependency(stream, parents) {
-		for (var i = 0; i < parents.length; i++) {
-			parents[i]._state.deps[stream._state.id] = stream;
-			registerDependency(stream, parents[i]._state.parents);
-		}
-	}
-	function unregisterStream(stream) {
-		for (var i = 0; i < stream._state.parents.length; i++) {
-			var parent = stream._state.parents[i];
-			delete parent._state.deps[stream._state.id];
-		}
-		for (var id in stream._state.deps) {
-			var dependent = stream._state.deps[id];
-			var index = dependent._state.parents.indexOf(stream);
-			if (index > -1) { dependent._state.parents.splice(index, 1); }
-		}
-		stream._state.state = 2; //ended
-		stream._state.deps = {};
-	}
-
-	function map(fn) {return combine(function(stream) {return fn(stream())}, [this])}
-	function ap(stream) {return combine(function(s1, s2) {return s1()(s2())}, [stream, this])}
-	function valueOf() {return this._state.value}
-	function toJSON() {return this._state.value != null && typeof this._state.value.toJSON === "function" ? this._state.value.toJSON() : this._state.value}
-
-	function valid(stream) {return stream._state }
-	function active(stream) {return stream._state.state === 1}
-	function changed(stream) {return stream._state.changed}
-	function notEnded(stream) {return stream._state.state !== 2}
-
-	function merge(streams) {
-		return combine(function() {
-			return streams.map(function(s) {return s()})
-		}, streams)
-	}
-
-	function scan(reducer, seed, stream) {
-		var newStream = combine(function (s) {
-			return seed = reducer(seed, s._state.value)
-		}, [stream]);
-
-		if (newStream._state.state === 0) { newStream(seed); }
-
-		return newStream
-	}
-
-	function scanMerge(tuples, seed) {
-		var streams = tuples.map(function(tuple) {
-			var stream = tuple[0];
-			if (stream._state.state === 0) { stream(undefined); }
-			return stream
-		});
-
-		var newStream = combine(function() {
-			var changed = arguments[arguments.length - 1];
-
-			streams.forEach(function(stream, idx) {
-				if (changed.indexOf(stream) > -1) {
-					seed = tuples[idx][1](seed, stream._state.value);
-				}
-			});
-
-			return seed
-		}, streams);
-
-		return newStream
-	}
-
-	createStream["fantasy-land/of"] = createStream;
-	createStream.merge = merge;
-	createStream.combine = combine;
-	createStream.scan = scan;
-	createStream.scanMerge = scanMerge;
-	createStream.HALT = HALT;
-
-	{ module["exports"] = createStream; }
-
-	}());
-	});
-
-	var stream$1 = stream;
 
 	var _global$1 = createCommonjsModule(function (module) {
 	// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
@@ -23214,138 +23287,57 @@
 	  );
 	} });
 
-	function Global (update) { return ({
-	    toggleSignUpForm: function toggleSignUpForm(toShow) {
-	        update({
-	            global: { showSignUp: toShow }
-	        });
-	    },
+	/**
+	 * Global Mutators
+	 * @param {Stream} update 
+	 * @param {Object} Firebase 
+	 */
 
-	    assignUser: function assignUser(user) {
-	        update({
-	            global: { user: user }
-	        });
-	    },
-
-	    updateSignUpMsg: function updateSignUpMsg(message) {
-	        update({
-	            global: { signUpMsg: message }
-	        });
-	    },
-
-	    createUser: function createUser(email, pwd) {
-	        var this$1 = this;
-
-	        Firebase.createUser(email, pwd)
+	var Global = function (update, firebase) {
+	    var toggleSignUpForm = function (toShow) { return update({
+	        global: { showSignUp: toShow }
+	    }); };
+	    
+	    var assignUser = function (user) { return update({
+	        global: { user: user }
+	    }); };
+	    
+	    var updateSignUpMsg = function (message) { return update({
+	        global: { signUpMsg: message }
+	    }); };
+	    
+	    var createUser = function (email, pwd) {
+	        firebase.auth().createUserWithEmailAndPassword(email, pwd)
 	            .then(function (res) {
-	                console.log('res', res);
-	                this$1.updateSignUpMsg(null);
-	                this$1.assignUser(email);
+	                updateSignUpMsg(null);
+	                assignUser(email);
+	                toggleSignUpForm(false);
 	            })
 	            .catch(function (err) {
-	                console.log('err', err);
-	                this$1.updateSignUpMsg(err.message);
+	                updateSignUpMsg(err.message);
 	            })
 	            .finally(mithril.redraw)
 	        ;
-	    },
-	}); }
+	    };
 
-	var isMergeableObject = function isMergeableObject(value) {
-		return isNonNullObject$1(value)
-			&& !isSpecial(value)
+	    return {
+	        toggleSignUpForm: toggleSignUpForm,
+	        assignUser: assignUser,
+	        updateSignUpMsg: updateSignUpMsg,
+	        createUser: createUser
+	    };
 	};
 
-	function isNonNullObject$1(value) {
-		return !!value && typeof value === 'object'
-	}
+	firebase.initializeApp(FIREBASE_CONFIG);
 
-	function isSpecial(value) {
-		var stringValue = Object.prototype.toString.call(value);
-
-		return stringValue === '[object RegExp]'
-			|| stringValue === '[object Date]'
-			|| isReactElement(value)
-	}
-
-	// see https://github.com/facebook/react/blob/b5ac963fb791d1298e7f396236383bc955f916c1/src/isomorphic/classic/element/ReactElement.js#L21-L25
-	var canUseSymbol = typeof Symbol === 'function' && Symbol.for;
-	var REACT_ELEMENT_TYPE = canUseSymbol ? Symbol.for('react.element') : 0xeac7;
-
-	function isReactElement(value) {
-		return value.$$typeof === REACT_ELEMENT_TYPE
-	}
-
-	function emptyTarget(val) {
-		return Array.isArray(val) ? [] : {}
-	}
-
-	function cloneUnlessOtherwiseSpecified(value, options) {
-		return (options.clone !== false && options.isMergeableObject(value))
-			? deepmerge(emptyTarget(value), value, options)
-			: value
-	}
-
-	function defaultArrayMerge(target, source, options) {
-		return target.concat(source).map(function(element) {
-			return cloneUnlessOtherwiseSpecified(element, options)
-		})
-	}
-
-	function mergeObject(target, source, options) {
-		var destination = {};
-		if (options.isMergeableObject(target)) {
-			Object.keys(target).forEach(function(key) {
-				destination[key] = cloneUnlessOtherwiseSpecified(target[key], options);
-			});
-		}
-		Object.keys(source).forEach(function(key) {
-			if (!options.isMergeableObject(source[key]) || !target[key]) {
-				destination[key] = cloneUnlessOtherwiseSpecified(source[key], options);
-			} else {
-				destination[key] = deepmerge(target[key], source[key], options);
-			}
-		});
-		return destination
-	}
-
-	function deepmerge(target, source, options) {
-		options = options || {};
-		options.arrayMerge = options.arrayMerge || defaultArrayMerge;
-		options.isMergeableObject = options.isMergeableObject || isMergeableObject;
-
-		var sourceIsArray = Array.isArray(source);
-		var targetIsArray = Array.isArray(target);
-		var sourceAndTargetTypesMatch = sourceIsArray === targetIsArray;
-
-		if (!sourceAndTargetTypesMatch) {
-			return cloneUnlessOtherwiseSpecified(source, options)
-		} else if (sourceIsArray) {
-			return options.arrayMerge(target, source, options)
-		} else {
-			return mergeObject(target, source, options)
-		}
-	}
-
-	deepmerge.all = function deepmergeAll(array, options) {
-		if (!Array.isArray(array)) {
-			throw new Error('first argument should be an array')
-		}
-
-		return array.reduce(function(prev, next) {
-			return deepmerge(prev, next, options)
-		}, {})
-	};
-
-	var deepmerge_1 = deepmerge;
-
+	/** State */
 	var initialState = {
 	    global: { user: null, signUpMsg: null, showSignUp: false },
 	};
 
 	var update = stream$1();
 	var model = stream$1.scan(deepmerge_1, initialState, update);
-	var mutators = { global: Global(update) };
+	var mutators = { global: Global(update, firebase) };
 
 	update.map(function (v) { return console.log('update: ', v); });
 
@@ -23386,7 +23378,8 @@
 	    }
 	};
 
-	var methods = { createUser: mutators.global.createUser };
+	var ref = mutators.global;
+	var createUser = ref.createUser;
 
 	var SignUpForm = function () {
 	    var email = stream$1('');
@@ -23427,7 +23420,7 @@
 	    
 	                isFormValid()
 	                    ? mithril('button.btn.btn-outline.my1', {
-	                        onclick: function () { return methods.createUser( email(), pwd() ); },
+	                        onclick: function () { return createUser( email(), pwd() ); },
 	                        disabled: !isFormValid()
 	                    }, 'Submit')
 	                    : null
@@ -23445,7 +23438,9 @@
 	    };
 	};
 
-	var methods$1 = { toggleSignUpForm: mutators.global.toggleSignUpForm };
+	var ref$1 = mutators.global;
+	var toggleSignUpForm = ref$1.toggleSignUpForm;
+	var updateSignUpMsg = ref$1.updateSignUpMsg;
 
 	var Layout = {
 	    view: function view(ref) {
@@ -23454,10 +23449,13 @@
 	        return mithril('.clearfix', [
 	            // m('a.mx3', { href: '/' }, 'dash'),
 	            // m('a.mx3', { href: '/profiles' }, 'profiles'),
-	            mithril('button.btn.btn-outline', { onclick: function () { return methods$1.toggleSignUpForm(true); } }, 'Sign Up'),
+	            mithril('button.btn.btn-outline', { onclick: function () { return toggleSignUpForm(true); } }, 'Sign Up'),
 
 	            model().global.showSignUp
-	                ? mithril(Modal, { showModal: methods$1.toggleSignUpForm }, mithril(SignUpForm))
+	                ? mithril(Modal, {
+	                    showModal: toggleSignUpForm,
+	                    cancelMethod: function () { return updateSignUpMsg(null); }
+	                }, mithril(SignUpForm))
 	                : null
 	            ,
 
@@ -23473,9 +23471,6 @@
 	            mithril('p', 'index page') ];
 	    }
 	};
-
-	Firebase.init(FIREBASE_CONFIG);
-	// m.route.prefix('');
 
 	mithril.route(document.getElementById('app'), '/', {
 	    '/': {
