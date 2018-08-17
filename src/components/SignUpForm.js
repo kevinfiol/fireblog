@@ -5,8 +5,8 @@ import { model, mutators } from 'state';
 const { createUser } = mutators.global;
 
 export const SignUpForm = () => {
-    const email = stream('');
-    const pwd = stream('');
+    const email      = stream('');
+    const pwd        = stream('');
     const confirmPwd = stream('');
 
     const pwdsMatch = stream.combine((pwd, confirmPwd) => {

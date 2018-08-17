@@ -47,7 +47,20 @@ o.spec('Global Mutators: ', () => {
         sdk.auth().getUserByEmail('keb@pm.me').then(user => {
             o(user.email).equals('keb@pm.me');
             o(user.password).equals('testpassword');
+
+            // Check State
+            o( model().global.signUpMsg ).equals(null);
+            o( model().global.user ).equals(user.email);
+            o( model().global.showSignUp ).equals(false);
         });
+    });
+
+    o('Global.createUser and then Global.signInUser', () => {
+        Global.createUser('keb@pm.me', 'testpassword');
+        Global.signInUser('keb@pm.me', 'testpassword');
+        sdk.auth().flush();
+
+        o(sdk.auth().currentUser.email).equals('keb@pm.me');
     });
 });
 

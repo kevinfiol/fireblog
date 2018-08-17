@@ -13,7 +13,7 @@ import Global from './mutators/Global';
 
 /** State */
 const initialState = {
-    global: { user: null, signUpMsg: null, showSignUp: false },
+    global: { user: null, signUpMsg: null, signInMsg: null, showSignUp: false, showSignIn: false },
 };
 
 const update = stream();
