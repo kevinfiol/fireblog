@@ -48,7 +48,7 @@ o.spec('Global Mutators: ', () => {
             o(user.email).equals('keb@pm.me');
             o(user.password).equals('testpassword');
         });
-    })
+    });
 });
 
 o.run();
