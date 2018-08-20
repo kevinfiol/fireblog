@@ -1,6 +1,6 @@
 import m from 'mithril';
-import stream from 'mithril/stream';
-import { model, mutators } from 'state';
+import { model } from 'state';
+import mutators from 'mutators/index';
 import { Modal } from 'components/Modal';
 import { SignUpForm } from 'components/SignUpForm';
 import { SignInForm } from 'components/SignInForm';
@@ -37,6 +37,6 @@ export const Layout = {
             children
 
             , m('code', { style: { zIndex: '9999', position: 'absolute', bottom: '0', left: '0' } }, JSON.stringify( model() )),
-        ]);        
+        ]);
     }
 };

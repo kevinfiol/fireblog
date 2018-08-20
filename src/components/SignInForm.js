@@ -1,6 +1,7 @@
 import m from 'mithril';
 import stream from 'mithril/stream';
-import { model, mutators } from 'state';
+import { model } from 'state';
+import mutators from 'mutators/index';
 
 const { signInUser } = mutators.global;
 

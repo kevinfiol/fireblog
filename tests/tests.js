@@ -23,6 +23,9 @@ const model = stream.scan(merge, initialState, update);
 const Global = require('../src/mutators/Global')(update, sdk);
 
 o.spec('Global Mutators: ', () => {
+    // Reset Model before each test
+    o.beforeEach(() => model(initialState));
+
     o('Global.assignUser', () => {
         Global.assignUser('kevin');
         o( model().global.user ).equals('kevin');
@@ -40,6 +43,18 @@ o.spec('Global Mutators: ', () => {
         o( model().global.signUpMsg ).equals('Bad email format!');
     });
 
+    o('Global.toggleSignInForm', () => {
+        Global.toggleSignInForm(true);
+        o( model().global.showSignIn ).equals(true);
+        Global.toggleSignInForm(false);
+        o( model().global.showSignIn ).equals(false);
+    });
+
+    o('Global.updateSignInMsg', () => {
+        Global.updateSignInMsg('Bad email format!');
+        o( model().global.signInMsg ).equals('Bad email format!');
+    });
+
     o('Global.createUser', () => {
         Global.createUser('keb@pm.me', 'testpassword');
         sdk.auth().flush();
@@ -55,11 +70,12 @@ o.spec('Global Mutators: ', () => {
         });
     });
 
-    o('Global.createUser and then Global.signInUser', () => {
-        Global.createUser('keb@pm.me', 'testpassword');
-        Global.signInUser('keb@pm.me', 'testpassword');
-        sdk.auth().flush();
+    o('Global.signInUser', () => {
+        Global.signInUser('keb@pm.me', 'testpassword').then(() => {
+            o( model().global.user ).equals('keb@pm.me');
+        });
 
+        sdk.auth().flush();
         o(sdk.auth().currentUser.email).equals('keb@pm.me');
     });
 });

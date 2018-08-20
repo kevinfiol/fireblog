@@ -3,11 +3,11 @@ require('core-js/modules/es7.promise.finally');
 
 /**
  * Global Mutators
- * @param {Stream} update 
- * @param {Object} Firebase 
+ * @param {Stream} update   Update Stream
+ * @param {Object} Firebase FirebaseService
  */
 
-module.exports = (update, firebase) => {
+module.exports = (update, Firebase) => {
     const toggleSignUpForm = toShow => update({
         global: { showSignUp: toShow }
     });
@@ -29,10 +29,9 @@ module.exports = (update, firebase) => {
     });
     
     const createUser = (email, pwd) => {
-        firebase.auth().createUserWithEmailAndPassword(email, pwd)
+        return Firebase.createUser(email, pwd)
             .then(() => {
                 updateSignUpMsg(null);
-                assignUser(email);
                 toggleSignUpForm(false);
             })
             .catch(err => {
@@ -43,10 +42,9 @@ module.exports = (update, firebase) => {
     };
 
     const signInUser = (email, pwd) => {
-        firebase.auth().signInWithEmailAndPassword(email, pwd)
-            .then((res) => {
+        return Firebase.signInUser(email, pwd)
+            .then(() => {
                 updateSignInMsg(null);
-                assignUser(email);
                 toggleSignInForm(false);
             })
             .catch(err => {
