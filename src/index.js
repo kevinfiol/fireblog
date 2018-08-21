@@ -1,4 +1,5 @@
 import m from 'mithril';
+import { authObserver } from 'observers/index'; 
 import { Layout } from 'views/Layout';
 import { Index } from 'views/Index';
 

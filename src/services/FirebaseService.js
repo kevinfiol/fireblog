@@ -9,6 +9,10 @@ module.exports = (firebase) => {
     const signInUser = (email, pwd) => {
         return auth.signInWithEmailAndPassword(email, pwd);
     };
+
+    const signOut = () => {
+        return auth.signOut();
+    };
     
     const onAuthStateChanged = (f) => {
         return auth.onAuthStateChanged(f);
@@ -17,6 +21,7 @@ module.exports = (firebase) => {
     return {
         createUser,
         signInUser,
-        onAuthStateChanged
+        onAuthStateChanged,
+        signOut
     };
 };

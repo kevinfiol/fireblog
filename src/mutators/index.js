@@ -5,6 +5,6 @@ import { Firebase } from 'services/index';
 /** Mutators */
 import Global from 'mutators/Global';
 
-export default {
+export const mutators = {
     global: Global(update, Firebase)
 };

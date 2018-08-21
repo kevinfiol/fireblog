@@ -9,6 +9,7 @@ const aliases = {
     'components': path.resolve(__dirname, 'src/components'),
     'views': path.resolve(__dirname, 'src/views'),
     'services': path.resolve(__dirname, 'src/services'),
+    'observers': path.resolve(__dirname, 'src/observers'),
     'mutators': path.resolve(__dirname, 'src/mutators'),
     'config': path.resolve(__dirname, 'src/config'),
     'state': path.resolve(__dirname, 'src/state')

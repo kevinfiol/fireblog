@@ -3,7 +3,9 @@ import m from 'mithril';
 export const Modal = {
     onbeforeremove({dom}) {
         dom.classList.add('exit');
-        return new Promise(res => setTimeout(res, 120));
+        return new Promise(res => {
+            setTimeout(res, 60);
+        });
     },
 
     view({attrs, children}) {
