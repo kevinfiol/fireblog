@@ -1,18 +1,14 @@
 const m = require('mithril');
 
 module.exports = (Firebase, mutators) => {
-    const { assignUser } = mutators;
+    const { assignUser, toggleLoading } = mutators;
+    toggleLoading(true);
 
     Firebase.onAuthStateChanged(user => {
-        if (user) {
-            console.log('user is', user);
-            assignUser(user.email);
-        } else {
-            // User is signed out
-            console.log('user is signed out');
-            assignUser(null);
-        }
+        if (user) assignUser(user.email);
+        else assignUser(null);
 
+        toggleLoading(false);
         m.redraw();
     });
 };

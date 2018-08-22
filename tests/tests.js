@@ -1,11 +1,19 @@
+/*eslint no-undef: "error"*/
+/*eslint-env node*/
+
 const o = require('mithril/ospec/ospec');
 const browserMock = require('mithril/test-utils/browserMock')();
-    global.window = browserMock;
-    global.document = browserMock.document;
+global.window = browserMock;
+global.document = browserMock.document;
 const firebaseMock = require('firebase-mock');
 const m = require('mithril');
 const stream = require('mithril/stream');
 const merge = require('deepmerge');
+
+/** State */
+const { initialState } = require('../src/state');
+const update = stream();
+const model = stream.scan(merge, initialState, update);
 
 /**
  * Firebase Mock
@@ -14,13 +22,18 @@ const merge = require('deepmerge');
 const mockAuth = new firebaseMock.MockAuthentication();
 const sdk = new firebaseMock.MockFirebaseSdk(null, () => mockAuth);
 
-/** State */
-const { initialState } = require('../src/state');
-const update = stream();
-const model = stream.scan(merge, initialState, update);
+/**
+ * Services
+ */
+const firebase = require('../src/services/FirebaseService')(sdk);
 
 /** Mutators */
-const Global = require('../src/mutators/Global')(update, sdk);
+const Global = require('../src/mutators/Global')(update, firebase);
+
+/**
+ * Observers
+ */
+const AuthObserver = require('../src/observers/AuthObserver')(firebase, Global);
 
 o.spec('Global Mutators: ', () => {
     // Reset Model before each test
@@ -62,11 +75,6 @@ o.spec('Global Mutators: ', () => {
         sdk.auth().getUserByEmail('keb@pm.me').then(user => {
             o(user.email).equals('keb@pm.me');
             o(user.password).equals('testpassword');
-
-            // Check State
-            o( model().global.signUpMsg ).equals(null);
-            o( model().global.user ).equals(user.email);
-            o( model().global.showSignUp ).equals(false);
         });
     });
 

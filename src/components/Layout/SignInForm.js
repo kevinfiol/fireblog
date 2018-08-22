@@ -2,6 +2,7 @@ import m from 'mithril';
 import stream from 'mithril/stream';
 import { model } from 'state';
 import { mutators } from 'mutators/index';
+import { Button } from 'components/Button';
 
 const { signInUser } = mutators.global;
 
@@ -32,9 +33,9 @@ export const SignInForm = () => {
                 }),
 
                 isFormValid()
-                    ? m('button.btn.btn-outline.my1', {
-                        onclick: () => signInUser( email(), pwd() ),
-                        disabled: !isFormValid()
+                    ? m(Button, { 
+                        class: 'my1',
+                        onclick: () => signInUser( email(), pwd() ) 
                     }, 'Submit')
                     : null
                 ,

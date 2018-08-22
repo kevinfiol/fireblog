@@ -1,8 +1,8 @@
 import m from 'mithril';
 import { model } from 'state';
 import { mutators } from 'mutators/index';
-import { Button } from 'components/Button';
 import { Modal } from 'components/Modal';
+import { Panel } from 'components/Layout/Panel';
 import { SignUpForm } from 'components/Layout/SignUpForm';
 import { SignInForm } from 'components/Layout/SignInForm';
 import { Spinner } from 'components/Layout/Spinner';
@@ -11,28 +11,17 @@ const {
     toggleSignUpForm,
     toggleSignInForm,
     updateSignUpMsg,
-    updateSignInMsg,
-    signOut
+    updateSignInMsg
 } = mutators.global;
 
 export const Layout = {
     view({children}) {
         return m('.clearfix', [
+            m(Panel),
+            children,
+
             model().global.isLoading
                 ? m(Spinner)
-                : null
-            ,
-
-            model().global.user === null
-                ? [
-                    m(Button, { onclick: () => toggleSignUpForm(true) }, 'Sign Up'),
-                    m(Button, { onclick: () => toggleSignInForm(true) }, 'Sign In'),
-                ]
-                : null
-            ,
-
-            model().global.user !== null
-                ? m(Button, { onclick: () => signOut() }, 'Sign Out')
                 : null
             ,
 
@@ -46,9 +35,7 @@ export const Layout = {
                 : null
             ,
 
-            children
-
-            , m('code', { style: { zIndex: '9999', position: 'absolute', bottom: '0', left: '0' } }, JSON.stringify( model() )),
+            m('code', { style: { zIndex: '9999', position: 'absolute', bottom: '0', left: '0' } }, JSON.stringify( model() )),
         ]);
     }
 };

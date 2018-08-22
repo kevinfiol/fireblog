@@ -2,6 +2,7 @@ import m from 'mithril';
 import stream from 'mithril/stream';
 import { model } from 'state';
 import { mutators } from 'mutators/index';
+import { Button } from 'components/Button';
 
 const { createUser } = mutators.global;
 
@@ -41,11 +42,11 @@ export const SignUpForm = () => {
                     type: 'password',
                     oninput: m.withAttr('value', confirmPwd)
                 }),
-    
+
                 isFormValid()
-                    ? m('button.btn.btn-outline.my1', {
-                        onclick: () => createUser( email(), pwd() ),
-                        disabled: !isFormValid()
+                    ? m(Button, {
+                        class: 'my1',
+                        onclick: () => createUser( email(), pwd() )
                     }, 'Submit')
                     : null
                 ,
