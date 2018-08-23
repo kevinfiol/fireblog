@@ -7,7 +7,7 @@ import { SignUpForm } from 'components/Layout/SignUpForm';
 import { SignInForm } from 'components/Layout/SignInForm';
 import { Spinner } from 'components/Layout/Spinner';
 
-const { 
+const {
     toggleSignUpForm,
     toggleSignInForm,
     updateSignUpMsg,
@@ -26,12 +26,18 @@ export const Layout = {
             ,
 
             model().global.showSignUp
-                ? m(Modal, { showModal: toggleSignUpForm, cancelMethod: () => updateSignUpMsg(null) }, m(SignUpForm))
+                ? m(Modal, {
+                    showModal: toggleSignUpForm,
+                    cancelMethod: () => updateSignUpMsg(null)
+                }, m(SignUpForm))
                 : null
             ,
 
             model().global.showSignIn
-                ? m(Modal, { showModal: toggleSignInForm, cancelMethod: () => updateSignInMsg(null) }, m(SignInForm))
+                ? m(Modal, {
+                    showModal: toggleSignInForm,
+                    cancelMethod: () => updateSignInMsg(null)
+                }, m(SignInForm))
                 : null
             ,
 

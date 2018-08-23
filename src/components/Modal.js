@@ -5,14 +5,14 @@ export const Modal = {
     onbeforeremove({dom}) {
         dom.classList.add('exit');
         return new Promise(res => {
-            setTimeout(res, 60);
+            dom.addEventListener('animationend', res);
         });
     },
 
     view({attrs, children}) {
-        return m('.z4.fixed.left-0.right-0.top-0.bottom-0.white.bg-black.p4.modal.overflow-auto', [
-            m('.clearfix.max-width-3.mx-auto', { style: { minWidth: '768px' } }, [
-                m('.clearfix.col.col-12.my3', [
+        return m('.z4.fixed.left-0.right-0.top-0.bottom-0.white.bg-black.p3.overflow-auto', [
+            m('.max-width-3.my3.mx-auto', [
+                m('.col.col-12.my3', [
                     m(Button, {
                         class: 'right mx1',
                         onclick: () => {
@@ -20,7 +20,7 @@ export const Modal = {
                             attrs.showModal(false);
                         }
                     }, 'Cancel'),
-
+    
                     attrs.saveMethod
                         ? m(Button, {
                             class: 'right mx1',
@@ -31,9 +31,9 @@ export const Modal = {
                         }, 'Save')
                         : null
                     ,
-                ]),
-
-                children
+    
+                    children
+                ])
             ])
         ]);
     }

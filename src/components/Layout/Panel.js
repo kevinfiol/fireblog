@@ -17,7 +17,7 @@ export const Panel = {
             ,
 
             model().global.user !== null
-                ? m(Button, { onclick: () => signOut(), disabled: model().global.isLoading }, 'Sign Out')
+                ? m(Button, { onclick: () => signOut() }, 'Sign Out')
                 : null
             ,
         ]);

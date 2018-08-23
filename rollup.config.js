@@ -15,17 +15,24 @@ const aliases = {
     'state': path.resolve(__dirname, 'src/state')
 };
 
-export default {
+const config = {
     input: './src/index.js',
     output: {
         file: './public/app.js',
-        format: 'iife'
+        format: 'iife',
+        sourcemap: true
     },
     plugins: [
         nodeResolve(),
         commonjs(),
         alias(aliases),
-        buble(),
-        ((process.env.PROD === 'true') && uglify.uglify())
+        buble()
     ]
+};
+
+if (process.env.PROD === 'true') {
+    config.output.sourcemap = false;
+    config.plugins.push( uglify.uglify() );
 }
+
+export default config;
