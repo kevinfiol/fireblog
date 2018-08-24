@@ -1,12 +1,12 @@
 const m = require('mithril');
 
 module.exports = (Firebase, mutators) => {
-    const { assignUser, toggleLoading } = mutators;
+    const { currentUser, toggleLoading } = mutators;
     toggleLoading(true);
 
     Firebase.onAuthStateChanged(user => {
-        if (user) assignUser(user.email);
-        else assignUser(null);
+        if (user) currentUser(user);
+        else currentUser(null);
 
         toggleLoading(false);
         m.redraw();

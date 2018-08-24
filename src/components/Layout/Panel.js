@@ -10,14 +10,24 @@ export const Panel = {
         return m('.clearfix', [
             model().global.user === null
                 ? [
-                    m(Button, { class: 'mx1', onclick: () => toggleSignUpForm(true) }, 'Sign Up'),
-                    m(Button, { class: 'mx1', onclick: () => toggleSignInForm(true) }, 'Sign In'),
+                    m(Button, { className: 'mx1', onclick: () => toggleSignUpForm(true) }, 'Sign Up'),
+                    m(Button, { className: 'mx1', onclick: () => toggleSignInForm(true) }, 'Sign In'),
                 ]
                 : null
             ,
 
             model().global.user !== null
-                ? m(Button, { onclick: () => signOut() }, 'Sign Out')
+                ? [
+                    m(Button, { className: 'mx1', onclick: () => m.route.set('/') }, 'Dashboard'),
+                    m(Button, { className: 'mx1', onclick: () => m.route.set('/settings') }, 'Settings'),
+                    m(Button, {
+                        className: 'mx1',
+                        onclick: () => {
+                            signOut();
+                            m.route.set('/');
+                        }
+                    }, 'Sign Out')
+                ]
                 : null
             ,
         ]);

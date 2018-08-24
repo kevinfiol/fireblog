@@ -20,9 +20,24 @@ module.exports = (update, Firebase) => {
         global: { showSignIn: toShow }
     });
 
-    const assignUser = user => update({
-        global: { user: user }
-    });
+    const currentUser = user => {
+        if (!user) {
+            update({ global: { user: null } });
+            return;
+        }
+
+        update({
+            global: {
+                user: {
+                    displayName: user.displayName,
+                    email: user.email,
+                    photoURL: user.photoURL,
+                    emailVerified: user.emailVerified,
+                    uid: user.uid
+                }
+            }
+        });
+    };
 
     const updateSignUpMsg = message => update({
         global: { signUpMsg: message }
@@ -68,6 +83,14 @@ module.exports = (update, Firebase) => {
         ;
     };
 
+    const updateProfile = (prop, val) => {
+        toggleLoading(true);
+
+        return Firebase.updateProfile(prop, val)
+            .finally(m.redraw)
+        ;
+    };
+
     const signOut = () => {
         toggleLoading(true);
 
@@ -81,7 +104,8 @@ module.exports = (update, Firebase) => {
         toggleLoading,
         toggleSignUpForm,
         toggleSignInForm,
-        assignUser,
+        currentUser,
+        updateProfile,
         updateSignUpMsg,
         updateSignInMsg,
         createUser,

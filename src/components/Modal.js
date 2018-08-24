@@ -14,7 +14,7 @@ export const Modal = {
             m('.max-width-3.my3.mx-auto', [
                 m('.col.col-12.my3', [
                     m(Button, {
-                        class: 'right mx1',
+                        className: 'right mx1',
                         onclick: () => {
                             if (attrs.cancelMethod) attrs.cancelMethod();
                             attrs.showModal(false);
@@ -23,7 +23,7 @@ export const Modal = {
     
                     attrs.saveMethod
                         ? m(Button, {
-                            class: 'right mx1',
+                            className: 'right mx1',
                             onclick: () => {
                                 attrs.saveMethod();
                                 attrs.showModal(false);

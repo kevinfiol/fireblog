@@ -18,7 +18,7 @@ export const Layout = {
     view({children}) {
         return m('.clearfix', [
             m(Panel),
-            children,
+            m('.my3', children),
 
             model().global.isLoading
                 ? m(Spinner)

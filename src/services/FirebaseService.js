@@ -17,11 +17,18 @@ module.exports = (firebase) => {
     const onAuthStateChanged = (f) => {
         return auth.onAuthStateChanged(f);
     };
+
+    const updateProfile = (prop, val) => {
+        return auth.currentUser.updateProfile({
+            [prop]: val
+        });
+    };
     
     return {
         createUser,
         signInUser,
         onAuthStateChanged,
-        signOut
+        signOut,
+        updateProfile
     };
 };

@@ -34,7 +34,7 @@ export const SignInForm = () => {
 
                 isFormValid()
                     ? m(Button, { 
-                        class: 'my1',
+                        className: 'my1',
                         onclick: () => signInUser( email(), pwd() ) 
                     }, 'Submit')
                     : null

@@ -45,7 +45,7 @@ export const SignUpForm = () => {
 
                 isFormValid()
                     ? m(Button, {
-                        class: 'my1',
+                        className: 'my1',
                         onclick: () => createUser( email(), pwd() )
                     }, 'Submit')
                     : null
