@@ -2,11 +2,13 @@ import m from 'mithril';
 import stream from 'mithril/stream';
 import { model } from 'state';
 import { mutators } from 'mutators/index';
+import { InputText } from 'components/InputText';
 import { Button } from 'components/Button';
 
-const { createUser } = mutators.global;
+const { createUser, getUserNames } = mutators.global;
 
 export const SignUpForm = () => {
+    const username   = stream('');
     const email      = stream('');
     const pwd        = stream('');
     const confirmPwd = stream('');
@@ -16,7 +18,7 @@ export const SignUpForm = () => {
     }, [pwd, confirmPwd]);
 
     const isFormValid = stream.combine((email, pwdsMatch) => {
-        const allFieldsFilled = email() && pwd() && confirmPwd();
+        const allFieldsFilled = email() && pwd() && confirmPwd() && username();
         return allFieldsFilled && pwdsMatch();
     }, [email, pwdsMatch]);
 
@@ -24,29 +26,34 @@ export const SignUpForm = () => {
         view() {
             return m('div', [
                 m('h3', 'Sign Up'),
-    
-                m('label', 'email:'),
-                m('input.input.bg-black.white.my1', {
+
+                m(InputText, {
+                    label: 'display name:',
+                    placeholder: 'Joe',
+                    input: username
+                }),
+
+                m(InputText, {
+                    label: 'email:',
                     placeholder: 'joe@website.com',
-                    oninput: m.withAttr('value', email)
+                    input: email
                 }),
-    
-                m('label', 'password:'),
-                m('input.input.bg-black.white.my1', {
+
+                m(InputText, {
+                    label: 'password:',
                     type: 'password',
-                    oninput: m.withAttr('value', pwd)
+                    input: pwd
                 }),
-    
-                m('label', 'confirm password:'),
-                m('input.input.bg-black.white.my1', {
-                    type: 'password',
-                    oninput: m.withAttr('value', confirmPwd)
+
+                m(InputText, {
+                    label: 'confirm password:',
+                    input: confirmPwd
                 }),
 
                 isFormValid()
                     ? m(Button, {
                         className: 'my1',
-                        onclick: () => createUser( email(), pwd() )
+                        onclick: () => createUser( username(), email(), pwd() )
                     }, 'Submit')
                     : null
                 ,

@@ -47,10 +47,19 @@ module.exports = (update, Firebase) => {
         global: { signInMsg: message }
     });
 
-    const createUser = (email, pwd) => {
+    const createUser = (user, email, pwd) => {
         toggleLoading(true);
 
-        return Firebase.createUser(email, pwd)
+        // Check if userName exists first
+        return Firebase.getUserNames()
+            .then(users => users.includes(user))
+            .then(userExists => {
+                if (userExists) {
+                    throw { message: 'Username already exists.' }
+                } else {
+                    return Firebase.createUser(email, pwd);
+                }
+            })
             .then(() => {
                 updateSignUpMsg(null);
                 toggleSignUpForm(false);
