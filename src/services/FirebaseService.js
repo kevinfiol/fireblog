@@ -26,6 +26,12 @@ module.exports = (firebase) => {
         });
     };
 
+    const updateUserData = (email, prop, val) => {
+        return db.collection('users').doc(email).set({
+            [prop]: val
+        });
+    };
+
     const getUserNames = () => {
         return db.collection('users').get()
             .then(snap => {
@@ -36,12 +42,40 @@ module.exports = (firebase) => {
         ;
     };
 
+    const getUserDataByEmail = email => {
+        return db.collection('users').doc(email).get()
+            .then(doc => doc.data())
+        ;
+    };
+
+    const getUserDataByUsername = username => {
+        return db.collection('users').where('username', '==', username)
+            .get()
+            .then(snap => {
+                const users = [];
+                snap.forEach(doc => users.push( doc.data() ));
+                return users[0] || null;
+            })
+        ;
+    };
+
+    const addUserToDatabase = (email, username, uid) => {
+        return db.collection('users').doc(email).set({
+            username,
+            uid
+        });
+    };
+
     return {
+        getUserDataByEmail,
+        getUserDataByUsername,
         createUser,
         signInUser,
         onAuthStateChanged,
         signOut,
         updateProfile,
-        getUserNames
+        getUserNames,
+        addUserToDatabase,
+        updateUserData
     };
 };

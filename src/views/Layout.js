@@ -41,7 +41,7 @@ export const Layout = {
                 : null
             ,
 
-            m('code', { style: { zIndex: '9999', position: 'absolute', bottom: '0', left: '0' } }, JSON.stringify( model() )),
+            // m('code', { style: { zIndex: '9999', position: 'absolute', bottom: '0', left: '0' } }, JSON.stringify( model() )),
         ]);
     }
 };

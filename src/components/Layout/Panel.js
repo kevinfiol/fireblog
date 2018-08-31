@@ -8,7 +8,7 @@ const { toggleSignUpForm, toggleSignInForm, signOut } = mutators.global;
 export const Panel = {
     view() {
         return m('.clearfix', [
-            model().global.user === null
+            model().global.firebaseUser === null
                 ? [
                     m(Button, { className: 'mx1', onclick: () => toggleSignUpForm(true) }, 'Sign Up'),
                     m(Button, { className: 'mx1', onclick: () => toggleSignInForm(true) }, 'Sign In'),
@@ -16,7 +16,7 @@ export const Panel = {
                 : null
             ,
 
-            model().global.user !== null
+            model().global.firebaseUser !== null
                 ? [
                     m(Button, { className: 'mx1', onclick: () => m.route.set('/') }, 'Dashboard'),
                     m(Button, { className: 'mx1', onclick: () => m.route.set('/settings') }, 'Settings'),

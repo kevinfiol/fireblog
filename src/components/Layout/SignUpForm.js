@@ -29,7 +29,7 @@ export const SignUpForm = () => {
 
                 m(InputText, {
                     label: 'display name:',
-                    placeholder: 'Joe',
+                    placeholder: 'joe',
                     input: username
                 }),
 
@@ -47,6 +47,7 @@ export const SignUpForm = () => {
 
                 m(InputText, {
                     label: 'confirm password:',
+                    type: 'password',
                     input: confirmPwd
                 }),
 

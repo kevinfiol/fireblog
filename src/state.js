@@ -3,12 +3,17 @@ import merge from 'deepmerge';
 
 const initialState = {
     global: {
-        user: null,
+        userData: { uid: null, username: null, photoURL: null },
+        firebaseUser: null,
         isLoading: false,
         signUpMsg: null,
         signInMsg: null,
         showSignUp: false,
         showSignIn: false 
+    },
+
+    profile: {
+        user: null,
     }
 };
 

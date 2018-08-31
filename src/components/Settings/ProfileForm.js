@@ -1,27 +1,26 @@
 import m from 'mithril';
 import stream from 'mithril/stream';
+import { mutators } from 'mutators/index';
 import { InputText } from 'components/InputText';
 import { Button } from 'components/Button';
 
+const { updateUserData } = mutators.global;
+
 export const ProfileForm = () => {
-    const email       = stream('');
     const photoURL    = stream('');
 
     return {
         view: ({attrs}) => m('.clearfix', [
             m(InputText, {
-                label: 'email',
-                value: attrs.user.email,
-                input: email
-            }),
-
-            m(InputText, {
                 label: 'photo url',
-                value: attrs.user.photoURL,
+                value: attrs.photoURL || '',
                 input: photoURL
             }),
 
-            m(Button, { className: 'my2' }, 'Save Changes')
+            m(Button, {
+                className: 'my2',
+                onclick: () => updateUserData(attrs.email, 'photoURL', photoURL())
+            }, 'Update Photo')
         ])
     };
 };

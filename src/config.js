@@ -7,6 +7,4 @@ const FIREBASE_CONFIG = {
     messagingSenderId: "356833125001"
 };
 
-export {
-    FIREBASE_CONFIG
-};
+export { FIREBASE_CONFIG };

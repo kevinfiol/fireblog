@@ -1,14 +1,35 @@
 const m = require('mithril');
 
 module.exports = (Firebase, mutators) => {
-    const { currentUser, toggleLoading } = mutators;
-    toggleLoading(true);
+    const { setUserData, setFirebaseUser, toggleLoading } = mutators;
+
+    let initialLoad = true;
+    if (initialLoad) toggleLoading(true);
 
     Firebase.onAuthStateChanged(user => {
-        if (user) currentUser(user);
-        else currentUser(null);
+        if (user) {
+            setFirebaseUser(user);
 
-        toggleLoading(false);
-        m.redraw();
+            if (initialLoad) {
+                Firebase.getUserDataByEmail(user.email)
+                    .then(setUserData)
+                    .finally(() => {
+                        toggleLoading(false);
+                        initialLoad = false;
+                        m.redraw();
+                    })
+                ;
+            }
+        } else {
+            setFirebaseUser(null);
+            setUserData({ uid: null, username: null, photoURL: null });
+
+            if (initialLoad) {
+                toggleLoading(false);
+                initialLoad = false;
+            }
+
+            m.redraw();
+        }
     });
 };

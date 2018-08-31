@@ -8,27 +8,52 @@ require('core-js/modules/es7.promise.finally');
  */
 
 module.exports = (update, Firebase) => {
+    /**
+     * UI Methods
+     */
     const toggleLoading = isLoading => update({
-        global: { isLoading: isLoading }
+        global: { isLoading }
     });
 
-    const toggleSignUpForm = toShow => update({
-        global: { showSignUp: toShow }
+    const toggleSignUpForm = showSignUp => update({
+        global: { showSignUp }
     });
 
-    const toggleSignInForm = toShow => update({
-        global: { showSignIn: toShow }
+    const toggleSignInForm = showSignIn => update({
+        global: { showSignIn }
     });
 
-    const currentUser = user => {
+    const updateSignUpMsg = signUpMsg => update({
+        global: { signUpMsg }
+    });
+
+    const updateSignInMsg = signInMsg => update({
+        global: { signInMsg }
+    });
+
+    /**
+     * User Account Methods
+     */
+
+    const setUserData = data => {
+        for (let key in data) {
+            update({
+                global: {
+                    userData: { [key]: data[key] }
+                }
+            });
+        }
+    };
+
+    const setFirebaseUser = user => {
         if (!user) {
-            update({ global: { user: null } });
+            update({ global: { firebaseUser: null } });
             return;
         }
 
         update({
             global: {
-                user: {
+                firebaseUser: {
                     displayName: user.displayName,
                     email: user.email,
                     photoURL: user.photoURL,
@@ -39,26 +64,22 @@ module.exports = (update, Firebase) => {
         });
     };
 
-    const updateSignUpMsg = message => update({
-        global: { signUpMsg: message }
-    });
-
-    const updateSignInMsg = message => update({
-        global: { signInMsg: message }
-    });
-
-    const createUser = (user, email, pwd) => {
+    const createUser = (username, email, pwd) => {
         toggleLoading(true);
 
         // Check if userName exists first
         return Firebase.getUserNames()
-            .then(users => users.includes(user))
+            .then(users => users.includes(username))
             .then(userExists => {
-                if (userExists) {
-                    throw { message: 'Username already exists.' }
-                } else {
-                    return Firebase.createUser(email, pwd);
-                }
+                // Throw Error if user exists
+                if (userExists) throw { message: 'Username taken.' };
+                // Else create user w/ email
+                else return Firebase.createUser(email, pwd);
+            })
+            .then(({ user }) => {
+                // Add username & uid to DB & state
+                setUserData({ username, uid: user.uid });
+                return Firebase.addUserToDatabase(email, username, user.uid);
             })
             .then(() => {
                 updateSignUpMsg(null);
@@ -78,12 +99,14 @@ module.exports = (update, Firebase) => {
         toggleLoading(true);
 
         return Firebase.signInUser(email, pwd)
+            .then(() => Firebase.getUserDataByEmail(email))
+            .then(setUserData)
             .then(() => {
                 updateSignInMsg(null);
                 toggleSignInForm(false);
             })
             .catch(err => {
-                updateSignInMsg(err.message);
+                updateSignInMsg(err.message)
             })
             .finally(() => {
                 toggleLoading(false);
@@ -96,7 +119,31 @@ module.exports = (update, Firebase) => {
         toggleLoading(true);
 
         return Firebase.updateProfile(prop, val)
-            .finally(m.redraw)
+            .then(() => {
+                update({
+                    global: {
+                        firebaseUser: { [prop]: val }
+                    }
+                });
+            })
+            .finally(() => {
+                toggleLoading(false);
+                m.redraw();
+            })
+        ;
+    };
+
+    const updateUserData = (email, prop, val) => {
+        toggleLoading(true);
+
+        return Firebase.updateUserData(email, prop, val)
+            .then(() => {
+                setUserData({ prop: val })
+            })
+            .finally(() => {
+                toggleLoading(false);
+                m.redraw();
+            })
         ;
     };
 
@@ -104,6 +151,7 @@ module.exports = (update, Firebase) => {
         toggleLoading(true);
 
         return Firebase.signOut().finally(() => {
+            setUserData(null);
             toggleLoading(false);
             m.redraw();
         });
@@ -113,12 +161,14 @@ module.exports = (update, Firebase) => {
         toggleLoading,
         toggleSignUpForm,
         toggleSignInForm,
-        currentUser,
+        setFirebaseUser,
         updateProfile,
         updateSignUpMsg,
         updateSignInMsg,
         createUser,
         signInUser,
-        signOut
+        signOut,
+        setUserData,
+        updateUserData
     };
 };

@@ -5,14 +5,16 @@ import { ProfileForm } from 'components/Settings/ProfileForm';
 export const Settings = {
     oninit() {
         // If not signed in, redirect to dash
-        if (!model().global.user) m.route.set('/');
+        if (!model().global.firebaseUser) m.route.set('/');
     },
 
     view() {
         return m('.clearfix', [
-            model().global.user
-                ? m(ProfileForm, { user: model().global.user })
-                // ? m(Profile, { user: model().global.user })
+            model().global.firebaseUser
+                ? m(ProfileForm, {
+                    email: model().global.firebaseUser.email,
+                    photoURL: model().global.userData.photoURL
+                })
                 : m('p', 'not logged in')
             ,
         ]);
