@@ -13,7 +13,8 @@ export const Settings = {
             model().global.firebaseUser
                 ? m(ProfileForm, {
                     email: model().global.firebaseUser.email,
-                    photoURL: model().global.userData.photoURL
+                    photoURL: model().global.userData.photoURL,
+                    bio: model().global.userData.bio
                 })
                 : m('p', 'not logged in')
             ,

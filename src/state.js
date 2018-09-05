@@ -1,15 +1,16 @@
 import stream from 'mithril/stream';
-import merge from 'deepmerge';
+// import merge from 'deepmerge';
 
 const initialState = {
     global: {
-        userData: { uid: null, username: null, photoURL: null },
+        userData: null,
         firebaseUser: null,
         isLoading: false,
         signUpMsg: null,
         signInMsg: null,
         showSignUp: false,
-        showSignIn: false 
+        showSignIn: false,
+        queue: []
     },
 
     profile: {
@@ -18,6 +19,7 @@ const initialState = {
 };
 
 const update = stream();
-const model = stream.scan(merge, initialState, update);
+const model = stream.scan((x, f) => f(x), initialState, update);
+// const model = stream.scan(merge, initialState, update);
 
 export { update, model, initialState };

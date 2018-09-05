@@ -3,7 +3,7 @@ import stream from 'mithril/stream';
 import { model } from 'state';
 import { mutators } from 'mutators/index';
 import { InputText } from 'components/InputText';
-import { Button } from 'components/Button';
+import { Btn } from 'components/Btn';
 
 const { signInUser } = mutators.global;
 
@@ -22,20 +22,19 @@ export const SignInForm = () => {
                 m('h3', 'Sign In'),
 
                 m(InputText, {
-                    label: 'email:',
-                    placeholder: 'joe@website.com',
+                    placeholder: 'email',
                     input: email
                 }),
 
                 m(InputText, {
-                    label: 'password:',
+                    placeholder: 'password',
                     type: 'password',
                     input: pwd
                 }),
 
                 isFormValid()
-                    ? m(Button, { 
-                        className: 'my1',
+                    ? m(Btn, { 
+                        className: 'my1 btn-outline',
                         onclick: () => signInUser( email(), pwd() ) 
                     }, 'Submit')
                     : null

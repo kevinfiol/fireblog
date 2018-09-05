@@ -15,33 +15,30 @@ const {
 } = mutators.global;
 
 export const Layout = {
-    view({children}) {
-        return m('.clearfix', [
-            m(Panel),
-            m('.my3', children),
+    view: ({children}) => m('.clearfix', [
+        m('.fixed.top-0.left-0', m(Panel)),
 
-            model().global.isLoading
-                ? m(Spinner)
-                : null
-            ,
+        m('.my3', children),
 
-            model().global.showSignUp
-                ? m(Modal, {
-                    showModal: toggleSignUpForm,
-                    cancelMethod: () => updateSignUpMsg(null)
-                }, m(SignUpForm))
-                : null
-            ,
+        model().global.queue.length
+            ? m(Spinner)
+            : null
+        ,
 
-            model().global.showSignIn
-                ? m(Modal, {
-                    showModal: toggleSignInForm,
-                    cancelMethod: () => updateSignInMsg(null)
-                }, m(SignInForm))
-                : null
-            ,
+        model().global.showSignUp
+            ? m(Modal, {
+                showModal: toggleSignUpForm,
+                cancelMethod: () => updateSignUpMsg(null)
+            }, m(SignUpForm))
+            : null
+        ,
 
-            // m('code', { style: { zIndex: '9999', position: 'absolute', bottom: '0', left: '0' } }, JSON.stringify( model() )),
-        ]);
-    }
+        model().global.showSignIn
+            ? m(Modal, {
+                showModal: toggleSignInForm,
+                cancelMethod: () => updateSignInMsg(null)
+            }, m(SignInForm))
+            : null
+        ,
+    ])
 };

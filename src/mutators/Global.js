@@ -8,64 +8,87 @@ require('core-js/modules/es7.promise.finally');
  */
 
 module.exports = (update, Firebase) => {
+    const enqueue = () => update(model => {
+        const id = Math.random();
+        const queue = [...model.global.queue];
+        queue.push(id);
+
+        model.global.queue = queue;
+        return model;
+    });
+
+    const dequeue = () => update(model => {
+        const queue = [...model.global.queue];
+        queue.shift();
+
+        model.global.queue = queue;
+        return model;
+    });
+
     /**
      * UI Methods
      */
-    const toggleLoading = isLoading => update({
-        global: { isLoading }
+    // const toggleLoading = isLoading => update({
+    //     global: { isLoading }
+    // });
+
+    const toggleSignUpForm = showSignUp => update(model => {
+        model.global.showSignUp = showSignUp;
+        return model;
     });
 
-    const toggleSignUpForm = showSignUp => update({
-        global: { showSignUp }
+    const toggleSignInForm = showSignIn => update(model => {
+        model.global.showSignIn = showSignIn;
+        return model;
     });
 
-    const toggleSignInForm = showSignIn => update({
-        global: { showSignIn }
+    const updateSignUpMsg = signUpMsg => update(model => {
+        model.global.signUpMsg = signUpMsg;
+        return model;
     });
 
-    const updateSignUpMsg = signUpMsg => update({
-        global: { signUpMsg }
-    });
-
-    const updateSignInMsg = signInMsg => update({
-        global: { signInMsg }
+    const updateSignInMsg = signInMsg => update(model => {
+        model.global.signInMsg = signInMsg;
+        return model;
     });
 
     /**
      * User Account Methods
      */
 
-    const setUserData = data => {
+    const setUserData = data => update(model => {
+        if (!data) {
+            model.global.userData = null;
+            return model;
+        }
+
         for (let key in data) {
-            update({
-                global: {
-                    userData: { [key]: data[key] }
-                }
-            });
+            model.global.userData[key] = data[key];
         }
-    };
 
-    const setFirebaseUser = user => {
+        return model;
+    });
+
+    const setFirebaseUser = user => update(model => {
         if (!user) {
-            update({ global: { firebaseUser: null } });
-            return;
+            model.global.firebaseUser = null;
+            return model;
         }
 
-        update({
-            global: {
-                firebaseUser: {
-                    displayName: user.displayName,
-                    email: user.email,
-                    photoURL: user.photoURL,
-                    emailVerified: user.emailVerified,
-                    uid: user.uid
-                }
-            }
-        });
-    };
+        model.global.firebaseUser = {
+            displayName: user.displayName,
+            email: user.email,
+            photoURL: user.photoURL,
+            emailVerified: user.emailVerified,
+            uid: user.uid
+        };
+
+        return model;
+    });
 
     const createUser = (username, email, pwd) => {
-        toggleLoading(true);
+        enqueue();
+        // toggleLoading(true);
 
         // Check if userName exists first
         return Firebase.getUserNames()
@@ -89,14 +112,16 @@ module.exports = (update, Firebase) => {
                 updateSignUpMsg(err.message);
             })
             .finally(() => {
-                toggleLoading(false);
+                dequeue();
+                // toggleLoading(false);
                 m.redraw();
             })
         ;
     };
 
     const signInUser = (email, pwd) => {
-        toggleLoading(true);
+        enqueue();
+        // toggleLoading(true);
 
         return Firebase.signInUser(email, pwd)
             .then(() => Firebase.getUserDataByEmail(email))
@@ -109,14 +134,16 @@ module.exports = (update, Firebase) => {
                 updateSignInMsg(err.message)
             })
             .finally(() => {
-                toggleLoading(false);
+                dequeue();
+                // toggleLoading(false);
                 m.redraw();
             })
         ;
     };
 
     const updateProfile = (prop, val) => {
-        toggleLoading(true);
+        enqueue();
+        // toggleLoading(true);
 
         return Firebase.updateProfile(prop, val)
             .then(() => {
@@ -127,37 +154,45 @@ module.exports = (update, Firebase) => {
                 });
             })
             .finally(() => {
-                toggleLoading(false);
+                dequeue();
+                // toggleLoading(false);
                 m.redraw();
             })
         ;
     };
 
     const updateUserData = (email, prop, val) => {
-        toggleLoading(true);
+        enqueue();
+        // toggleLoading(true);
 
         return Firebase.updateUserData(email, prop, val)
             .then(() => {
-                setUserData({ prop: val })
+                setUserData({ [prop]: val })
             })
             .finally(() => {
-                toggleLoading(false);
+                dequeue();
+                // toggleLoading(false);
                 m.redraw();
             })
         ;
     };
 
     const signOut = () => {
-        toggleLoading(true);
+        enqueue();
+        // toggleLoading(true);
 
         return Firebase.signOut().finally(() => {
             setUserData(null);
-            toggleLoading(false);
+            // toggleLoading(false);
+            dequeue();
             m.redraw();
         });
     };
 
     return {
+        enqueue,
+        dequeue,
+
         toggleLoading,
         toggleSignUpForm,
         toggleSignInForm,

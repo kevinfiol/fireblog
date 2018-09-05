@@ -11,7 +11,6 @@
     "test": "node -r esm tests/tests.js"
   },
   "dependencies": {
-    "core-js": "^2.5.7",
     "deepmerge": "^2.1.1",
     "firebase": "^5.3.0",
     "mithril": "^1.1.6"

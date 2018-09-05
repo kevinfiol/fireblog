@@ -11,11 +11,22 @@ require('core-js/modules/es7.promise.finally');
 module.exports = (update, Firebase, global) => {
     const { toggleLoading } = global;
 
+    const setProfileData = user => update({
+        profile: { user }
+    });
+
     const getProfileData = username => {
+        setProfileData(null);
+        toggleLoading(true);
+
         return Firebase.getUserDataByUsername(username)
-            .then(res => console.log(res))
+            .then(setProfileData)
+            .finally(() => {
+                toggleLoading(false);
+                m.redraw();
+            })
         ;
     };
 
-    return { getProfileData };
+    return { getProfileData, setProfileData };
 };

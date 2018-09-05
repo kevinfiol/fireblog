@@ -1,5 +1,7 @@
 import m from 'mithril';
 
 export const Index = {
-    view: () => m('p', 'Dashboard')
+    view: () => m('.clearfix', [
+        m('p', 'Dashboard')
+    ])
 };

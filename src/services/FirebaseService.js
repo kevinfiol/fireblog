@@ -29,7 +29,7 @@ module.exports = (firebase) => {
     const updateUserData = (email, prop, val) => {
         return db.collection('users').doc(email).set({
             [prop]: val
-        });
+        }, { merge: true });
     };
 
     const getUserNames = () => {
