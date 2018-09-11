@@ -5,7 +5,6 @@ module.exports = (Firebase, mutators) => {
 
     let initialLoad = true;
     if (initialLoad) enqueue();
-    // if (initialLoad) toggleLoading(true);
 
     Firebase.onAuthStateChanged(user => {
         if (user) {
@@ -15,10 +14,9 @@ module.exports = (Firebase, mutators) => {
                 Firebase.getUserDataByEmail(user.email)
                     .then(setUserData)
                     .finally(() => {
-                        console.log('here');
                         dequeue();
-                        // toggleLoading(false);
                         initialLoad = false;
+
                         m.redraw();
                     })
                 ;
@@ -28,9 +26,7 @@ module.exports = (Firebase, mutators) => {
             setUserData(null);
 
             if (initialLoad) {
-                console.log('here');
                 dequeue();
-                // toggleLoading(false);
                 initialLoad = false;
             }
 

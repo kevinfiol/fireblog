@@ -8,7 +8,7 @@ import { Profile } from 'views/Profile';
 import { Settings } from 'views/Settings';
 
 meiosisTracer({ selector: '#tracer', streams: [ { stream: model, hide: false } ] });
-model.map(m.redraw);
+model.map(() => setTimeout(m.redraw, 2));
 
 m.route(document.getElementById('app'), '/', {
     '/': {

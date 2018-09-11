@@ -5,7 +5,7 @@ import { mutators } from 'mutators/index';
 import { InputText } from 'components/InputText';
 import { Btn } from 'components/Btn';
 
-const { createUser, getUserNames } = mutators.global;
+const { createUser } = mutators.global;
 
 export const SignUpForm = () => {
     const username   = stream('');

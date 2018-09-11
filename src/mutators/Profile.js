@@ -1,5 +1,4 @@
 const m = require('mithril');
-require('core-js/modules/es7.promise.finally');
 
 /**
  * Profile Mutators
@@ -9,21 +8,21 @@ require('core-js/modules/es7.promise.finally');
  */
 
 module.exports = (update, Firebase, global) => {
-    const { toggleLoading } = global;
+    const { enqueue, dequeue } = global;
 
-    const setProfileData = user => update({
-        profile: { user }
+    const setProfileData = user => update(model => {
+        model.profile.user = user;
+        return model;
     });
 
     const getProfileData = username => {
+        enqueue();
         setProfileData(null);
-        toggleLoading(true);
 
         return Firebase.getUserDataByUsername(username)
             .then(setProfileData)
             .finally(() => {
-                toggleLoading(false);
-                m.redraw();
+                dequeue();
             })
         ;
     };

@@ -4,6 +4,7 @@ import { Btn } from 'components/Btn';
 export const Modal = {
     onbeforeremove({dom}) {
         dom.classList.add('exit');
+
         return new Promise(res => {
             dom.addEventListener('animationend', res);
         });

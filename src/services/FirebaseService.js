@@ -2,6 +2,7 @@ module.exports = (firebase) => {
     const db   = firebase.firestore();
     const auth = firebase.auth();
     const settings = { timestampsInSnapshots: true };
+
     db.settings(settings);
 
     const createUser = (email, pwd) => {

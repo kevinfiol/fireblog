@@ -1,5 +1,4 @@
 const m = require('mithril');
-require('core-js/modules/es7.promise.finally');
 
 /**
  * Global Mutators
@@ -8,10 +7,17 @@ require('core-js/modules/es7.promise.finally');
  */
 
 module.exports = (update, Firebase) => {
+    const toggleLoading = isLoading => update(model => {
+        model.global.isLoading = isLoading;
+        return model;
+    });
+
     const enqueue = () => update(model => {
-        const id = Math.random();
         const queue = [...model.global.queue];
-        queue.push(id);
+        queue.push(0);
+
+        toggleLoading(queue.length > 0);
+        setTimeout(m.redraw);
 
         model.global.queue = queue;
         return model;
@@ -21,6 +27,9 @@ module.exports = (update, Firebase) => {
         const queue = [...model.global.queue];
         queue.shift();
 
+        toggleLoading(queue.length > 0);
+        setTimeout(m.redraw);
+
         model.global.queue = queue;
         return model;
     });
@@ -28,10 +37,6 @@ module.exports = (update, Firebase) => {
     /**
      * UI Methods
      */
-    // const toggleLoading = isLoading => update({
-    //     global: { isLoading }
-    // });
-
     const toggleSignUpForm = showSignUp => update(model => {
         model.global.showSignUp = showSignUp;
         return model;
@@ -42,12 +47,12 @@ module.exports = (update, Firebase) => {
         return model;
     });
 
-    const updateSignUpMsg = signUpMsg => update(model => {
+    const setSignUpMsg = signUpMsg => update(model => {
         model.global.signUpMsg = signUpMsg;
         return model;
     });
 
-    const updateSignInMsg = signInMsg => update(model => {
+    const setSignInMsg = signInMsg => update(model => {
         model.global.signInMsg = signInMsg;
         return model;
     });
@@ -58,7 +63,13 @@ module.exports = (update, Firebase) => {
 
     const setUserData = data => update(model => {
         if (!data) {
-            model.global.userData = null;
+            model.global.userData = {
+                username: null,
+                uid: null,
+                photoURL: null,
+                bio: null
+            };
+
             return model;
         }
 
@@ -88,7 +99,6 @@ module.exports = (update, Firebase) => {
 
     const createUser = (username, email, pwd) => {
         enqueue();
-        // toggleLoading(true);
 
         // Check if userName exists first
         return Firebase.getUserNames()
@@ -105,101 +115,67 @@ module.exports = (update, Firebase) => {
                 return Firebase.addUserToDatabase(email, username, user.uid);
             })
             .then(() => {
-                updateSignUpMsg(null);
+                setSignUpMsg(null);
                 toggleSignUpForm(false);
             })
             .catch(err => {
-                updateSignUpMsg(err.message);
+                setSignUpMsg(err.message);
             })
             .finally(() => {
                 dequeue();
-                // toggleLoading(false);
-                m.redraw();
             })
         ;
     };
 
     const signInUser = (email, pwd) => {
         enqueue();
-        // toggleLoading(true);
 
         return Firebase.signInUser(email, pwd)
             .then(() => Firebase.getUserDataByEmail(email))
             .then(setUserData)
             .then(() => {
-                updateSignInMsg(null);
+                setSignInMsg(null);
                 toggleSignInForm(false);
             })
             .catch(err => {
-                updateSignInMsg(err.message)
+                setSignInMsg(err.message);
             })
             .finally(() => {
                 dequeue();
-                // toggleLoading(false);
-                m.redraw();
-            })
-        ;
-    };
-
-    const updateProfile = (prop, val) => {
-        enqueue();
-        // toggleLoading(true);
-
-        return Firebase.updateProfile(prop, val)
-            .then(() => {
-                update({
-                    global: {
-                        firebaseUser: { [prop]: val }
-                    }
-                });
-            })
-            .finally(() => {
-                dequeue();
-                // toggleLoading(false);
-                m.redraw();
             })
         ;
     };
 
     const updateUserData = (email, prop, val) => {
         enqueue();
-        // toggleLoading(true);
 
         return Firebase.updateUserData(email, prop, val)
             .then(() => {
-                setUserData({ [prop]: val })
+                setUserData({ [prop]: val });
             })
             .finally(() => {
                 dequeue();
-                // toggleLoading(false);
-                m.redraw();
             })
         ;
     };
 
     const signOut = () => {
         enqueue();
-        // toggleLoading(true);
 
         return Firebase.signOut().finally(() => {
             setUserData(null);
-            // toggleLoading(false);
             dequeue();
-            m.redraw();
         });
     };
 
     return {
         enqueue,
         dequeue,
-
-        toggleLoading,
         toggleSignUpForm,
         toggleSignInForm,
         setFirebaseUser,
-        updateProfile,
-        updateSignUpMsg,
-        updateSignInMsg,
+        setSignUpMsg,
+        setSignInMsg,
         createUser,
         signInUser,
         signOut,

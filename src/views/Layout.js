@@ -20,7 +20,7 @@ export const Layout = {
 
         m('.my3', children),
 
-        model().global.queue.length
+        model().global.isLoading
             ? m(Spinner)
             : null
         ,
