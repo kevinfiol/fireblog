@@ -8,11 +8,12 @@ import alias from 'rollup-plugin-alias';
 const aliases = {
     'components': path.resolve(__dirname, 'src/components'),
     'views': path.resolve(__dirname, 'src/views'),
-    'services': path.resolve(__dirname, 'src/services'),
-    'observers': path.resolve(__dirname, 'src/observers'),
-    'mutators': path.resolve(__dirname, 'src/mutators'),
     'config': path.resolve(__dirname, 'src/config'),
-    'state': path.resolve(__dirname, 'src/state')
+    'state': path.resolve(__dirname, 'src/state'),
+
+    'services': path.resolve(__dirname, 'src/services/index'),
+    'observers': path.resolve(__dirname, 'src/observers/index'),
+    'actions': path.resolve(__dirname, 'src/actions/index'),
 };
 
 const config = {

@@ -1,11 +1,11 @@
 import m from 'mithril';
 import stream from 'mithril/stream';
-import { mutators } from 'mutators/index';
+import actions from 'actions';
 import { InputText } from 'components/InputText';
 import { TextArea } from 'components/TextArea';
 import { Btn } from 'components/Btn';
 
-const { updateUserData } = mutators.global;
+const { updateUserData } = actions.global;
 
 export const ProfileForm = () => {
     const photoURL = stream('');

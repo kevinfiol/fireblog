@@ -1,8 +1,8 @@
 import m from 'mithril';
 import { model } from 'state';
-import { mutators } from 'mutators/index';
+import actions from 'actions';
 
-const { getProfileData } = mutators.profile;
+const { getProfileData } = actions.profile;
 
 export const Profile = {
     oninit: ({attrs}) => {

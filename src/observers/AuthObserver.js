@@ -1,10 +1,10 @@
 const m = require('mithril');
 
-module.exports = (Firebase, mutators) => {
-    const { setUserData, setFirebaseUser, enqueue, dequeue } = mutators;
+module.exports = (Firebase, actions) => {
+    const { setUserData, setFirebaseUser, enqueue, dequeue } = actions.global;
 
     let initialLoad = true;
-    if (initialLoad) enqueue();
+    enqueue();
 
     Firebase.onAuthStateChanged(user => {
         if (user) {

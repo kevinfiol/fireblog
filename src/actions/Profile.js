@@ -1,10 +1,8 @@
-const m = require('mithril');
-
 /**
- * Profile Mutators
+ * Profile Actions
  * @param {Stream} update   Update Stream
  * @param {Object} Firebase FirebaseService
- * @param {Object} global   Global Mutators
+ * @param {Object} global   Global Actions
  */
 
 module.exports = (update, Firebase, global) => {
@@ -21,9 +19,7 @@ module.exports = (update, Firebase, global) => {
 
         return Firebase.getUserDataByUsername(username)
             .then(setProfileData)
-            .finally(() => {
-                dequeue();
-            })
+            .finally(dequeue)
         ;
     };
 

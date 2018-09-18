@@ -1,12 +1,15 @@
 const m = require('mithril');
 
 /**
- * Global Mutators
+ * Global Actions
  * @param {Stream} update   Update Stream
  * @param {Object} Firebase FirebaseService
  */
 
 module.exports = (update, Firebase) => {
+    /**
+     * Indicator Actions
+     */
     const toggleLoading = isLoading => update(model => {
         model.global.isLoading = isLoading;
         return model;
@@ -35,7 +38,7 @@ module.exports = (update, Firebase) => {
     });
 
     /**
-     * UI Methods
+     * UI Actions
      */
     const toggleSignUpForm = showSignUp => update(model => {
         model.global.showSignUp = showSignUp;
@@ -60,7 +63,6 @@ module.exports = (update, Firebase) => {
     /**
      * User Account Methods
      */
-
     const setUserData = data => update(model => {
         if (!data) {
             model.global.userData = {
@@ -97,6 +99,9 @@ module.exports = (update, Firebase) => {
         return model;
     });
 
+    /**
+     * Async Actions
+     */
     const createUser = (username, email, pwd) => {
         enqueue();
 

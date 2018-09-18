@@ -1,11 +1,9 @@
 /** Dependencies */
-import { mutators } from 'mutators/index';
-import { Firebase } from 'services/index';
+import actions from 'actions';
+import services from 'services';
 
 /** Observers */
-import AuthObserver from 'observers/AuthObserver';
-const authObserver = AuthObserver(Firebase, mutators.global);
+import AuthObserver from './AuthObserver';
+const authObserver = AuthObserver(services.Firebase, actions);
 
-export {
-    authObserver
-};
+export default { authObserver };

@@ -1,11 +1,11 @@
 import m from 'mithril';
 import stream from 'mithril/stream';
 import { model } from 'state';
-import { mutators } from 'mutators/index';
+import actions from 'actions';
 import { InputText } from 'components/InputText';
 import { Btn } from 'components/Btn';
 
-const { createUser } = mutators.global;
+const { createUser } = actions.global;
 
 export const SignUpForm = () => {
     const username   = stream('');

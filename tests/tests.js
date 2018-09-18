@@ -27,15 +27,15 @@ const sdk = new firebaseMock.MockFirebaseSdk(null, () => mockAuth);
  */
 const firebase = require('../src/services/FirebaseService')(sdk);
 
-/** Mutators */
-const Global = require('../src/mutators/Global')(update, firebase);
+/** Actions */
+const Global = require('../src/actions/Global')(update, firebase);
 
 /**
  * Observers
  */
 const AuthObserver = require('../src/observers/AuthObserver')(firebase, Global);
 
-o.spec('Global Mutators: ', () => {
+o.spec('Global Actions: ', () => {
     // Reset Model before each test
     o.beforeEach(() => model(initialState));
 

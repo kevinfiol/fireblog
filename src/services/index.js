@@ -6,9 +6,7 @@ import { FIREBASE_CONFIG } from 'config';
 firebase.initializeApp(FIREBASE_CONFIG);
 
 /** Services */
-import FirebaseService from 'services/FirebaseService';
+import FirebaseService from './FirebaseService';
 const Firebase = FirebaseService(firebase);
 
-export {
-    Firebase
-};
+export default { Firebase };

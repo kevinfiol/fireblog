@@ -1,7 +1,7 @@
 import m from 'mithril';
+import observers from 'observers'; 
 import meiosisTracer from 'meiosis-tracer';
 import { model } from 'state';
-import { authObserver } from 'observers/index'; 
 import { Layout } from 'views/Layout';
 import { Index } from 'views/Index';
 import { Profile } from 'views/Profile';

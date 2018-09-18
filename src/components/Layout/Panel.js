@@ -1,9 +1,9 @@
 import m from 'mithril';
 import { model } from 'state';
-import { mutators } from 'mutators/index';
+import actions from 'actions';
 import { Btn } from 'components/Btn';
 
-const { toggleSignUpForm, toggleSignInForm, signOut } = mutators.global;
+const { toggleSignUpForm, toggleSignInForm, signOut } = actions.global;
 
 export const Panel = {
     view: () => m('.clearfix.p2', [

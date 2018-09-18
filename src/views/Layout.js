@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { model } from 'state';
-import { mutators } from 'mutators/index';
+import actions from 'actions';
 import { Modal } from 'components/Modal';
 import { Panel } from 'components/Layout/Panel';
 import { SignUpForm } from 'components/Layout/SignUpForm';
@@ -12,7 +12,7 @@ const {
     toggleSignInForm,
     setSignUpMsg,
     setSignInMsg
-} = mutators.global;
+} = actions.global;
 
 export const Layout = {
     view: ({children}) => m('.clearfix', [
