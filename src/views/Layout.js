@@ -10,8 +10,8 @@ import { Spinner } from 'components/Layout/Spinner';
 const {
     toggleSignUpForm,
     toggleSignInForm,
-    updateSignUpMsg,
-    updateSignInMsg
+    setSignUpMsg,
+    setSignInMsg
 } = mutators.global;
 
 export const Layout = {
@@ -28,7 +28,7 @@ export const Layout = {
         model().global.showSignUp
             ? m(Modal, {
                 showModal: toggleSignUpForm,
-                cancelMethod: () => updateSignUpMsg(null)
+                cancelMethod: () => setSignUpMsg(null)
             }, m(SignUpForm))
             : null
         ,
@@ -36,7 +36,7 @@ export const Layout = {
         model().global.showSignIn
             ? m(Modal, {
                 showModal: toggleSignInForm,
-                cancelMethod: () => updateSignInMsg(null)
+                cancelMethod: () => setSignInMsg(null)
             }, m(SignInForm))
             : null
         ,

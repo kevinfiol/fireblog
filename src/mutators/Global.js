@@ -14,7 +14,7 @@ module.exports = (update, Firebase) => {
 
     const enqueue = () => update(model => {
         const queue = [...model.global.queue];
-        queue.push(0);
+        queue.push(true);
 
         toggleLoading(queue.length > 0);
         setTimeout(m.redraw);

@@ -37,7 +37,7 @@ module.exports = (firebase) => {
         return db.collection('users').get()
             .then(snap => {
                 const userNames = [];
-                snap.forEach(doc => userNames.push(doc.id));
+                snap.forEach(doc => userNames.push(doc.data().username));
                 return userNames;
             })
         ;

@@ -15,7 +15,7 @@ m.route(document.getElementById('app'), '/', {
         render: () => m(Layout, m(Index))
     },
 
-    '/user/:key': {
+    '/u/:key': {
         render: ({key}) => m(Layout, m(Profile, { key }))
     },
 

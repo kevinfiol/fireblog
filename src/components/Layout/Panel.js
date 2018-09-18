@@ -24,7 +24,7 @@ export const Panel = {
 
                 m(Btn, {
                     className: 'mx1',
-                    onclick: () => m.route.set('/user/:key', { key: model().global.userData.username })
+                    onclick: () => m.route.set('/u/:key', { key: model().global.userData.username })
                 }, 'Profile'),
 
                 m(Btn, {
