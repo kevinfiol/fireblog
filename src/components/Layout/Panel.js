@@ -3,14 +3,14 @@ import { model } from 'state';
 import actions from 'actions';
 import { Btn } from 'components/Btn';
 
-const { toggleSignUpForm, toggleSignInForm, signOut } = actions.global;
+const { showSignUpForm, showSignInForm, signOut } = actions.global;
 
 export const Panel = {
     view: () => m('.clearfix.p2', [
         model().global.firebaseUser === null
             ? [
-                m(Btn, { className: 'mx1', onclick: () => toggleSignUpForm(true) }, 'Sign Up'),
-                m(Btn, { className: 'mx1', onclick: () => toggleSignInForm(true) }, 'Sign In'),
+                m(Btn, { className: 'mx1', onclick: () => showSignUpForm(true) }, 'Sign Up'),
+                m(Btn, { className: 'mx1', onclick: () => showSignInForm(true) }, 'Sign In'),
             ]
             : null
         ,

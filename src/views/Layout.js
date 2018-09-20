@@ -8,8 +8,8 @@ import { SignInForm } from 'components/Layout/SignInForm';
 import { Spinner } from 'components/Layout/Spinner';
 
 const {
-    toggleSignUpForm,
-    toggleSignInForm,
+    showSignUpForm,
+    showSignInForm,
     setSignUpMsg,
     setSignInMsg
 } = actions.global;
@@ -20,14 +20,14 @@ export const Layout = {
 
         m('.my3', children),
 
-        model().global.isLoading
+        model().isLoading
             ? m(Spinner)
             : null
         ,
 
         model().global.showSignUp
             ? m(Modal, {
-                showModal: toggleSignUpForm,
+                showModal: showSignUpForm,
                 cancelMethod: () => setSignUpMsg(null)
             }, m(SignUpForm))
             : null
@@ -35,7 +35,7 @@ export const Layout = {
 
         model().global.showSignIn
             ? m(Modal, {
-                showModal: toggleSignInForm,
+                showModal: showSignInForm,
                 cancelMethod: () => setSignInMsg(null)
             }, m(SignInForm))
             : null

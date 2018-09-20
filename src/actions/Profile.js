@@ -1,25 +1,31 @@
 /**
+ * Profile Action Types
+ */
+
+const PROFILE_SET_PROFILEDATA = 'PROFILE_SET_PROFILEDATA';
+const PROFILE_GET_PROFILEDATA = 'PROFILE_GET_PROFILEDATA';
+
+/**
  * Profile Actions
  * @param {Stream} update   Update Stream
  * @param {Object} Firebase FirebaseService
- * @param {Object} global   Global Actions
+ * @param {Object} queue    Queue Actions
  */
 
-module.exports = (update, Firebase, global) => {
-    const { enqueue, dequeue } = global;
-
-    const setProfileData = user => update(model => {
-        model.profile.user = user;
-        return model;
-    });
+module.exports = (update, Firebase, queue) => {
+    const setProfileData = user => update(() => ({
+        type: PROFILE_SET_PROFILEDATA,
+        model: { profile: { user } }
+    }));
 
     const getProfileData = username => {
-        enqueue();
-        setProfileData(null);
+        const action = { type: PROFILE_GET_PROFILEDATA };
+        queue.enqueue(action);
 
+        setProfileData(null);
         return Firebase.getUserDataByUsername(username)
             .then(setProfileData)
-            .finally(dequeue)
+            .finally(() => queue.dequeue(action))
         ;
     };
 

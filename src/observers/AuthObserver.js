@@ -1,10 +1,12 @@
 const m = require('mithril');
 
 module.exports = (Firebase, actions) => {
-    const { setUserData, setFirebaseUser, enqueue, dequeue } = actions.global;
+    const { setUserData, setFirebaseUser } = actions.global;
+    const { enqueue, dequeue } = actions.queue;
+    const action = { type: 'OBSERVER_AUTH_ON_STATE_CHANGED' };
 
     let initialLoad = true;
-    enqueue();
+    enqueue(action);
 
     Firebase.onAuthStateChanged(user => {
         if (user) {
@@ -14,9 +16,8 @@ module.exports = (Firebase, actions) => {
                 Firebase.getUserDataByEmail(user.email)
                     .then(setUserData)
                     .finally(() => {
-                        dequeue();
+                        dequeue(action);
                         initialLoad = false;
-
                         m.redraw();
                     })
                 ;
@@ -26,7 +27,7 @@ module.exports = (Firebase, actions) => {
             setUserData(null);
 
             if (initialLoad) {
-                dequeue();
+                dequeue(action);
                 initialLoad = false;
             }
 

@@ -1,109 +1,105 @@
-const m = require('mithril');
+/**
+ * Global Action Types
+ */
+
+const GLOBAL_SHOW_SIGNUP      = 'GLOBAL_SHOW_SIGNUP';
+const GLOBAL_SHOW_SIGNIN      = 'GLOBAL_SHOW_SIGNIN';
+
+const GLOBAL_SET_SIGNUPMSG    = 'GLOBAL_SET_SIGNUPMSG';
+const GLOBAL_SET_SIGNINMSG    = 'GLOBAL_SET_SIGNINMSG';
+const GLOBAL_SET_USERDATA     = 'GLOBAL_SET_USERDATA';
+const GLOBAL_SET_FIREBASEUSER = 'GLOBAL_SET_FIREBASEUSER';
+
+const GLOBAL_CREATE_USER      = 'GLOBAL_CREATE_USER';
+const GLOBAL_SIGNIN_USER      = 'GLOBAL_SIGNIN_USER';
+const GLOBAL_UPDATE_USERDATA  = 'GLOBAL_UPDATE_USERDATA';
+const GLOBAL_SIGNOUT          = 'GLOBAL_SIGNOUT';
 
 /**
  * Global Actions
  * @param {Stream} update   Update Stream
  * @param {Object} Firebase FirebaseService
+ * @param {Object} queue    Queue Actions
  */
 
-module.exports = (update, Firebase) => {
-    /**
-     * Indicator Actions
-     */
-    const toggleLoading = isLoading => update(model => {
-        model.global.isLoading = isLoading;
-        return model;
-    });
-
-    const enqueue = () => update(model => {
-        const queue = [...model.global.queue];
-        queue.push(true);
-
-        toggleLoading(queue.length > 0);
-        setTimeout(m.redraw);
-
-        model.global.queue = queue;
-        return model;
-    });
-
-    const dequeue = () => update(model => {
-        const queue = [...model.global.queue];
-        queue.shift();
-
-        toggleLoading(queue.length > 0);
-        setTimeout(m.redraw);
-
-        model.global.queue = queue;
-        return model;
-    });
-
+module.exports = (update, Firebase, queue) => {
     /**
      * UI Actions
      */
-    const toggleSignUpForm = showSignUp => update(model => {
-        model.global.showSignUp = showSignUp;
-        return model;
-    });
+    const showSignUpForm = showSignUp => update(() => ({
+        type: GLOBAL_SHOW_SIGNUP,
+        model: { global: { showSignUp } }
+    }));
 
-    const toggleSignInForm = showSignIn => update(model => {
-        model.global.showSignIn = showSignIn;
-        return model;
-    });
+    const showSignInForm = showSignIn => update(() => ({
+        type: GLOBAL_SHOW_SIGNIN,
+        model: { global: { showSignIn } }
+    }));
 
-    const setSignUpMsg = signUpMsg => update(model => {
-        model.global.signUpMsg = signUpMsg;
-        return model;
-    });
+    const setSignUpMsg = signUpMsg => update(() => ({
+        type: GLOBAL_SET_SIGNUPMSG,
+        model: { global: { signUpMsg } }
+    }));
 
-    const setSignInMsg = signInMsg => update(model => {
-        model.global.signInMsg = signInMsg;
-        return model;
-    });
+    const setSignInMsg = signInMsg => update(() => ({
+        type: GLOBAL_SET_SIGNINMSG,
+        model: { global: { signInMsg } }
+    }));
 
     /**
      * User Account Methods
      */
-    const setUserData = data => update(model => {
+    const setUserData = data => update(() => {
+        const type = GLOBAL_SET_USERDATA;
+        let userData = {};
+
         if (!data) {
-            model.global.userData = {
+            userData = {
                 username: null,
                 uid: null,
                 photoURL: null,
                 bio: null
             };
-
-            return model;
+        } else {
+            for (let key in data) {
+                userData[key] = data[key];
+            }
         }
 
-        for (let key in data) {
-            model.global.userData[key] = data[key];
-        }
-
-        return model;
+        return {
+            type,
+            model: { global: { userData } }
+        };
     });
 
-    const setFirebaseUser = user => update(model => {
-        if (!user) {
-            model.global.firebaseUser = null;
-            return model;
+    const setFirebaseUser = user => update(() => {
+        const type = GLOBAL_SET_FIREBASEUSER;
+        let firebaseUser = null;
+
+        if (user) {
+            firebaseUser = {
+                displayName: user.displayName,
+                email: user.email,
+                photoURL: user.photoURL,
+                emailVerified: user.emailVerified,
+                uid: user.uid
+            };
         }
 
-        model.global.firebaseUser = {
-            displayName: user.displayName,
-            email: user.email,
-            photoURL: user.photoURL,
-            emailVerified: user.emailVerified,
-            uid: user.uid
+        return {
+            type,
+            model: { global: { firebaseUser } }
         };
-
-        return model;
     });
 
     /**
      * Async Actions
      */
     const createUser = (username, email, pwd) => {
-        enqueue();
+        const action = { type: GLOBAL_CREATE_USER };
+
+        // Queue Async Action
+        queue.enqueue(action);
 
         // Check if userName exists first
         return Firebase.getUserNames()
@@ -121,63 +117,70 @@ module.exports = (update, Firebase) => {
             })
             .then(() => {
                 setSignUpMsg(null);
-                toggleSignUpForm(false);
+                showSignUpForm(false);
             })
             .catch(err => {
                 setSignUpMsg(err.message);
             })
             .finally(() => {
-                dequeue();
+                queue.dequeue(action);
             })
         ;
     };
 
     const signInUser = (email, pwd) => {
-        enqueue();
+        const action = { type: GLOBAL_SIGNIN_USER };
+
+        // Queue Async Action
+        queue.enqueue(action);
 
         return Firebase.signInUser(email, pwd)
             .then(() => Firebase.getUserDataByEmail(email))
             .then(setUserData)
             .then(() => {
                 setSignInMsg(null);
-                toggleSignInForm(false);
+                showSignInForm(false);
             })
             .catch(err => {
                 setSignInMsg(err.message);
             })
             .finally(() => {
-                dequeue();
+                queue.dequeue(action);
             })
         ;
     };
 
     const updateUserData = (email, prop, val) => {
-        enqueue();
+        const action = { type: GLOBAL_UPDATE_USERDATA };
+
+        // Queue Async Action
+        queue.enqueue(action);
 
         return Firebase.updateUserData(email, prop, val)
             .then(() => {
                 setUserData({ [prop]: val });
             })
             .finally(() => {
-                dequeue();
+                queue.dequeue(action);
             })
         ;
     };
 
     const signOut = () => {
-        enqueue();
+        const action = { type: GLOBAL_SIGNOUT };
+
+        // Queue Async Action
+        queue.enqueue(action);
 
         return Firebase.signOut().finally(() => {
             setUserData(null);
-            dequeue();
+            queue.dequeue(action);
         });
     };
 
     return {
-        enqueue,
-        dequeue,
-        toggleSignUpForm,
-        toggleSignInForm,
+        showSignUpForm,
+        showSignInForm,
         setFirebaseUser,
         setSignUpMsg,
         setSignInMsg,

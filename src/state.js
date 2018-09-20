@@ -1,6 +1,10 @@
 import stream from 'mithril/stream';
+import merge from 'deepmerge';
 
 const initialState = {
+    queue: [],
+    isLoading: false,
+
     global: {
         userData: {
             username: null,
@@ -13,8 +17,6 @@ const initialState = {
         signInMsg: null,
         showSignUp: false,
         showSignIn: false,
-        isLoading: false,
-        queue: []
     },
 
     profile: {
@@ -22,7 +24,28 @@ const initialState = {
     }
 };
 
-const update = stream();
-const model = stream.scan((x, f) => f(x), initialState, update);
+// Record of Actions
+const record = stream();
 
-export { update, model, initialState };
+// Update Stream
+const update = stream();
+
+// Reducer
+const reducer = (model, f) => {
+    const action = f(model);
+    record(action);
+
+    return merge(
+        // Latest Model
+        model,
+        // Return empty object if action doesn't modify model
+        action.model || {},
+        // Deepmerge overwrites array properties
+        { arrayMerge: (x, y) => y }
+    );
+};
+
+// Model
+const model = stream.scan(reducer, initialState, update);
+
+export { record, update, model, initialState };
