@@ -1,3 +1,5 @@
+const range = require('../util').range;
+
 module.exports = (firebase) => {
     const db   = firebase.firestore();
     const auth = firebase.auth();
@@ -27,8 +29,8 @@ module.exports = (firebase) => {
         });
     };
 
-    const updateUserData = (email, prop, val) => {
-        return db.collection('users').doc(email).set({
+    const updateUserData = (username, prop, val) => {
+        return db.collection('users').doc(username).set({
             [prop]: val
         }, { merge: true });
     };
@@ -44,8 +46,13 @@ module.exports = (firebase) => {
     };
 
     const getUserDataByEmail = email => {
-        return db.collection('users').doc(email).get()
-            .then(doc => doc.data())
+        return db.collection('users').where('email', '==', email)
+            .get()
+            .then(snap => {
+                const users = [];
+                snap.forEach(doc => users.push( doc.data() ));
+                return users[0] || null;
+            })
         ;
     };
 
@@ -60,11 +67,45 @@ module.exports = (firebase) => {
         ;
     };
 
-    const addUserToDatabase = (email, username, uid) => {
-        return db.collection('users').doc(email).set({
+    const addUserToDatabase = (username, email, uid) => {
+        return db.collection('users').doc(username).set({
             username,
+            email,
             uid
         });
+    };
+
+    const createUserBlog = username => {
+        return db.collection('blogs').doc(username).set({
+            pages: [ { posts: [] } ]
+        });
+    };
+
+    const getUserBlogPageNumbers = username => {
+        return db.collection('blogs').doc(username)
+            .get()
+            .then(doc => {
+                if (doc.exists) {
+                    return range(doc.data().pages.length);
+                }
+
+                return null;
+            })
+        ;
+    };
+
+    const getUserBlogPosts = (username, pageNo) => {
+        return db.collection('blogs').doc(username)
+            .get()
+            .then(doc => {
+                if (doc.exists) {
+                    const pages = doc.data().pages[pageNo] || null;
+                    if (pages) return pages.posts;
+                }
+
+                return null;
+            })
+        ;
     };
 
     return {
@@ -77,6 +118,9 @@ module.exports = (firebase) => {
         updateProfile,
         getUserNames,
         addUserToDatabase,
-        updateUserData
+        createUserBlog,
+        updateUserData,
+        getUserBlogPosts,
+        getUserBlogPageNumbers
     };
 };

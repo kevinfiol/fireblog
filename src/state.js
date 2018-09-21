@@ -8,6 +8,7 @@ const initialState = {
     global: {
         userData: {
             username: null,
+            email: null,
             uid: null,
             photoURL: null,
             bio: null
@@ -21,6 +22,10 @@ const initialState = {
 
     profile: {
         user: null,
+        blog: {
+            page: { pageNo: null, posts: null },
+            pageNumbers: []
+        }
     }
 };
 

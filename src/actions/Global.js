@@ -112,8 +112,14 @@ module.exports = (update, Firebase, queue) => {
             })
             .then(({ user }) => {
                 // Add username & uid to DB & state
-                setUserData({ username, uid: user.uid });
-                return Firebase.addUserToDatabase(email, username, user.uid);
+                setUserData({ username, email, uid: user.uid });
+
+                return Promise.all([
+                    // Add User to /users/{username}
+                    Firebase.addUserToDatabase(username, email, user.uid),
+                    // Create User Blog at /blogs/{username}
+                    Firebase.createUserBlog(username)
+                ]);
             })
             .then(() => {
                 setSignUpMsg(null);
@@ -150,13 +156,13 @@ module.exports = (update, Firebase, queue) => {
         ;
     };
 
-    const updateUserData = (email, prop, val) => {
+    const updateUserData = (username, prop, val) => {
         const action = { type: GLOBAL_UPDATE_USERDATA };
 
         // Queue Async Action
         queue.enqueue(action);
 
-        return Firebase.updateUserData(email, prop, val)
+        return Firebase.updateUserData(username, prop, val)
             .then(() => {
                 setUserData({ [prop]: val });
             })

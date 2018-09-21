@@ -1,21 +1,17 @@
 import m from 'mithril';
-import { model } from 'state';
-import actions from 'actions';
 import { Btn } from 'components/Btn';
 
-const { showSignUpForm, showSignInForm, signOut } = actions.global;
-
 export const Panel = {
-    view: () => m('.clearfix.p2', [
-        model().global.firebaseUser === null
+    view: ({attrs}) => m('.clearfix.p2', [
+        attrs.firebaseUser === null
             ? [
-                m(Btn, { className: 'mx1', onclick: () => showSignUpForm(true) }, 'Sign Up'),
-                m(Btn, { className: 'mx1', onclick: () => showSignInForm(true) }, 'Sign In'),
+                m(Btn, { className: 'mx1', onclick: () => attrs.showSignUpForm(true) }, 'Sign Up'),
+                m(Btn, { className: 'mx1', onclick: () => attrs.showSignInForm(true) }, 'Sign In'),
             ]
             : null
         ,
 
-        model().global.firebaseUser !== null
+        attrs.firebaseUser !== null
             ? [
                 m(Btn, {
                     className: 'mx1',
@@ -24,7 +20,7 @@ export const Panel = {
 
                 m(Btn, {
                     className: 'mx1',
-                    onclick: () => m.route.set('/u/:key', { key: model().global.userData.username })
+                    onclick: () => m.route.set('/u/:key', { key: attrs.username })
                 }, 'Profile'),
 
                 m(Btn, {
@@ -35,7 +31,7 @@ export const Panel = {
                 m(Btn, {
                     className: 'mx1',
                     onclick: () => {
-                        signOut();
+                        attrs.signOut();
                         m.route.set('/');
                     }
                 }, 'Sign Out')

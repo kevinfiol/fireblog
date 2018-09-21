@@ -1,11 +1,9 @@
 import m from 'mithril';
 import stream from 'mithril/stream';
-import actions from 'actions';
 import { InputText } from 'components/InputText';
 import { TextArea } from 'components/TextArea';
 import { Btn } from 'components/Btn';
 
-const { updateUserData } = actions.global;
 
 export const ProfileForm = () => {
     const photoURL = stream('');
@@ -21,7 +19,7 @@ export const ProfileForm = () => {
 
             m(Btn, {
                 className: 'mt1 mb3 btn-outline',
-                onclick: () => updateUserData(attrs.email, 'photoURL', photoURL())
+                onclick: () => attrs.updateUserData(attrs.username, 'photoURL', photoURL())
             }, 'Update Photo'),
 
             m(TextArea, {
@@ -32,7 +30,7 @@ export const ProfileForm = () => {
 
             m(Btn, {
                 className: 'mt1 mb3 btn-outline',
-                onclick: () => updateUserData(attrs.email, 'bio', bio())
+                onclick: () => attrs.updateUserData(attrs.username, 'bio', bio())
             }, 'Update Bio')
         ])
     };

@@ -1,34 +1,39 @@
 import m from 'mithril';
-import { model } from 'state';
 import actions from 'actions';
+import { model } from 'state';
+import { Sidebar } from 'components/Profile/SideBar';
+import { BlogContainer } from 'components/Profile/BlogContainer';
 
-const { getProfileData } = actions.profile;
+const { getProfileData, getBlogPage } = actions.profile;
 
 export const Profile = {
     oninit: ({attrs}) => {
-        getProfileData(attrs.key);
+        Promise.all([
+            getProfileData(attrs.key),
+            getBlogPage(attrs.key, 0)
+        ]);
     },
 
-    view: ({attrs}) => {
-        if (!model().profile.user) return null;
+    view: () => {
+        const isProfileLoaded = model().profile.user !== null;
+        const isBlogLoaded = model().profile.blog.page.pageNo !== null;
+
+        if (!isProfileLoaded || !isBlogLoaded) return null;
 
         return m('.clearfix', [
             m('.col.col-12.md-col-3.px1', [
-                m('.col.col-12', m('h2', attrs.key)),
-    
-                m('.col.col-12', [
-                    m('img.fit', {
-                        src: model().profile.user.photoURL,
-                        onerror: e => e.target.src = 'https://images2.imgbox.com/a9/72/O6bXtE7c_o.png'
-                    }),
-                ]),
-    
-                m('.col.col-12', m('code', model().profile.user.bio))
+                m(Sidebar, {
+                    // State
+                    user: model().profile.user
+                })
             ]),
     
-            m('.col.col-12.md-col-9.px1.py3', [
-                m('p', 'Lorem ipsum potato baby desu desu desu desu desu desu desu desu desu fam fam fam fam fam fam fam fam')
+            m('.col.col-12.md-col-9.px4.my3', [
+                m(BlogContainer, {
+                    // State
+                    blog: model().profile.blog
+                })
             ])
-        ])
+        ]);
     }
-}
+};

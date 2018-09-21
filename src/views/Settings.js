@@ -1,6 +1,9 @@
 import m from 'mithril';
+import actions from 'actions';
 import { model } from 'state';
 import { ProfileForm } from 'components/Settings/ProfileForm';
+
+const { updateUserData } = actions.global;
 
 export const Settings = {
     oninit() {
@@ -12,9 +15,13 @@ export const Settings = {
         return m('.clearfix', [
             model().global.firebaseUser
                 ? m(ProfileForm, {
-                    email: model().global.firebaseUser.email,
+                    // State
+                    username: model().global.userData.username,
                     photoURL: model().global.userData.photoURL,
-                    bio: model().global.userData.bio
+                    bio: model().global.userData.bio,
+
+                    // Actions
+                    updateUserData
                 })
                 : m('p', 'not logged in')
             ,
