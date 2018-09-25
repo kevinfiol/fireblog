@@ -23,6 +23,7 @@ export const ProfileForm = () => {
             }, 'Update Photo'),
 
             m(TextArea, {
+                maxlength: '200',
                 placeholder: 'bio text',
                 value: attrs.bio || '',
                 input: bio

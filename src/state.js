@@ -13,7 +13,13 @@ const initialState = {
             photoURL: null,
             bio: null
         },
-        firebaseUser: null,
+        firebaseUser: {
+            displayName: null,
+            email: null,
+            photoURL: null,
+            emailVerified: null,
+            uid: null
+        },
         signUpMsg: null,
         signInMsg: null,
         showSignUp: false,
@@ -21,11 +27,24 @@ const initialState = {
     },
 
     profile: {
-        user: null,
+        user: {
+            username: null,
+            bio: null,
+            email: null,
+            photoURL: null,
+            uid: null
+        },
         blog: {
             page: { pageNo: null, posts: null },
             pageNumbers: []
-        }
+        },
+        showEditor: false,
+    },
+
+    post: {
+        title: null,
+        date: null,
+        content: null
     }
 };
 
@@ -43,7 +62,7 @@ const reducer = (model, f) => {
     return merge(
         // Latest Model
         model,
-        // Return empty object if action doesn't modify model
+        // Merge with empty object if action doesn't modify model
         action.model || {},
         // Deepmerge overwrites array properties
         { arrayMerge: (x, y) => y }

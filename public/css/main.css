@@ -14,3 +14,8 @@ blockquote { font-size: 1rem; font-style: normal; margin-left: 2rem; }
 
 .bg-lighten { background-color: rgba(255, 255, 255, 0.1); }
 .c-hand { cursor: pointer; }
+
+.max-height-1 { max-height: 4rem; }
+.max-height-2 { max-height: 8rem; }
+.max-height-3 { max-height: 12rem; }
+.max-height-4 { max-height: 16rem; }

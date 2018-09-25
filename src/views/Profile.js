@@ -2,15 +2,16 @@ import m from 'mithril';
 import actions from 'actions';
 import { model } from 'state';
 import { Sidebar } from 'components/Profile/SideBar';
+import { Controls } from 'components/Profile/Controls';
 import { BlogContainer } from 'components/Profile/BlogContainer';
 
-const { getProfileData, getBlogPage } = actions.profile;
+const { getProfileData, getBlogPage, showPostEditor, createBlogPost } = actions.profile;
 
 export const Profile = {
     oninit: ({attrs}) => {
         Promise.all([
             getProfileData(attrs.key),
-            getBlogPage(attrs.key, 0)
+            getBlogPage(attrs.key, 1)
         ]);
     },
 
@@ -19,18 +20,36 @@ export const Profile = {
         const isBlogLoaded = model().profile.blog.page.pageNo !== null;
 
         if (!isProfileLoaded || !isBlogLoaded) return null;
+        const isUsersProfile = model().profile.user.username === model().global.userData.username;
 
         return m('.clearfix', [
-            m('.col.col-12.md-col-3.px1', [
+            m('.col.col-12', [
                 m(Sidebar, {
                     // State
                     user: model().profile.user
                 })
             ]),
-    
-            m('.col.col-12.md-col-9.px4.my3', [
+
+            isUsersProfile
+                ? m('.col.col-12.mt2', [
+                    m(Controls, {
+                        // State
+                        username: model().global.userData.username,
+                        showEditor: model().profile.showEditor,
+
+                        // Actions
+                        createBlogPost,
+                        getBlogPage,
+                        showPostEditor
+                    })
+                ])
+                : null
+            ,
+
+            m('.col.col-12.mt2', [
                 m(BlogContainer, {
                     // State
+                    username: model().profile.user.username,
                     blog: model().profile.blog
                 })
             ])

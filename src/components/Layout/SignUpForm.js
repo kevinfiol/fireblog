@@ -24,7 +24,7 @@ export const SignUpForm = () => {
 
     return {
         view() {
-            return m('div', [
+            return m('.clearfix', [
                 m('h3', 'Sign Up'),
 
                 m(InputText, {

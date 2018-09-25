@@ -25,6 +25,7 @@ export const Modal = {
                     attrs.saveMethod
                         ? m(Btn, {
                             className: 'right mx1 btn-outline',
+                            disabled: attrs.disabledCondition || false,
                             onclick: () => {
                                 attrs.saveMethod();
                                 attrs.showModal(false);
@@ -33,7 +34,7 @@ export const Modal = {
                         : null
                     ,
     
-                    children
+                    m('.col.col-12.mt2', children)
                 ])
             ])
         ]);

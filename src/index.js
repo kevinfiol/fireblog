@@ -5,6 +5,7 @@ import { model, record } from 'state';
 import { Layout } from 'views/Layout';
 import { Index } from 'views/Index';
 import { Profile } from 'views/Profile';
+import { Post } from 'views/Post';
 import { Settings } from 'views/Settings';
 
 meiosisTracer({ selector: '#tracer', streams: [ { stream: record, hide: false }, { stream: model, hide: false } ] });
@@ -17,6 +18,10 @@ m.route(document.getElementById('app'), '/', {
 
     '/u/:key': {
         render: ({key}) => m(Layout, m(Profile, { key }))
+    },
+
+    '/u/:key/blog/:pageNo/:postNo': {
+        render: ({key, attrs}) => m(Layout, m(Post, { key, pageNo: attrs.pageNo, postNo: attrs.postNo }))
     },
 
     '/settings': {

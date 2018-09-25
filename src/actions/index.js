@@ -12,4 +12,7 @@ const global = Global(update, services.Firebase, queue);
 import Profile from './Profile';
 const profile = Profile(update, services.Firebase, queue);
 
-export default { queue, global, profile };
+import Post from './Post';
+const post = Post(update, services.Firebase, queue);
+
+export default { queue, global, profile, post };

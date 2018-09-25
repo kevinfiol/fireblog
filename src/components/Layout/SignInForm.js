@@ -18,7 +18,7 @@ export const SignInForm = () => {
 
     return {
         view() {
-            return m('div', [
+            return m('.clearfix', [
                 m('h3', 'Sign In'),
 
                 m(InputText, {

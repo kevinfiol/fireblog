@@ -1,0 +1,122 @@
+.wk-commands > button,
+.wk-switchboard > button,
+.wk-prompt-buttons > button {
+    background-color: #222;
+    font-family: inherit;
+    color: #fff;
+    padding: 1em 1.5em;
+    cursor: pointer;
+    outline: none;
+    height: 3em;
+    border: none;
+}
+
+.wk-container { background-color: #222; }
+
+.wk-commands > button:hover,
+.wk-switchboard > button:hover,
+.wk-prompt-buttons > button:hover { background-color: rgba(255, 255, 255, 0.10); }
+
+.wk-wysiwyg { outline: none; }
+.wk-commands, .wk-switchboard { display: inline-block; }
+
+.wk-prompt {
+    z-index: 5;
+    position: fixed;
+    top: 20%;
+    left: 2%;
+    right: 2%;
+    background-color: #111;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    color: #fff;
+    padding: 10px;
+    margin: 0 auto;
+    max-width: 450px;
+}
+
+.wk-prompt-input {
+    background-color: #111;
+    color: #fff;
+    font-family: inherit;
+    font-size: inherit;
+    display: block;
+    width: 100%;
+    padding: .5rem;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.wk-prompt-body { text-align: left; }
+
+.wk-prompt-buttons {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.wk-prompt-cancel {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.wk-prompt-upload {
+    position: relative;
+    overflow: hidden;
+}
+
+.wk-prompt-browse { font-weight: bold; }
+
+.wk-prompt-dragdrop {
+    text-align: center;
+    font-style: italic;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 300px;
+}
+
+.wk-prompt-fileupload {
+    position: absolute;
+    top: 0;
+    left: -200%;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.wk-dragging {
+    position: absolute;
+    text-align: center;
+    padding: 10px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #fff;
+}
+
+.wk-prompt-error {
+    display: none;
+    padding: 10px;
+    background-color: rgba(0,0,0,0.1);
+}
+
+.wk-prompt-error-show { display: block; }
+
+.wk-prompt-drop,
+.wk-prompt-drop-icon,
+.wk-prompt-progress { display: none; }
+
+.wk-prompt-upload-dragging .wk-prompt-drop,
+.wk-prompt-upload-dragging .wk-prompt-drop-icon { display: block; }
+
+.wk-prompt-upload-dragging .wk-prompt-dragdrop { display: none; }
+
+.wk-prompt-uploading { pointer-events: none; }
+
+.wk-prompt-uploading .wk-prompt-progress { display: block; }
+
+.wk-prompt-uploading .wk-prompt-drop,
+.wk-prompt-uploading .wk-prompt-dragdrop { display: none; }
+
+.wk-prompt-progress { cursor: not-allowed; }
