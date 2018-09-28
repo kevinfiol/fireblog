@@ -24,6 +24,7 @@ const initialState = {
         signInMsg: null,
         showSignUp: false,
         showSignIn: false,
+        showEditor: false,
     },
 
     profile: {
@@ -37,11 +38,12 @@ const initialState = {
         blog: {
             page: { pageNo: null, posts: null },
             pageNumbers: []
-        },
-        showEditor: false,
+        }
     },
 
     post: {
+        doc_id: null,
+        username: null,
         title: null,
         date: null,
         content: null

@@ -1,3 +1,27 @@
+/**
+ * nanoid
+ * https://github.com/ai/nanoid
+ * @param {Int} size 
+ */
+const nanoid = size => {
+    const crypto = self.crypto || self.msCrypto;
+    const random = bytes => crypto.getRandomValues(new Uint8Array(bytes));
+    const url =  '_~0123456789' +
+        'abcdefghijklmnopqrstuvwxyz' +
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    ;
+
+    size = size || 21;
+    let id = '';
+    const bytes = random(size);
+    
+    while (0 < size--) {
+        id += url[bytes[size] & 63];
+    }
+
+    return id;
+};
+
 const compose = (...fs) => x => fs.reduceRight((val, f) => f(val), x);
 
 const range = num => {
@@ -67,4 +91,4 @@ const Pager = (initialPages = null, MAX_LENGTH = 7) => {
     };
 };
 
-export { compose, range, Pager };
+export { compose, range, Pager, nanoid };

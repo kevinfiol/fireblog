@@ -8,7 +8,11 @@ import { Profile } from 'views/Profile';
 import { Post } from 'views/Post';
 import { Settings } from 'views/Settings';
 
-meiosisTracer({ selector: '#tracer', streams: [ { stream: record, hide: false }, { stream: model, hide: false } ] });
+meiosisTracer({ selector: '#tracer', streams: [
+    // { stream: record, hide: false },
+    // { stream: model, hide: false }
+]});
+
 model.map(() => setTimeout(m.redraw, 2));
 
 m.route(document.getElementById('app'), '/', {
@@ -20,8 +24,12 @@ m.route(document.getElementById('app'), '/', {
         render: ({key}) => m(Layout, m(Profile, { key }))
     },
 
-    '/u/:key/blog/:pageNo/:postNo': {
-        render: ({key, attrs}) => m(Layout, m(Post, { key, pageNo: attrs.pageNo, postNo: attrs.postNo }))
+    // '/u/:key/blog/:pageNo/:postNo': {
+    //     render: ({key, attrs}) => m(Layout, m(Post, { key, pageNo: attrs.pageNo, postNo: attrs.postNo }))
+    // },
+
+    '/p/:doc_id': {
+        render: ({attrs}) => m(Layout, m(Post, { doc_id: attrs.doc_id }))
     },
 
     '/settings': {

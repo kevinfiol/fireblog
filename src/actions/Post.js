@@ -2,8 +2,10 @@
  * Post Action Types
  */
 
-const POST_SET_POST = 'POST_SET_POST';
-const POST_GET_POST = 'POST_GET_POST';
+const POST_SET_POST        = 'POST_SET_POST';
+const POST_GET_POST        = 'POST_GET_POST';
+
+const POST_UPDATE_BLOGPOST = 'POST_UPDATE_BLOGPOST';
 
 /**
  * Post Actions
@@ -15,15 +17,24 @@ module.exports = (update, Firebase, queue) => {
         model: { post }
     }));
 
-    const getPost = (username, pageNo, postNo) => {
+    const getPost = doc_id => {
         const action = { type: POST_GET_POST };
         queue.enqueue(action);
 
-        return Firebase.getUserBlogPost(username, pageNo, postNo)
+        return Firebase.getBlogPost(doc_id)
             .then(setPostData)
             .finally(() => queue.dequeue(action))
         ;
     };
 
-    return { setPostData, getPost };
+    const updateBlogPost = (doc_id, title, content) => {
+        const action = { type: POST_UPDATE_BLOGPOST };
+        queue.enqueue(action);
+
+        return Firebase.updateUserBlogPost(doc_id, title, content)
+            .finally(() => queue.dequeue(action))
+        ;
+    };
+
+    return { setPostData, getPost, updateBlogPost };
 };

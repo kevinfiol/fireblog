@@ -16,15 +16,27 @@ export const Editor = () => {
                 input: title
             }),
             
-            m(Woofmark, { placeholder: 'content...', content }),
+            m(Woofmark, {
+                placeholder: 'content...',
+                value: attrs.content || null,
+                input: content
+            }),
 
             title() && content()
                 ? m(Btn, {
                     className: 'mx1 my2 btn-outline',
                     onclick: () => {
                         if (attrs.createBlogPost) {
+                            // Creating Blog Post
                             attrs.createBlogPost(attrs.username, title(), content())
-                                .then(() => attrs.getBlogPage(attrs.username, 1))
+                                .then(() => attrs.getBlogPage(attrs.username, attrs.blog.page.pageNo))
+                                .then(() => attrs.showPostEditor(false))
+                            ;
+                        } else if (attrs.updateBlogPost) {
+                            // Editing Blog Post
+                            attrs.updateBlogPost(attrs.doc_id, title(), content())
+                                .then(() => attrs.getPost(attrs.doc_id))
+                                .then(() => attrs.showPostEditor(false))
                             ;
                         }
                     }
@@ -33,4 +45,4 @@ export const Editor = () => {
             ,
         ])
     };
-};
+}

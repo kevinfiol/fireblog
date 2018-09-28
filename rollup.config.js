@@ -14,6 +14,7 @@ const aliases = {
     'services': path.resolve(__dirname, 'src/services/index'),
     'observers': path.resolve(__dirname, 'src/observers/index'),
     'actions': path.resolve(__dirname, 'src/actions/index'),
+    'util': path.resolve(__dirname, 'src/util')
 };
 
 const config = {
@@ -27,8 +28,8 @@ const config = {
         nodeResolve(),
         commonjs(),
         alias(aliases),
-        buble()
-    ]
+        buble(),
+    ],
 };
 
 if (process.env.PROD === 'true') {

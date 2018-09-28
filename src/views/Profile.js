@@ -5,7 +5,8 @@ import { Sidebar } from 'components/Profile/SideBar';
 import { Controls } from 'components/Profile/Controls';
 import { BlogContainer } from 'components/Profile/BlogContainer';
 
-const { getProfileData, getBlogPage, showPostEditor, createBlogPost } = actions.profile;
+const { showPostEditor } = actions.global;
+const { getProfileData, getBlogPage, createBlogPost } = actions.profile;
 
 export const Profile = {
     oninit: ({attrs}) => {
@@ -35,7 +36,8 @@ export const Profile = {
                     m(Controls, {
                         // State
                         username: model().global.userData.username,
-                        showEditor: model().profile.showEditor,
+                        blog: model().profile.blog,
+                        showEditor: model().global.showEditor,
 
                         // Actions
                         createBlogPost,
@@ -49,7 +51,6 @@ export const Profile = {
             m('.col.col-12.mt2', [
                 m(BlogContainer, {
                     // State
-                    username: model().profile.user.username,
                     blog: model().profile.blog
                 })
             ])

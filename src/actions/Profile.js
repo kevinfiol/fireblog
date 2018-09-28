@@ -2,8 +2,6 @@
  * Profile Action Types
  */
 
-const PROFILE_SHOW_POSTEDITOR = 'PROFILE_SHOW_POSTEDITOR';
-
 const PROFILE_SET_PROFILEDATA = 'PROFILE_SET_PROFILEDATA';
 const PROFILE_SET_PAGEDATA    = 'PROFILE_SET_PAGEDATA';
 
@@ -20,11 +18,6 @@ const PROFILE_CREATE_BLOGPOST = 'PROFILE_CREATE_BLOGPOST';
  */
 
 module.exports = (update, Firebase, queue) => {
-    const showPostEditor = showEditor => update(() => ({
-        type: PROFILE_SHOW_POSTEDITOR,
-        model: { profile: { showEditor } }
-    }));
-
     const setProfileData = user => update(() => ({
         type: PROFILE_SET_PROFILEDATA,
         model: { profile: { user } }
@@ -61,13 +54,11 @@ module.exports = (update, Firebase, queue) => {
         queue.enqueue(action);
 
         return Firebase.createUserBlogPost(username, title, content)
-            .then(() => showPostEditor(false))
             .finally(() => queue.dequeue(action))
         ;
     };
 
     return {
-        showPostEditor,
         getProfileData,
         setProfileData,
         setPageData,

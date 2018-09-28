@@ -2,6 +2,7 @@
  * Global Action Types
  */
 
+const GLOBAL_SHOW_POSTEDITOR  = 'GLOBAL_SHOW_POSTEDITOR';
 const GLOBAL_SHOW_SIGNUP      = 'GLOBAL_SHOW_SIGNUP';
 const GLOBAL_SHOW_SIGNIN      = 'GLOBAL_SHOW_SIGNIN';
 
@@ -26,6 +27,11 @@ module.exports = (update, Firebase, queue) => {
     /**
      * UI Actions
      */
+    const showPostEditor = showEditor => update(() => ({
+        type: GLOBAL_SHOW_POSTEDITOR,
+        model: { global: { showEditor } }
+    }));
+
     const showSignUpForm = showSignUp => update(() => ({
         type: GLOBAL_SHOW_SIGNUP,
         model: { global: { showSignUp } }
@@ -185,6 +191,7 @@ module.exports = (update, Firebase, queue) => {
     };
 
     return {
+        showPostEditor,
         showSignUpForm,
         showSignInForm,
         setFirebaseUser,

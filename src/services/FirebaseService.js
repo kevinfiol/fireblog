@@ -1,7 +1,4 @@
-const range = require('../util').range;
-const Pager = require('../util').Pager;
-
-module.exports = (firebase) => {
+module.exports = (firebase, Pager, nanoid) => {
     const db   = firebase.firestore();
     const auth = firebase.auth();
     const settings = { timestampsInSnapshots: true };
@@ -101,34 +98,38 @@ module.exports = (firebase) => {
         return db.collection('blogs').doc(username)
             .get()
             .then(doc => {
-                if (doc.exists) {
-                    const pages = doc.data().pages;
-                    const pager = Pager(pages);
-                    return pager.getPage(pageNo);
-                }
+                if (!doc.exists) throw 'Document does not exist.';
 
-                return null;
+                const pages = doc.data().pages;
+                const page = Pager(pages).getPage(pageNo);
+                const refs = page.posts.map(ref => ref);
+
+                return Promise.all([
+                    page,
+                    ...refs.map(ref => ref.get().then(doc => doc.data()))
+                ]);
             })
+            .then(res => {
+                const page = res.shift();
+                page.posts = [...res];
+
+                return page;
+            })
+            .catch(() => null)
         ;
     };
 
-    const getUserBlogPost = (username, pageNo, postNo) => {
-        return db.collection('blogs').doc(username)
+    const getBlogPost = uid => {
+        return db.collection('posts').doc(uid)
             .get()
-            .then(doc => {
-                if (doc.exists) {
-                    const pages = doc.data().pages;
-                    return pages[`${pageNo}`].posts[postNo] || null;
-                }
-
-                return null;
-            })
+            .then(doc => doc.exists ? doc.data() : null)
         ;
     };
 
     const createUserBlogPost = (username, title, content) => {
         const date = new Date().toLocaleDateString();
         const userBlogRef = db.collection('blogs').doc(username);
+        const allPostsRef = db.collection('posts');
 
         return userBlogRef.get()
             .then(doc => {
@@ -136,10 +137,15 @@ module.exports = (firebase) => {
                     const pages = doc.data().pages || null;
 
                     if (pages) {
-                        const pager = Pager(pages);
-                        pager.addPost({ title, content, date });
-                        userBlogRef.set({ pages: pager.getPages() });
+                        const uid = nanoid(11);
+                        const doc_id = `${username}-${uid}`;
+                        allPostsRef.doc(doc_id).set({ doc_id, username, title, content, date });
 
+                        const postRef = allPostsRef.doc(doc_id);
+                        const pager = Pager(pages);
+                        pager.addPost(postRef);
+
+                        userBlogRef.set({ pages: pager.getPages() });
                         return;
                     }
                 }
@@ -147,6 +153,13 @@ module.exports = (firebase) => {
                 throw 'Error: Cannot create post!';
             })
         ;
+    };
+
+    const updateUserBlogPost = (doc_id, title, content) => {
+        return db.collection('posts').doc(doc_id).update({
+            title,
+            content
+        });
     };
 
     return {
@@ -163,7 +176,8 @@ module.exports = (firebase) => {
         updateUserData,
         getUserBlogPage,
         getUserBlogPageNumbers,
-        getUserBlogPost,
-        createUserBlogPost
+        getBlogPost,
+        createUserBlogPost,
+        updateUserBlogPost
     };
 };
