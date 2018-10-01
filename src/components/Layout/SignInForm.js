@@ -41,7 +41,7 @@ export const SignInForm = () => {
                 ,
 
                 model().global.signInMsg
-                    ? m('p.p2.rounded.bg-lighten', model().global.signInMsg)
+                    ? m('p.p2.rounded.bg-darken', model().global.signInMsg)
                     : null
                 ,
             ]);

@@ -3,7 +3,7 @@ import m from 'mithril';
 const Post = {
     view: ({attrs}) => m('.my1', [
         m('h2', [
-            m('a.white', {
+            m('a.charcoal', {
                 oncreate: m.route.link,
                 href: `/p/${attrs.post.doc_id}`
             }, attrs.post.title)

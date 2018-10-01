@@ -59,11 +59,11 @@ export const SignUpForm = () => {
     
                 pwdsMatch()
                     ? null
-                    : m('p.p2.rounded.bg-lighten', 'Passwords must match.')
+                    : m('p.p2.rounded.bg-darken', 'Passwords must match.')
                 ,
 
                 model().global.signUpMsg
-                    ? m('p.p2.rounded.bg-lighten', model().global.signUpMsg)
+                    ? m('p.p2.rounded.bg-darken', model().global.signUpMsg)
                     : null
                 ,
             ]);

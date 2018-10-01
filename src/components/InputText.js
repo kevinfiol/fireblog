@@ -7,7 +7,7 @@ export const InputText = {
 
     view: ({attrs}) => m('div', [
         m('label', attrs.label),
-        m('input.input.bg-black.white.my1', {
+        m('input.input.bg-paper.charcoal.my1', {
             type: attrs.type || 'text',
             placeholder: attrs.placeholder || '',
             oncreate: ({dom}) => dom.value = attrs.value || '',

@@ -46,6 +46,47 @@ const Pager = (initialPages = null, MAX_LENGTH = 7) => {
 
     const getPageKeys = () => Object.keys(pages);
 
+    const removeEmptyPages = () => {
+        // Will not remove first page
+        let pageKeys = getPageKeys();
+        
+        for (let i = 1; i < pageKeys.length; i++) {
+            const k = pageKeys[i];
+            
+            if (pages[k].posts.length === 0) {
+                delete pages[k];
+            }
+        }
+        
+        console.log('after balancing pages', JSON.parse(JSON.stringify(pages)));
+    };
+    
+    const balancePages = () => {
+        let pageKeys = getPageKeys();
+
+        for (let i = 0; i < pageKeys.length; i++) {
+            const k = pageKeys[i];
+            const next = pageKeys[i + 1];
+
+            if (pages[k].posts.length === MAX_LENGTH) {
+                continue;
+            }
+
+            if (pages[k].posts.length < MAX_LENGTH) {
+                // No next page to unload from
+                if (next === undefined) {
+                    removeEmptyPages();
+                    return;
+                };
+
+                while (pages[k].posts.length < MAX_LENGTH && pages[next].posts.length > 0) {
+                    pages[k].posts.push( pages[next].posts.shift() );
+                }
+
+            }
+        }   
+    };
+
     // Public Methods
     const getPageNumbers = () => {
         return Object.keys(pages)
@@ -54,7 +95,7 @@ const Pager = (initialPages = null, MAX_LENGTH = 7) => {
         ;
     };
 
-    const addPost = post => {
+    const addPost = (id, post) => {
         let pageKeys = getPageKeys();
 
         for (let i = 0; i < pageKeys.length; i++) {
@@ -62,7 +103,7 @@ const Pager = (initialPages = null, MAX_LENGTH = 7) => {
             let next = pageKeys[i + 1];
 
             if (pages[k].pageNo === 1) {
-                pages[k].posts.unshift(post);
+                pages[k].posts.unshift({ id, post });
             }
 
             if (pages[k].posts.length > MAX_LENGTH) {
@@ -79,12 +120,37 @@ const Pager = (initialPages = null, MAX_LENGTH = 7) => {
         }
     };
 
+    const deletePost = id => {
+        // Will delete first post found
+        let pageKeys = getPageKeys();
+        let found = false;
+
+        for (let i = 0; i < pageKeys.length || !found; i++) {
+            const k = pageKeys[i];
+
+            for (let j = 0; j < pages[k].posts.length; j++) {
+                if (id === pages[k].posts[j].id) {
+                    // Remove Post
+                    pages[k].posts.splice(j, 1);
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        console.log('after deleting a post', JSON.parse(JSON.stringify(pages)));
+        
+        // Balance pages upon deleting
+        balancePages();
+    };
+
     const getPages = () => pages;
 
     const getPage = pageNo => pages[`${pageNo}`] || null;
 
     return {
         addPost,
+        deletePost,
         getPage,
         getPages,
         getPageNumbers

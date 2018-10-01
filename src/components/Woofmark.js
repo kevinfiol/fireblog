@@ -7,7 +7,7 @@ export const Woofmark = {
     },
 
     view: ({attrs}) => m('.clearfix', [
-        m('textarea.textarea.bg-black.white.my1', {
+        m('textarea.textarea.bg-paper.charcoal.my1', {
             rows: '14',
             style: { margin: 0, borderRadius: 0 },
             placeholder: attrs.placeholder || '',
