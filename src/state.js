@@ -37,7 +37,7 @@ const initialState = {
         },
         blog: {
             page: { pageNo: null, posts: null },
-            pageNumbers: []
+            pageNos: []
         }
     },
 

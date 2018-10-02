@@ -10,7 +10,7 @@ import { Settings } from 'views/Settings';
 
 meiosisTracer({ selector: '#tracer', streams: [
     // { stream: record, hide: false },
-    // { stream: model, hide: false }
+    { stream: model, hide: false }
 ]});
 
 model.map(() => setTimeout(m.redraw, 2));

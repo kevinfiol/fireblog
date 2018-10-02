@@ -7,11 +7,18 @@ import { Modal } from 'components/Modal';
 export const Controls = {
     view: ({attrs}) => [
         m(Btn, { className: 'mx1', onclick: () => attrs.showPostEditor(true) }, 'Edit'),
-        // m(Btn, { className: 'mx1', onclick: () => console.log('delete this post') }, 'Delete'),
+
         m(ConfirmBtn, {
             className: 'mx1',
             label: 'Delete',
-            action: () => console.log('you deleted this post')
+            action: () => {
+                attrs.deleteBlogPost(attrs.doc_id)
+                    .then(() => {
+                        // Route back to profile upon deletion
+                        m.route.set(`/u/${attrs.username}`);
+                    })
+                ;
+            }
         }),
 
         attrs.showEditor

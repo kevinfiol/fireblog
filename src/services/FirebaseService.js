@@ -102,7 +102,7 @@ module.exports = (firebase, Pager, nanoid) => {
 
                 const pages = doc.data().pages;
                 const page = Pager(pages).getPage(pageNo);
-                const refs = page.posts.map(ref => ref);
+                const refs = page.posts.map(post => post.data);
 
                 return Promise.all([
                     page,
@@ -143,7 +143,7 @@ module.exports = (firebase, Pager, nanoid) => {
 
                         const postRef = allPostsRef.doc(doc_id);
                         const pager = Pager(pages);
-                        pager.addPost(postRef);
+                        pager.addPost(doc_id, postRef);
 
                         userBlogRef.set({ pages: pager.getPages() });
                         return;
@@ -151,6 +151,32 @@ module.exports = (firebase, Pager, nanoid) => {
                 }
 
                 throw 'Error: Cannot create post!';
+            })
+        ;
+    };
+
+    const deleteUserBlogPost = doc_id => {
+        const allPostsRef = db.collection('posts');
+        let userBlogRef;
+
+        return allPostsRef.doc(doc_id)
+            .get()
+            .then(doc => doc.data())
+            .then(data => data.username)
+            .then(username => {
+                userBlogRef = db.collection('blogs').doc(username);
+                return userBlogRef.get().then(doc => doc.data().pages);
+            })
+            .then(pages => {
+                const pager = Pager(pages);
+                pager.deletePost(doc_id);
+
+                // Update User's blog pages with post removed
+                userBlogRef.set({ pages: pager.getPages() });
+                return allPostsRef.doc(doc_id).delete();
+            })
+            .catch(() => {
+                throw 'Error: Could not delete post!';
             })
         ;
     };
@@ -178,6 +204,7 @@ module.exports = (firebase, Pager, nanoid) => {
         getUserBlogPageNumbers,
         getBlogPost,
         createUserBlogPost,
-        updateUserBlogPost
+        updateUserBlogPost,
+        deleteUserBlogPost
     };
 };

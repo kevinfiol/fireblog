@@ -5,7 +5,7 @@ import { model } from 'state';
 import { Controls } from 'components/Post/Controls';
 
 const { showPostEditor } = actions.global;
-const { setPostData, getPost, updateBlogPost } = actions.post;
+const { setPostData, getPost, updateBlogPost, deleteBlogPost } = actions.post;
 
 export const Post = {
     oninit: ({attrs}) => {
@@ -27,12 +27,13 @@ export const Post = {
                     ? m(Controls, {
                         // State
                         showEditor: model().global.showEditor,
-                        username: model().global.username,
+                        username: model().global.userData.username,
                         title: model().post.title,
                         content: model().post.content,
                         doc_id: model().post.doc_id,
 
                         // Actions
+                        deleteBlogPost,
                         showPostEditor,
                         updateBlogPost,
                         setPostData,

@@ -4,9 +4,11 @@
 
 const PROFILE_SET_PROFILEDATA = 'PROFILE_SET_PROFILEDATA';
 const PROFILE_SET_PAGEDATA    = 'PROFILE_SET_PAGEDATA';
+const PROFILE_SET_PAGENOS     = 'PROFILE_SET_PAGENOS';
 
 const PROFILE_GET_PROFILEDATA = 'PROFILE_GET_PROFILEDATA';
 const PROFILE_GET_BLOGPAGE    = 'PROFILE_GET_BLOGPAGE';
+const PROFILE_GET_BLOGPAGENOS = 'PROFILE_GET_BLOGPAGENOS';
 
 const PROFILE_CREATE_BLOGPOST = 'PROFILE_CREATE_BLOGPOST';
 
@@ -26,6 +28,11 @@ module.exports = (update, Firebase, queue) => {
     const setPageData = page => update(() => ({
         type: PROFILE_SET_PAGEDATA,
         model: { profile: { blog: { page } } }
+    }));
+
+    const setPageNumbers = pageNos => update(() => ({
+        type: PROFILE_SET_PAGENOS,
+        model: { profile: { blog: { pageNos } } }
     }));
 
     const getProfileData = username => {
@@ -49,6 +56,16 @@ module.exports = (update, Firebase, queue) => {
         ;
     };
 
+    const getBlogPageNumbers = username => {
+        const action = { type: PROFILE_GET_BLOGPAGENOS };
+        queue.enqueue(action);
+
+        return Firebase.getUserBlogPageNumbers(username)
+            .then(setPageNumbers)
+            .finally(() => queue.dequeue(action))
+        ;
+    };
+
     const createBlogPost = (username, title, content) => {
         const action = { type: PROFILE_CREATE_BLOGPOST };
         queue.enqueue(action);
@@ -60,8 +77,10 @@ module.exports = (update, Firebase, queue) => {
 
     return {
         getProfileData,
+        getBlogPageNumbers,
         setProfileData,
         setPageData,
+        setPageNumbers,
         getBlogPage,
         createBlogPost
     };

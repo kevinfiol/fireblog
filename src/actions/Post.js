@@ -6,6 +6,7 @@ const POST_SET_POST        = 'POST_SET_POST';
 const POST_GET_POST        = 'POST_GET_POST';
 
 const POST_UPDATE_BLOGPOST = 'POST_UPDATE_BLOGPOST';
+const POST_DELETE_BLOGPOST = 'POST_DELETE_BLOGPOST';
 
 /**
  * Post Actions
@@ -36,5 +37,14 @@ module.exports = (update, Firebase, queue) => {
         ;
     };
 
-    return { setPostData, getPost, updateBlogPost };
+    const deleteBlogPost = doc_id => {
+        const action = { type: POST_DELETE_BLOGPOST };
+        queue.enqueue(action);
+
+        return Firebase.deleteUserBlogPost(doc_id)
+            .finally(() => queue.dequeue(action))
+        ;
+    };
+
+    return { setPostData, getPost, updateBlogPost, deleteBlogPost };
 };

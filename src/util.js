@@ -57,8 +57,6 @@ const Pager = (initialPages = null, MAX_LENGTH = 7) => {
                 delete pages[k];
             }
         }
-        
-        console.log('after balancing pages', JSON.parse(JSON.stringify(pages)));
     };
     
     const balancePages = () => {
@@ -77,7 +75,7 @@ const Pager = (initialPages = null, MAX_LENGTH = 7) => {
                 if (next === undefined) {
                     removeEmptyPages();
                     return;
-                };
+                }
 
                 while (pages[k].posts.length < MAX_LENGTH && pages[next].posts.length > 0) {
                     pages[k].posts.push( pages[next].posts.shift() );
@@ -95,7 +93,7 @@ const Pager = (initialPages = null, MAX_LENGTH = 7) => {
         ;
     };
 
-    const addPost = (id, post) => {
+    const addPost = (id, data) => {
         let pageKeys = getPageKeys();
 
         for (let i = 0; i < pageKeys.length; i++) {
@@ -103,7 +101,7 @@ const Pager = (initialPages = null, MAX_LENGTH = 7) => {
             let next = pageKeys[i + 1];
 
             if (pages[k].pageNo === 1) {
-                pages[k].posts.unshift({ id, post });
+                pages[k].posts.unshift({ id, data });
             }
 
             if (pages[k].posts.length > MAX_LENGTH) {
@@ -138,8 +136,6 @@ const Pager = (initialPages = null, MAX_LENGTH = 7) => {
             }
         }
 
-        console.log('after deleting a post', JSON.parse(JSON.stringify(pages)));
-        
         // Balance pages upon deleting
         balancePages();
     };
