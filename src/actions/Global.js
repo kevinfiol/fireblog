@@ -80,9 +80,17 @@ module.exports = (update, Firebase, queue) => {
 
     const setFirebaseUser = user => update(() => {
         const type = GLOBAL_SET_FIREBASEUSER;
-        let firebaseUser = null;
+        let firebaseUser = {};
 
-        if (user) {
+        if (!user) {
+            firebaseUser = {
+                displayName: null,
+                email: null,
+                photoURL: null,
+                emailVerified: null,
+                uid: null
+            };
+        } else {
             firebaseUser = {
                 displayName: user.displayName,
                 email: user.email,

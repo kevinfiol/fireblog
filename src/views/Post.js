@@ -4,10 +4,21 @@ import actions from 'actions';
 import { model } from 'state';
 import { Controls } from 'components/Post/Controls';
 
+/**
+ * Actions
+ */
+
 const { showPostEditor } = actions.global;
 const { setPostData, getPost, updateBlogPost, deleteBlogPost } = actions.post;
 
+/**
+ * Post View
+ */
 export const Post = {
+    /**
+     * Oninit Method
+     * @param {Object} attrs View Attributes
+     */
     oninit: ({attrs}) => {
         setPostData({
             doc_id: null,
@@ -20,34 +31,59 @@ export const Post = {
         getPost(attrs.doc_id);
     },
 
-    view: () => m('.clearfix', [
-        model().post.title
-            ? m('.clearfix', [
-                model().global.userData.username === model().post.username
-                    ? m(Controls, {
-                        // State
-                        showEditor: model().global.showEditor,
-                        username: model().global.userData.username,
-                        title: model().post.title,
-                        content: model().post.content,
-                        doc_id: model().post.doc_id,
+    /**
+     * View Method
+     */
+    view: () => {
+        /**
+         * State Variables
+         */
+        const username = model().global.userData.username;
+        const showEditor = model().global.showEditor;
 
-                        // Actions
-                        deleteBlogPost,
-                        showPostEditor,
-                        updateBlogPost,
-                        setPostData,
-                        getPost
-                    })
-                    : null
-                ,
-                
-                m('h1', model().post.title),
-                m('h3', m('a', { oncreate: m.route.link, href: `/u/${model().post.username}` }, model().post.username)),
-                m('h3', model().post.date),
-                m('p', m.trust( marked( model().post.content ) ))
-            ])
-            : null
-        ,
-    ])
+        const doc_id = model().post.doc_id;
+        const title = model().post.title;
+        const date = model().post.date;
+        const content = model().post.content;
+
+        /**
+         * Computed
+         */
+        const isPostData = title !== null;
+        const isSignedInUsersPost = username === model().post.username;
+
+        /**
+         * View
+         */
+        return m('.clearfix', [
+            isPostData
+                ? m('.clearfix', [
+                    isSignedInUsersPost
+                        ? m(Controls, {
+                            // State
+                            showEditor,
+                            username,
+                            title,
+                            content,
+                            doc_id,
+    
+                            // Actions
+                            deleteBlogPost,
+                            showPostEditor,
+                            updateBlogPost,
+                            setPostData,
+                            getPost
+                        })
+                        : null
+                    ,
+                    
+                    m('h1',title),
+                    m('h3', m('a', { oncreate: m.route.link, href: `/u/${username}` }, username)),
+                    m('h3', date),
+                    m('p', m.trust( marked( content ) ))
+                ])
+                : null
+            ,
+        ]);
+    }
 };

@@ -4,41 +4,71 @@ import { Btn } from 'components/Btn';
 import { ConfirmBtn } from 'components/ConfirmBtn';
 import { Modal } from 'components/Modal';
 
+/**
+ * Post Controls Component
+ */
 export const Controls = {
-    view: ({attrs}) => [
-        m(Btn, { className: 'mx1', onclick: () => attrs.showPostEditor(true) }, 'Edit'),
+    /**
+     * View Method
+     * @param {Object} attrs View Attributes
+     */
+    view: ({attrs}) => {
+        /**
+         * State
+         */
+        const username = attrs.username;
+        const doc_id = attrs.doc_id;
+        const title = attrs.title;
+        const content = attrs.content;
+        const showEditor = attrs.showEditor;
 
-        m(ConfirmBtn, {
-            className: 'mx1',
-            label: 'Delete',
-            action: () => {
-                attrs.deleteBlogPost(attrs.doc_id)
-                    .then(() => {
-                        // Route back to profile upon deletion
-                        m.route.set(`/u/${attrs.username}`);
+        /**
+         * Actions
+         */
+        const showPostEditor = attrs.showPostEditor;
+        const deleteBlogPost = attrs.deleteBlogPost;
+        const updateBlogPost = attrs.updateBlogPost;
+        const getPost = attrs.getPost;
+
+        /**
+         * Computed
+         */
+
+        return [
+            m(Btn, { className: 'mx1', onclick: () => showPostEditor(true) }, 'Edit'),
+    
+            m(ConfirmBtn, {
+                className: 'mx1',
+                label: 'Delete',
+                action: () => {
+                    deleteBlogPost(doc_id)
+                        .then(() => {
+                            // Route back to profile upon deletion
+                            m.route.set(`/u/${username}`);
+                        })
+                    ;
+                }
+            }),
+    
+            showEditor
+                ? m(Modal, {
+                    showModal: showPostEditor,
+                }, [
+                    m(Editor, {
+                        // State
+                        username,
+                        title,
+                        content,
+                        doc_id,
+    
+                        // Actions
+                        updateBlogPost,
+                        getPost,
+                        showPostEditor
                     })
-                ;
-            }
-        }),
-
-        attrs.showEditor
-            ? m(Modal, {
-                showModal: attrs.showPostEditor,
-            }, [
-                m(Editor, {
-                    // State
-                    username: attrs.username,
-                    title: attrs.title,
-                    content: attrs.content,
-                    doc_id: attrs.doc_id,
-
-                    // Actions
-                    updateBlogPost: attrs.updateBlogPost,
-                    getPost: attrs.getPost,
-                    showPostEditor: attrs.showPostEditor
-                })
-            ])
-            : null
-        ,
-    ]
+                ])
+                : null
+            ,
+        ];
+    }
 };

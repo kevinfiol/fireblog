@@ -1,13 +1,15 @@
 import m from 'mithril';
 import stream from 'mithril/stream';
-import { model } from 'state';
-import actions from 'actions';
 import { InputText } from 'components/InputText';
 import { Btn } from 'components/Btn';
 
-const { signInUser } = actions.global;
-
+/**
+ * SignInForm Component
+ */
 export const SignInForm = () => {
+    /**
+     * Local State
+     */
     const email = stream('');
     const pwd   = stream('');
 
@@ -17,7 +19,21 @@ export const SignInForm = () => {
     }, [email, pwd]);
 
     return {
-        view() {
+        /**
+         * View Method
+         * @param {Object} attrs
+         */
+        view({attrs}) {
+            /**
+             * State
+             */
+            const signInMsg = attrs.signInMsg;
+
+            /**
+             * Actions
+             */
+            const signInUser = attrs.signInUser;
+
             return m('.clearfix', [
                 m('h3', 'Sign In'),
 
@@ -40,8 +56,8 @@ export const SignInForm = () => {
                     : null
                 ,
 
-                model().global.signInMsg
-                    ? m('p.p2.rounded.bg-darken', model().global.signInMsg)
+                signInMsg
+                    ? m('p.p2.rounded.bg-darken', signInMsg)
                     : null
                 ,
             ]);

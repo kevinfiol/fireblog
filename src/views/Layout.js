@@ -7,44 +7,90 @@ import { SignUpForm } from 'components/Layout/SignUpForm';
 import { SignInForm } from 'components/Layout/SignInForm';
 import { Spinner } from 'components/Layout/Spinner';
 
-const { showSignInForm, showSignUpForm, setSignUpMsg, setSignInMsg, signOut } = actions.global;
+/**
+ * Actions
+ */
+const {
+    signInUser,
+    createUser,
+    showSignInForm,
+    showSignUpForm,
+    setSignUpMsg,
+    setSignInMsg,
+    signOut
+} = actions.global;
 
+/**
+ * Layout View
+ * Renders Layout encapsulating child component
+ */
 export const Layout = {
-    view: ({children}) => m('.clearfix', [
-        m('.fixed.top-0.left-0', [
-            m(Panel, {
-                // State
-                firebaseUser: model().global.firebaseUser,
-                username: model().global.userData.username,
+    /**
+     * View Method
+     * @param {Array} children Child View 
+     */
+    view: ({children}) => {
+        /**
+         * State Variables
+         */
+        const firebaseUser = model().global.firebaseUser;
+        const username = model().global.userData.username;
+        const signUpMsg = model().global.signUpMsg;
+        const signInMsg = model().global.signInMsg;
 
-                // Actions
-                showSignInForm,
-                showSignUpForm,
-                signOut
-            })
-        ]),
+        const isLoading = model().isLoading;
+        const showSignUp = model().global.showSignUp;
+        const showSignIn = model().global.showSignIn;
 
-        m('.my3', children),
+        /**
+         * View
+         */
+        return m('.clearfix', [
+            m('.top-0.left-0', [
+                m(Panel, {
+                    // State
+                    firebaseUser,
+                    username,
+    
+                    // Actions
+                    showSignInForm,
+                    showSignUpForm,
+                    signOut
+                })
+            ]),
+    
+            m('.my3', children),
+    
+            isLoading
+                ? m(Spinner)
+                : null
+            ,
+    
+            showSignUp
+                ? m(Modal, { showModal: showSignUpForm, cancelMethod: () => setSignUpMsg(null) }, [
+                    m(SignUpForm, {
+                        // State
+                        signUpMsg,
 
-        model().isLoading
-            ? m(Spinner)
-            : null
-        ,
+                        // Actions
+                        createUser
+                    })
+                ])
+                : null
+            ,
+    
+            showSignIn
+                ? m(Modal, { showModal: showSignInForm, cancelMethod: () => setSignInMsg(null) }, [
+                    m(SignInForm, {
+                        // State
+                        signInMsg,
 
-        model().global.showSignUp
-            ? m(Modal, {
-                showModal: showSignUpForm,
-                cancelMethod: () => setSignUpMsg(null)
-            }, m(SignUpForm))
-            : null
-        ,
-
-        model().global.showSignIn
-            ? m(Modal, {
-                showModal: showSignInForm,
-                cancelMethod: () => setSignInMsg(null)
-            }, m(SignInForm))
-            : null
-        ,
-    ])
+                        // Actions
+                        signInUser
+                    })
+                ])
+                : null
+            ,
+        ]);
+    }
 };

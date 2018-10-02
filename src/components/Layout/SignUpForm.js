@@ -1,13 +1,15 @@
 import m from 'mithril';
 import stream from 'mithril/stream';
-import { model } from 'state';
-import actions from 'actions';
 import { InputText } from 'components/InputText';
 import { Btn } from 'components/Btn';
 
-const { createUser } = actions.global;
-
+/**
+ * SignUpForm Component
+ */
 export const SignUpForm = () => {
+    /**
+     * Local State
+     */
     const username   = stream('');
     const email      = stream('');
     const pwd        = stream('');
@@ -23,7 +25,24 @@ export const SignUpForm = () => {
     }, [email, pwdsMatch]);
 
     return {
-        view() {
+        /**
+         * View Method
+         * @param {Object} attrs
+         */
+        view({attrs}) {
+            /**
+             * State
+             */
+            const signUpMsg = attrs.signUpMsg;
+
+            /**
+             * Actions
+             */
+            const createUser = attrs.createUser;
+
+            /**
+             * View
+             */
             return m('.clearfix', [
                 m('h3', 'Sign Up'),
 
@@ -62,8 +81,8 @@ export const SignUpForm = () => {
                     : m('p.p2.rounded.bg-darken', 'Passwords must match.')
                 ,
 
-                model().global.signUpMsg
-                    ? m('p.p2.rounded.bg-darken', model().global.signUpMsg)
+                signUpMsg
+                    ? m('p.p2.rounded.bg-darken', signUpMsg)
                     : null
                 ,
             ]);
