@@ -1,28 +1,54 @@
 import m from 'mithril';
 import { Editor } from 'components/Editor';
-import { Btn } from 'components/Btn';
+import { LoadingBtn } from 'components/LoadingBtn';
 import { Modal } from 'components/Modal';
 
+/**
+ * Profile Controls Component
+ */
 export const Controls = {
-    view: ({attrs}) => [
-        m(Btn, { className: 'mx1', onclick: () => attrs.showPostEditor(true) }, '+ New Post'),
+    /**
+     * View Method
+     * @param {Object} attrs View Attributes
+     */
+    view: ({attrs}) => {
+        /**
+         * State
+         */
+        const showEditor = attrs.showEditor;
+        const username = attrs.username;
+        const blog = attrs.blog;
 
-        attrs.showEditor
-            ? m(Modal, {
-                showModal: attrs.showPostEditor,
-            }, [
-                m(Editor, {
-                    // State
-                    username: attrs.username,
-                    blog: attrs.blog,
+        /**
+         * Actions
+         */
+        const showPostEditor = attrs.showPostEditor;
+        const createBlogPost = attrs.createBlogPost;
+        const getBlogPage = attrs.getBlogPage;
 
-                    // Actions
-                    createBlogPost: attrs.createBlogPost,
-                    showPostEditor: attrs.showPostEditor,
-                    getBlogPage: attrs.getBlogPage
-                })
-            ])
-            : null
-        ,
-    ]
+        /**
+         * View
+         */
+        return [
+            m(LoadingBtn, { className: 'mx1', onclick: () => showPostEditor(true) }, '+ New Post'),
+    
+            showEditor
+                ? m(Modal, {
+                    showModal: showPostEditor,
+                }, [
+                    m(Editor, {
+                        // State
+                        username,
+                        blog,
+    
+                        // Actions
+                        createBlogPost,
+                        showPostEditor,
+                        getBlogPage
+                    })
+                ])
+                : null
+            ,
+        ];
+    }
 };

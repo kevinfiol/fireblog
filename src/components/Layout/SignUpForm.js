@@ -1,10 +1,10 @@
 import m from 'mithril';
 import stream from 'mithril/stream';
 import { InputText } from 'components/InputText';
-import { Btn } from 'components/Btn';
+import { LoadingBtn } from 'components/LoadingBtn';
 
 /**
- * SignUpForm Component
+ * Layout SignUpForm Component
  */
 export const SignUpForm = () => {
     /**
@@ -69,7 +69,7 @@ export const SignUpForm = () => {
                 }),
 
                 isFormValid()
-                    ? m(Btn, {
+                    ? m(LoadingBtn, {
                         className: 'my1 btn-outline',
                         onclick: () => createUser( username(), email(), pwd() )
                     }, 'Submit')

@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { Btn } from 'components/Btn';
+import { LoadingBtn } from 'components/LoadingBtn';
 
 export const Modal = {
     onbeforeremove({dom}) {
@@ -14,7 +14,7 @@ export const Modal = {
         return m('.z4.fixed.left-0.right-0.top-0.bottom-0.charcoal.bg-paper.p3.overflow-auto', [
             m('.max-width-3.my3.mx-auto', [
                 m('.col.col-12.my3', [
-                    m(Btn, {
+                    m(LoadingBtn, {
                         className: 'right mx1 btn-outline',
                         onclick: () => {
                             if (attrs.cancelMethod) attrs.cancelMethod();
@@ -23,7 +23,7 @@ export const Modal = {
                     }, 'Cancel'),
     
                     attrs.saveMethod
-                        ? m(Btn, {
+                        ? m(LoadingBtn, {
                             className: 'right mx1 btn-outline',
                             disabled: attrs.disabledCondition || false,
                             onclick: () => {

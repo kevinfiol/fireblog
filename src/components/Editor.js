@@ -1,48 +1,86 @@
 import m from 'mithril';
 import stream from 'mithril/stream';
-import { Btn } from 'components/Btn';
+import { LoadingBtn } from 'components/LoadingBtn';
 import { InputText } from 'components/InputText';
 import { Woofmark } from 'components/Woofmark';
 
+/**
+ * Editor Component
+ */
 export const Editor = () => {
-    const title = stream('');
-    const content = stream('');
+    /**
+     * Local State
+     */
+    const titleStream = stream('');
+    const contentStream = stream('');
 
     return {
-        view: ({attrs}) => m('.clearfix', [
-            m(InputText, {
-                placeholder: 'title...',
-                value: attrs.title || null,
-                input: title
-            }),
-            
-            m(Woofmark, {
-                placeholder: 'content...',
-                value: attrs.content || null,
-                input: content
-            }),
+        /**
+         * View Method
+         * @param {Object} attrs View Attributes
+         */
+        view: ({attrs}) => {
+            /**
+             * State
+             */
+            const username = attrs.username;
+            const blog = attrs.blog;
+            const doc_id = attrs.doc_id;
+            const title = attrs.title;
+            const content = attrs.content;
 
-            title() && content()
-                ? m(Btn, {
-                    className: 'mx1 my2 btn-outline',
-                    onclick: () => {
-                        if (attrs.createBlogPost) {
-                            // Creating Blog Post
-                            attrs.createBlogPost(attrs.username, title(), content())
-                                .then(() => attrs.getBlogPage(attrs.username, attrs.blog.page.pageNo))
-                                .then(() => attrs.showPostEditor(false))
-                            ;
-                        } else if (attrs.updateBlogPost) {
-                            // Editing Blog Post
-                            attrs.updateBlogPost(attrs.doc_id, title(), content())
-                                .then(() => attrs.getPost(attrs.doc_id))
-                                .then(() => attrs.showPostEditor(false))
-                            ;
+            /**
+             * Actions
+             */
+            const showPostEditor = attrs.showPostEditor;
+            const createBlogPost = attrs.createBlogPost || null;
+            const updateBlogPost = attrs.updateBlogPost || null;
+            const getBlogPage = attrs.getBlogPage || null;
+            const getPost = attrs.getPost || null;
+
+            /**
+             * Computed
+             */
+            const isEditorFilled = titleStream() && contentStream();
+
+            /**
+             * View
+             */
+            return m('.clearfix', [
+                m(InputText, {
+                    placeholder: 'title...',
+                    value: title || null,
+                    input: titleStream
+                }),
+                
+                m(Woofmark, {
+                    placeholder: 'content...',
+                    value: content || null,
+                    input: contentStream
+                }),
+    
+                isEditorFilled
+                    ? m(LoadingBtn, {
+                        className: 'mx1 my2 btn-outline',
+                        onclick: () => {
+                            if (createBlogPost) {
+                                // Creating Blog Post
+                                createBlogPost(username, titleStream(), contentStream())
+                                    .then(() => getBlogPage(username, blog.page.pageNo))
+                                    .then(() => showPostEditor(false))
+                                ;
+                            } else if (updateBlogPost) {
+                                // Editing Blog Post
+                                updateBlogPost(doc_id, titleStream(), contentStream())
+                                    .then(() => getPost(doc_id))
+                                    .then(() => showPostEditor(false))
+                                ;
+                            }
                         }
-                    }
-                }, 'Save Post')
-                : null
-            ,
-        ])
+                    }, 'Save Post')
+                    : null
+                ,
+            ]);
+        }
     };
-}
+};

@@ -1,9 +1,8 @@
 import m from 'mithril';
-import { model } from 'state';
 
+/**
+ * Btn Component
+ */
 export const Btn = {
-    view: ({attrs, children}) => m('button.btn',
-        Object.assign({}, attrs, { disabled: model().isLoading }),
-        children
-    )
+    view: ({attrs, children}) => m('button.btn', attrs, children)
 };

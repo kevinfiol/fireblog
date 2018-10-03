@@ -1,8 +1,8 @@
 import m from 'mithril';
-import { Btn } from 'components/Btn';
+import { LoadingBtn } from 'components/LoadingBtn';
 
 /**
- * Panel Component
+ * Layout Panel Component
  */
 export const Panel = {
     /**
@@ -34,30 +34,30 @@ export const Panel = {
         return m('.clearfix', [
             !isFirebaseUser
                 ? [
-                    m(Btn, { className: 'mx1', onclick: () => showSignUpForm(true) }, 'Sign Up'),
-                    m(Btn, { className: 'mx1', onclick: () => showSignInForm(true) }, 'Sign In'),
+                    m(LoadingBtn, { className: 'mx1', onclick: () => showSignUpForm(true) }, 'Sign Up'),
+                    m(LoadingBtn, { className: 'mx1', onclick: () => showSignInForm(true) }, 'Sign In'),
                 ]
                 : null
             ,
     
             isFirebaseUser
                 ? [
-                    m(Btn, {
+                    m(LoadingBtn, {
                         className: 'mx1',
                         onclick: () => m.route.set('/')
                     }, 'Dashboard'),
     
-                    m(Btn, {
+                    m(LoadingBtn, {
                         className: 'mx1',
                         onclick: () => m.route.set('/u/:key', { key: username })
                     }, 'Profile'),
     
-                    m(Btn, {
+                    m(LoadingBtn, {
                         className: 'mx1',
                         onclick: () => m.route.set('/settings')
                     }, 'Settings'),
     
-                    m(Btn, {
+                    m(LoadingBtn, {
                         className: 'mx1',
                         onclick: () => {
                             signOut();

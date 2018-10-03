@@ -6,11 +6,22 @@ import { Controls } from 'components/Profile/Controls';
 import { BlogContainer } from 'components/Profile/BlogContainer';
 import { Pagination } from 'components/Profile/Pagination';
 
+/**
+ * Actions
+ */
 const { showPostEditor } = actions.global;
 const { getProfileData, getBlogPage, getBlogPageNumbers, createBlogPost } = actions.profile;
 
+/**
+ * Profile View
+ */
 export const Profile = {
+    /**
+     * Oninit Method
+     * @param {Object} attrs View Attributes
+     */
     oninit: ({attrs}) => {
+        console.log('init profile');
         const username = attrs.key;
 
         Promise.all([
@@ -20,28 +31,51 @@ export const Profile = {
         ]);
     },
 
+    /**
+     * View Method
+     */
     view: () => {
-        const isProfileLoaded = model().profile.user !== null;
-        const isBlogLoaded = model().profile.blog.page.pageNo !== null && model().profile.blog.pageNos.length > 0;
+        console.log('show view'); // this is triggering infinitely, solve this
+        /**
+         * State
+         */
+        const globalUser = model().global.userData;
+        const showEditor = model().global.showEditor;
 
-        if (!isProfileLoaded || !isBlogLoaded) return null;
-        const isUsersProfile = model().profile.user.username === model().global.userData.username;
+        const profileUser = model().profile.user;
+        const blog = model().profile.blog;
+        const pageNo = model().profile.blog.page.pageNo;
+        const pageNos = model().profile.blog.pageNos;
+        const pageLength = model().profile.blog.pageNos.length;
+
+        /**
+         * Computed
+         */
+        const isProfileLoaded = profileUser.uid !== null;
+        const isBlogLoaded = pageNo !== null && pageLength > 0;
+        const isGlobalUsersProfile = profileUser.username === globalUser.username;
+
+        /**
+         * View
+         */
+        if (!isProfileLoaded || !isBlogLoaded)
+            return null;
 
         return m('.clearfix', [
             m('.col.col-12', [
                 m(Sidebar, {
                     // State
-                    user: model().profile.user
+                    user: profileUser
                 })
             ]),
 
-            isUsersProfile
+            isGlobalUsersProfile
                 ? m('.col.col-12.mt2', [
                     m(Controls, {
                         // State
-                        username: model().global.userData.username,
-                        blog: model().profile.blog,
-                        showEditor: model().global.showEditor,
+                        username: globalUser.username,
+                        blog,
+                        showEditor,
 
                         // Actions
                         createBlogPost,
@@ -55,14 +89,14 @@ export const Profile = {
             m('.col.col-12.mt2', [
                 m(BlogContainer, {
                     // State
-                    blog: model().profile.blog
+                    blog
                 }),
 
                 m(Pagination, {
                     // State
-                    username: model().profile.user.username,
-                    currentPage: model().profile.blog.page.pageNo,
-                    pageNos: model().profile.blog.pageNos,
+                    username: profileUser.username,
+                    currentPage: pageNo,
+                    pageNos,
 
                     // Actions
                     getBlogPage

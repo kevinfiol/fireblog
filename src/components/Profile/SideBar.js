@@ -1,21 +1,38 @@
 import m from 'mithril';
 
+/**
+ * Profile Sidebar Component
+ */
 export const Sidebar = {
-    view: ({attrs}) => [
-        // Username & Display Pic
-        m('.col.col-12.py1', [
-            m('h2', attrs.user.username),
+    /**
+     * View Method
+     * @param {Object} attrs View Attributes
+     */
+    view: ({attrs}) => {
+        /**
+         * State
+         */
+        const user = attrs.user;
 
-            m('img.fit.py1', {
-                style: { maxHeight: '150px', maxWidth: '150px' },
-                src: attrs.user.photoURL,
-                onerror: e => e.target.src = 'https://images2.imgbox.com/a9/72/O6bXtE7c_o.png'
-            }),
-        ]),
+        /**
+         * View
+         */
+        return [
+            // Username & Display Pic
+            m('.col.col-12.py1', [
+                m('h2', user.username),
 
-        // Bio
-        m('.col.col-12.py1', [
-            m('code', attrs.user.bio)
-        ])
-    ]
+                m('img.fit.py1', {
+                    style: { maxHeight: '150px', maxWidth: '150px' },
+                    src: user.photoURL,
+                    onerror: e => e.target.src = '/img/favicon.png'
+                }),
+            ]),
+
+            // Bio
+            m('.col.col-12.py1', [
+                m('code', user.bio)
+            ])
+        ];
+    }
 };

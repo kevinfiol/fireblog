@@ -1,6 +1,6 @@
 import m from 'mithril';
 import { Editor } from 'components/Editor';
-import { Btn } from 'components/Btn';
+import { LoadingBtn } from 'components/LoadingBtn';
 import { ConfirmBtn } from 'components/ConfirmBtn';
 import { Modal } from 'components/Modal';
 
@@ -31,11 +31,10 @@ export const Controls = {
         const getPost = attrs.getPost;
 
         /**
-         * Computed
+         * View
          */
-
         return [
-            m(Btn, { className: 'mx1', onclick: () => showPostEditor(true) }, 'Edit'),
+            m(LoadingBtn, { className: 'mx1', onclick: () => showPostEditor(true) }, 'Edit'),
     
             m(ConfirmBtn, {
                 className: 'mx1',

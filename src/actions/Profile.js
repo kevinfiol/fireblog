@@ -2,7 +2,7 @@
  * Profile Action Types
  */
 
-const PROFILE_SET_PROFILEDATA = 'PROFILE_SET_PROFILEDATA';
+const PROFILE_SET_PROFILEUSER = 'PROFILE_SET_PROFILEUSER';
 const PROFILE_SET_PAGEDATA    = 'PROFILE_SET_PAGEDATA';
 const PROFILE_SET_PAGENOS     = 'PROFILE_SET_PAGENOS';
 
@@ -20,10 +20,29 @@ const PROFILE_CREATE_BLOGPOST = 'PROFILE_CREATE_BLOGPOST';
  */
 
 module.exports = (update, Firebase, queue) => {
-    const setProfileData = user => update(() => ({
-        type: PROFILE_SET_PROFILEDATA,
-        model: { profile: { user } }
-    }));
+    const setProfileUser = data => update(() => {
+        const type = PROFILE_SET_PROFILEUSER;
+        let user = {};
+
+        if (!data) {
+            user = {
+                username: null,
+                bio: null,
+                email: null,
+                photoURL: null,
+                uid: null
+            };
+        } else {
+            for (let key in data) {
+                user[key] = data[key];
+            }
+        }
+
+        return {
+            type,
+            model: { profile: { user } }
+        };
+    });
 
     const setPageData = page => update(() => ({
         type: PROFILE_SET_PAGEDATA,
@@ -39,9 +58,9 @@ module.exports = (update, Firebase, queue) => {
         const action = { type: PROFILE_GET_PROFILEDATA };
         queue.enqueue(action);
 
-        setProfileData(null);
+        setProfileUser(null);
         return Firebase.getUserDataByUsername(username)
-            .then(setProfileData)
+            .then(setProfileUser)
             .finally(() => queue.dequeue(action))
         ;
     };
@@ -78,7 +97,7 @@ module.exports = (update, Firebase, queue) => {
     return {
         getProfileData,
         getBlogPageNumbers,
-        setProfileData,
+        setProfileUser,
         setPageData,
         setPageNumbers,
         getBlogPage,

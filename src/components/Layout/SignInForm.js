@@ -1,10 +1,10 @@
 import m from 'mithril';
 import stream from 'mithril/stream';
 import { InputText } from 'components/InputText';
-import { Btn } from 'components/Btn';
+import { LoadingBtn } from 'components/LoadingBtn';
 
 /**
- * SignInForm Component
+ * Layout SignInForm Component
  */
 export const SignInForm = () => {
     /**
@@ -34,6 +34,9 @@ export const SignInForm = () => {
              */
             const signInUser = attrs.signInUser;
 
+            /**
+             * View
+             */
             return m('.clearfix', [
                 m('h3', 'Sign In'),
 
@@ -49,7 +52,7 @@ export const SignInForm = () => {
                 }),
 
                 isFormValid()
-                    ? m(Btn, { 
+                    ? m(LoadingBtn, { 
                         className: 'my1 btn-outline',
                         onclick: () => signInUser( email(), pwd() ) 
                     }, 'Submit')

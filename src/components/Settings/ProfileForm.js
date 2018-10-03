@@ -2,37 +2,63 @@ import m from 'mithril';
 import stream from 'mithril/stream';
 import { InputText } from 'components/InputText';
 import { TextArea } from 'components/TextArea';
-import { Btn } from 'components/Btn';
+import { LoadingBtn } from 'components/LoadingBtn';
 
-
+/**
+ * Settings ProfileForm Component
+ */
 export const ProfileForm = () => {
-    const photoURL = stream('');
-    const bio      = stream('');
+    /**
+     * Local State
+     */
+    const photoURLStream = stream('');
+    const bioStream      = stream('');
 
     return {
-        view: ({attrs}) => m('.clearfix', [
-            m(InputText, {
-                placeholder: 'photo url',
-                value: attrs.photoURL || '',
-                input: photoURL
-            }),
+        /**
+         * View Method
+         * @param {Object} attrs View Attributes
+         */
+        view: ({attrs}) => {
+            /**
+             * State
+             */
+            const username = attrs.username;
+            const photoURL = attrs.photoURL;
+            const bio = attrs.bio;
 
-            m(Btn, {
-                className: 'mt1 mb3 btn-outline',
-                onclick: () => attrs.updateUserData(attrs.username, 'photoURL', photoURL())
-            }, 'Update Photo'),
+            /**
+             * Actions
+             */
+            const updateUserData = attrs.updateUserData;
 
-            m(TextArea, {
-                maxlength: '200',
-                placeholder: 'bio text',
-                value: attrs.bio || '',
-                input: bio
-            }),
+            /**
+             * View
+             */
+            return m('.clearfix', [
+                m(InputText, {
+                    placeholder: 'photo url',
+                    value: photoURL || '',
+                    input: photoURLStream
+                }),
 
-            m(Btn, {
-                className: 'mt1 mb3 btn-outline',
-                onclick: () => attrs.updateUserData(attrs.username, 'bio', bio())
-            }, 'Update Bio')
-        ])
+                m(LoadingBtn, {
+                    className: 'mt1 mb3 btn-outline',
+                    onclick: () => updateUserData(username, 'photoURL', photoURLStream())
+                }, 'Update Photo'),
+
+                m(TextArea, {
+                    maxlength: '200',
+                    placeholder: 'bio text',
+                    value: bio || '',
+                    input: bioStream
+                }),
+
+                m(LoadingBtn, {
+                    className: 'mt1 mb3 btn-outline',
+                    onclick: () => updateUserData(username, 'bio', bioStream())
+                }, 'Update Bio')
+            ]);
+        }
     };
 };
