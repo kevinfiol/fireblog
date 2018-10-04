@@ -1,18 +1,49 @@
 import m from 'mithril';
 
-export const TextArea = {
-    oninit: ({attrs}) => {
-        if (attrs.value) attrs.input(attrs.value);
-    },
+/**
+ * TextArea Component
+ */
+export const TextArea = () => {
+    /**
+     * Local State
+     */
+    let value;
+    let inputStream;
 
-    view: ({attrs}) => m('div', [
-        m('label', attrs.label),
-        m('textarea.textarea.bg-paper.charcoal.my1', {
-            maxlength: attrs.maxlength,
-            rows: attrs.rows || '4',
-            placeholder: attrs.placeholder || '',
-            oncreate: ({dom}) => dom.value = attrs.value || '',
-            oninput: m.withAttr('value', attrs.input)
-        })
-    ])
+    let maxlength;
+    let rows;
+    let placeholder;
+    let textareaOncreate;
+
+    return {
+        /**
+         * Oninit Method
+         * @param {Object} attrs View Attributes
+         */
+        oninit: ({attrs}) => {
+            value = attrs.value || '';
+            inputStream = attrs.input;
+            if (value) inputStream(value);
+
+            maxlength = attrs.maxlength || '';
+            rows = attrs.rows || '4';
+            placeholder = attrs.placeholder || '';
+
+            if (attrs.textareaOncreate) textareaOncreate = attrs.textareaOncreate;
+            else textareaOncreate = ({dom}) => dom.value = value;
+        },
+
+        /**
+         * View Method
+         */
+        view: () => m('div', [
+            m('textarea.textarea.bg-paper.charcoal.my1', {
+                maxlength,
+                rows,
+                placeholder,
+                oncreate: textareaOncreate,
+                oninput: m.withAttr('value', inputStream)
+            })
+        ])
+    };
 };

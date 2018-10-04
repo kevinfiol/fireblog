@@ -44,10 +44,18 @@ module.exports = (update, Firebase, queue) => {
         };
     });
 
-    const setPageData = page => update(() => ({
-        type: PROFILE_SET_PAGEDATA,
-        model: { profile: { blog: { page } } }
-    }));
+    const setPageData = data => update(() => {
+        const type = PROFILE_SET_PAGEDATA;
+        let page = {};
+
+        if (!data) page = { pageNo: null, posts: null };
+        else page = { pageNo: data.pageNo, posts: data.posts };
+
+        return {
+            type,
+            model: { profile: { blog: { page } } }
+        };
+    });
 
     const setPageNumbers = pageNos => update(() => ({
         type: PROFILE_SET_PAGENOS,
@@ -69,6 +77,7 @@ module.exports = (update, Firebase, queue) => {
         const action = { type: PROFILE_GET_BLOGPAGE };
         queue.enqueue(action);
 
+        setPageData(null);
         return Firebase.getUserBlogPage(username, pageNo)
             .then(setPageData)
             .finally(() => queue.dequeue(action))

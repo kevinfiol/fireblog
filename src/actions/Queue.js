@@ -3,16 +3,14 @@ const m = require('mithril');
 /**
  * Queue Action Types
  */
-
 const QUEUE_SET_LOADING = 'QUEUE_SET_LOADING';
 const QUEUE_ENQUEUE     = 'QUEUE_ENQUEUE';
 const QUEUE_DEQUEUE     = 'QUEUE_DEQUEUE';
 
 /**
  * Queue Actions
- * @param {Stream} update   Update Stream
+ * @param {Stream} update Update Stream
  */
-
 module.exports = update => {
     const setLoading = isLoading => update(() => ({
         type: QUEUE_SET_LOADING,

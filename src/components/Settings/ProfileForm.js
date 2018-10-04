@@ -48,7 +48,7 @@ export const ProfileForm = () => {
                 }, 'Update Photo'),
 
                 m(TextArea, {
-                    maxlength: '200',
+                    maxlength: '300',
                     placeholder: 'bio text',
                     value: bio || '',
                     input: bioStream

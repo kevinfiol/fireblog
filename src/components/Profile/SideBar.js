@@ -23,9 +23,8 @@ export const Sidebar = {
                 m('h2', user.username),
 
                 m('img.fit.py1', {
-                    style: { maxHeight: '150px', maxWidth: '150px' },
-                    src: user.photoURL,
-                    onerror: e => e.target.src = '/img/favicon.png'
+                    style: { maxHeight: '120px', maxWidth: '120px' },
+                    src: user.photoURL || '/img/favicon.png'
                 }),
             ]),
 

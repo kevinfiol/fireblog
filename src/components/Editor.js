@@ -32,7 +32,7 @@ export const Editor = () => {
             /**
              * Actions
              */
-            const showPostEditor = attrs.showPostEditor;
+            const enableEditor = attrs.enableEditor;
             const createBlogPost = attrs.createBlogPost || null;
             const updateBlogPost = attrs.updateBlogPost || null;
             const getBlogPage = attrs.getBlogPage || null;
@@ -67,13 +67,13 @@ export const Editor = () => {
                                 // Creating Blog Post
                                 createBlogPost(username, titleStream(), contentStream())
                                     .then(() => getBlogPage(username, blog.page.pageNo))
-                                    .then(() => showPostEditor(false))
+                                    .then(() => enableEditor(false))
                                 ;
                             } else if (updateBlogPost) {
                                 // Editing Blog Post
                                 updateBlogPost(doc_id, titleStream(), contentStream())
                                     .then(() => getPost(doc_id))
-                                    .then(() => showPostEditor(false))
+                                    .then(() => enableEditor(false))
                                 ;
                             }
                         }

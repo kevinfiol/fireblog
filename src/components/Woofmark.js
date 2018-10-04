@@ -1,21 +1,25 @@
 import m from 'mithril';
 import woofmark from 'woofmark';
+import { TextArea } from 'components/TextArea';
 
+/**
+ * Woofmark Component
+ */
 export const Woofmark = {
-    oninit: ({attrs}) => {
-        if (attrs.value) attrs.input(attrs.value);
-    },
-
+    /**
+     * View Method
+     * @param {Object} attrs View Attributes
+     */
     view: ({attrs}) => m('.clearfix', [
-        m('textarea.textarea.bg-paper.charcoal.my1', {
+        m(TextArea, {
+            value: attrs.value,
+            input: attrs.input,
             rows: '14',
-            style: { margin: 0, borderRadius: 0 },
-            placeholder: attrs.placeholder || '',
-            oncreate: ({dom}) => {
+            placeholder: attrs.placeholder, 
+            textareaOncreate: ({dom}) => {
                 woofmark(dom, { html: false, wysiwyg: false });
                 dom.value = attrs.value || '';
-            },
-            oninput: m.withAttr('value', attrs.input)
+            }
         })
     ])
 };

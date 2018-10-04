@@ -2,19 +2,19 @@
  * Global Action Types
  */
 
-const GLOBAL_SHOW_POSTEDITOR  = 'GLOBAL_SHOW_POSTEDITOR';
-const GLOBAL_SHOW_SIGNUP      = 'GLOBAL_SHOW_SIGNUP';
-const GLOBAL_SHOW_SIGNIN      = 'GLOBAL_SHOW_SIGNIN';
+const GLOBAL_ENABLE_POSTEDITOR  = 'GLOBAL_ENABLE_POSTEDITOR';
+const GLOBAL_ENABLE_SIGNUP      = 'GLOBAL_ENABLE_SIGNUP';
+const GLOBAL_ENABLE_SIGNIN      = 'GLOBAL_ENABLE_SIGNIN';
 
-const GLOBAL_SET_SIGNUPMSG    = 'GLOBAL_SET_SIGNUPMSG';
-const GLOBAL_SET_SIGNINMSG    = 'GLOBAL_SET_SIGNINMSG';
-const GLOBAL_SET_USERDATA     = 'GLOBAL_SET_USERDATA';
-const GLOBAL_SET_FIREBASEUSER = 'GLOBAL_SET_FIREBASEUSER';
+const GLOBAL_SET_SIGNUPMSG      = 'GLOBAL_SET_SIGNUPMSG';
+const GLOBAL_SET_SIGNINMSG      = 'GLOBAL_SET_SIGNINMSG';
+const GLOBAL_SET_USERDATA       = 'GLOBAL_SET_USERDATA';
+const GLOBAL_SET_FIREBASEUSER   = 'GLOBAL_SET_FIREBASEUSER';
 
-const GLOBAL_CREATE_USER      = 'GLOBAL_CREATE_USER';
-const GLOBAL_SIGNIN_USER      = 'GLOBAL_SIGNIN_USER';
-const GLOBAL_UPDATE_USERDATA  = 'GLOBAL_UPDATE_USERDATA';
-const GLOBAL_SIGNOUT          = 'GLOBAL_SIGNOUT';
+const GLOBAL_CREATE_USER        = 'GLOBAL_CREATE_USER';
+const GLOBAL_SIGNIN_USER        = 'GLOBAL_SIGNIN_USER';
+const GLOBAL_UPDATE_USERDATA    = 'GLOBAL_UPDATE_USERDATA';
+const GLOBAL_SIGNOUT            = 'GLOBAL_SIGNOUT';
 
 /**
  * Global Actions
@@ -27,18 +27,18 @@ module.exports = (update, Firebase, queue) => {
     /**
      * UI Actions
      */
-    const showPostEditor = showEditor => update(() => ({
-        type: GLOBAL_SHOW_POSTEDITOR,
+    const enableEditor = showEditor => update(() => ({
+        type: GLOBAL_ENABLE_POSTEDITOR,
         model: { global: { showEditor } }
     }));
 
-    const showSignUpForm = showSignUp => update(() => ({
-        type: GLOBAL_SHOW_SIGNUP,
+    const enableSignUpForm = showSignUp => update(() => ({
+        type: GLOBAL_ENABLE_SIGNUP,
         model: { global: { showSignUp } }
     }));
 
-    const showSignInForm = showSignIn => update(() => ({
-        type: GLOBAL_SHOW_SIGNIN,
+    const enableSignInForm = showSignIn => update(() => ({
+        type: GLOBAL_ENABLE_SIGNIN,
         model: { global: { showSignIn } }
     }));
 
@@ -137,7 +137,7 @@ module.exports = (update, Firebase, queue) => {
             })
             .then(() => {
                 setSignUpMsg(null);
-                showSignUpForm(false);
+                enableSignUpForm(false);
             })
             .catch(err => {
                 setSignUpMsg(err.message);
@@ -159,7 +159,7 @@ module.exports = (update, Firebase, queue) => {
             .then(setUserData)
             .then(() => {
                 setSignInMsg(null);
-                showSignInForm(false);
+                enableSignInForm(false);
             })
             .catch(err => {
                 setSignInMsg(err.message);
@@ -199,9 +199,9 @@ module.exports = (update, Firebase, queue) => {
     };
 
     return {
-        showPostEditor,
-        showSignUpForm,
-        showSignInForm,
+        enableEditor,
+        enableSignUpForm,
+        enableSignInForm,
         setFirebaseUser,
         setSignUpMsg,
         setSignInMsg,

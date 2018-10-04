@@ -15,6 +15,4 @@ const profile = Profile(update, services.Firebase, queue);
 import Post from './Post';
 const post = Post(update, services.Firebase, queue);
 
-
-
 export default { queue, global, profile, post };

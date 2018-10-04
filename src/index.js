@@ -20,13 +20,13 @@ m.route(document.getElementById('app'), '/', {
         render: () => m(Layout, m(Index))
     },
 
-    '/u/:key': {
-        render: ({key}) => m(Layout, m(Profile, { key }))
+    '/u/:username': {
+        onmatch: ({username}) => m.route.set('/u/:username/:key', { username, key: 1 })
     },
 
-    // '/u/:key/blog/:pageNo/:postNo': {
-    //     render: ({key, attrs}) => m(Layout, m(Post, { key, pageNo: attrs.pageNo, postNo: attrs.postNo }))
-    // },
+    '/u/:username/:key': {
+        render: ({attrs, key}) => m(Layout, m(Profile, { username: attrs.username, key }))
+    },
 
     '/p/:doc_id': {
         render: ({attrs}) => m(Layout, m(Post, { doc_id: attrs.doc_id }))

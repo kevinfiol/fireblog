@@ -7,7 +7,7 @@ import { Controls } from 'components/Post/Controls';
 /**
  * Actions
  */
-const { showPostEditor } = actions.global;
+const { enableEditor } = actions.global;
 const { setPostData, getPost, updateBlogPost, deleteBlogPost } = actions.post;
 
 /**
@@ -19,7 +19,6 @@ export const Post = {
      * @param {Object} attrs View Attributes
      */
     oninit: ({attrs}) => {
-        console.log('init post');
         setPostData({
             doc_id: null,
             username: null,
@@ -35,7 +34,6 @@ export const Post = {
      * View Method
      */
     view: () => {
-        console.log('view');
         /**
          * State Variables
          */
@@ -70,7 +68,7 @@ export const Post = {
     
                             // Actions
                             deleteBlogPost,
-                            showPostEditor,
+                            enableEditor,
                             updateBlogPost,
                             setPostData,
                             getPost

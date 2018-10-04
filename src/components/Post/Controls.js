@@ -25,7 +25,7 @@ export const Controls = {
         /**
          * Actions
          */
-        const showPostEditor = attrs.showPostEditor;
+        const enableEditor = attrs.enableEditor;
         const deleteBlogPost = attrs.deleteBlogPost;
         const updateBlogPost = attrs.updateBlogPost;
         const getPost = attrs.getPost;
@@ -34,7 +34,7 @@ export const Controls = {
          * View
          */
         return [
-            m(LoadingBtn, { className: 'mx1', onclick: () => showPostEditor(true) }, 'Edit'),
+            m(LoadingBtn, { className: 'mx1', onclick: () => enableEditor(true) }, 'Edit'),
     
             m(ConfirmBtn, {
                 className: 'mx1',
@@ -51,7 +51,7 @@ export const Controls = {
     
             showEditor
                 ? m(Modal, {
-                    showModal: showPostEditor,
+                    enableModal: enableEditor,
                 }, [
                     m(Editor, {
                         // State
@@ -63,7 +63,7 @@ export const Controls = {
                         // Actions
                         updateBlogPost,
                         getPost,
-                        showPostEditor
+                        enableEditor
                     })
                 ])
                 : null

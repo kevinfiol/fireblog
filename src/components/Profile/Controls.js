@@ -22,7 +22,7 @@ export const Controls = {
         /**
          * Actions
          */
-        const showPostEditor = attrs.showPostEditor;
+        const enableEditor = attrs.enableEditor;
         const createBlogPost = attrs.createBlogPost;
         const getBlogPage = attrs.getBlogPage;
 
@@ -30,11 +30,11 @@ export const Controls = {
          * View
          */
         return [
-            m(LoadingBtn, { className: 'mx1', onclick: () => showPostEditor(true) }, '+ New Post'),
+            m(LoadingBtn, { className: 'mx1', onclick: () => enableEditor(true) }, '+ New Post'),
     
             showEditor
                 ? m(Modal, {
-                    showModal: showPostEditor,
+                    enableModal: enableEditor,
                 }, [
                     m(Editor, {
                         // State
@@ -43,7 +43,7 @@ export const Controls = {
     
                         // Actions
                         createBlogPost,
-                        showPostEditor,
+                        enableEditor,
                         getBlogPage
                     })
                 ])

@@ -9,7 +9,7 @@ import { Pagination } from 'components/Profile/Pagination';
 /**
  * Actions
  */
-const { showPostEditor } = actions.global;
+const { enableEditor } = actions.global;
 const { getProfileData, getBlogPage, getBlogPageNumbers, createBlogPost } = actions.profile;
 
 /**
@@ -21,13 +21,13 @@ export const Profile = {
      * @param {Object} attrs View Attributes
      */
     oninit: ({attrs}) => {
-        console.log('init profile');
-        const username = attrs.key;
+        const username = attrs.username;
+        const pageNo = attrs.key;
 
         Promise.all([
             getBlogPageNumbers(username),
             getProfileData(username),
-            getBlogPage(username, 1)
+            getBlogPage(username, pageNo)
         ]);
     },
 
@@ -35,7 +35,6 @@ export const Profile = {
      * View Method
      */
     view: () => {
-        console.log('show view'); // this is triggering infinitely, solve this
         /**
          * State
          */
@@ -58,16 +57,16 @@ export const Profile = {
         /**
          * View
          */
-        if (!isProfileLoaded || !isBlogLoaded)
-            return null;
-
         return m('.clearfix', [
-            m('.col.col-12', [
-                m(Sidebar, {
-                    // State
-                    user: profileUser
-                })
-            ]),
+            isProfileLoaded
+                ? m('.col.col-12', [
+                    m(Sidebar, {
+                        // State
+                        user: profileUser
+                    })
+                ])
+                : null
+            ,
 
             isGlobalUsersProfile
                 ? m('.col.col-12.mt2', [
@@ -80,28 +79,31 @@ export const Profile = {
                         // Actions
                         createBlogPost,
                         getBlogPage,
-                        showPostEditor
+                        enableEditor
                     })
                 ])
                 : null
             ,
 
-            m('.col.col-12.mt2', [
-                m(BlogContainer, {
-                    // State
-                    blog
-                }),
-
-                m(Pagination, {
-                    // State
-                    username: profileUser.username,
-                    currentPage: pageNo,
-                    pageNos,
-
-                    // Actions
-                    getBlogPage
-                })
-            ])
+            isBlogLoaded
+                ? m('.col.col-12.mt2', [
+                    m(BlogContainer, {
+                        // State
+                        blog
+                    }),
+    
+                    m(Pagination, {
+                        // State
+                        username: profileUser.username,
+                        currentPage: pageNo,
+                        pageNos,
+    
+                        // Actions
+                        getBlogPage
+                    })
+                ])
+                : null
+            ,
         ]);
     }
 };

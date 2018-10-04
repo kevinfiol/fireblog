@@ -13,8 +13,8 @@ import { Spinner } from 'components/Layout/Spinner';
 const {
     signInUser,
     createUser,
-    showSignInForm,
-    showSignUpForm,
+    enableSignInForm,
+    enableSignUpForm,
     setSignUpMsg,
     setSignInMsg,
     signOut
@@ -53,8 +53,8 @@ export const Layout = {
                     username,
     
                     // Actions
-                    showSignInForm,
-                    showSignUpForm,
+                    enableSignInForm,
+                    enableSignUpForm,
                     signOut
                 })
             ]),
@@ -67,7 +67,7 @@ export const Layout = {
             ,
     
             showSignUp
-                ? m(Modal, { showModal: showSignUpForm, cancelMethod: () => setSignUpMsg(null) }, [
+                ? m(Modal, { enableModal: enableSignUpForm, cancelMethod: () => setSignUpMsg(null) }, [
                     m(SignUpForm, {
                         // State
                         signUpMsg,
@@ -80,7 +80,7 @@ export const Layout = {
             ,
     
             showSignIn
-                ? m(Modal, { showModal: showSignInForm, cancelMethod: () => setSignInMsg(null) }, [
+                ? m(Modal, { enableModal: enableSignInForm, cancelMethod: () => setSignInMsg(null) }, [
                     m(SignInForm, {
                         // State
                         signInMsg,

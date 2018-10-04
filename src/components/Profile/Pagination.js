@@ -29,7 +29,9 @@ export const Pagination = {
             return m('span.px1', [
                 m(Btn, {
                     disabled: currentPage === pageNo,
-                    onclick: () => getBlogPage(username, pageNo)
+                    onclick: () => {
+                        m.route.set('/u/:username/:key', { username, key: pageNo });
+                    }
                 }, pageNo)
             ]);
         });
