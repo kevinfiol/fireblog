@@ -20,6 +20,7 @@ export const ConfirmBtn = () => {
              * State
              */
             const className = attrs.className;
+            const btnClassName = attrs.btnClassName;
             const label = attrs.label;
 
             /**
@@ -33,15 +34,22 @@ export const ConfirmBtn = () => {
             return m('span', { className }, [
                 confirm
                     ? [
-                        m('span.btn.c-default', 'Are you sure?'),
+                        m('span.btn.c-default', { className: btnClassName, style: { border: '0' } }, 'Are you sure?'),
     
                         m(LoadingBtn, {
+                            className: btnClassName,
                             onclick: () => { action(); confirm = false; }
                         }, 'Yes'),
     
-                        m(LoadingBtn, { onclick: () => confirm = false }, 'No')
+                        m(LoadingBtn, {
+                            className: btnClassName,
+                            onclick: () => confirm = false
+                        }, 'No')
                     ]
-                    : m(LoadingBtn, { onclick: () => confirm = true }, label)
+                    : m(LoadingBtn, {
+                        className: btnClassName,
+                        onclick: () => confirm = true
+                    }, label)
                 ,
             ]);
         }

@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { Btn } from 'components/Btn';
+import { LoadingBtn } from 'components/LoadingBtn';
 
 /**
  * Profile Pagination Component
@@ -18,22 +18,23 @@ export const Pagination = {
         const username = attrs.username;
 
         /**
-         * Actions
-         */
-        const getBlogPage = attrs.getBlogPage;
-
-        /**
          * View
          */
-        return pageNos.map(pageNo => {
-            return m('span.px1', [
-                m(Btn, {
-                    disabled: currentPage === pageNo,
-                    onclick: () => {
-                        m.route.set('/u/:username/:key', { username, key: pageNo });
-                    }
-                }, pageNo)
-            ]);
-        });
+        return [
+            m('span.pt1.pb1.mr1', 'page'),
+
+            pageNos.map(pageNo => {
+                return m('span.px1', [
+                    m(LoadingBtn, {
+                        className: `p1 center ${currentPage === pageNo ? 'muted c-default' : ''}`,
+                        disabled: currentPage === pageNo,
+                        onclick: () => {
+                            m.route.set('/u/:username/:key', { username, key: pageNo });
+                        }
+                    }, pageNo)
+                ]);
+            })
+        ];
+
     }
 };

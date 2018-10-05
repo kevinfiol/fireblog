@@ -31,11 +31,11 @@ export const Panel = {
         /**
          * View
          */
-        return m('.clearfix', [
+        return m('.clearfix.right', [
             !isFirebaseUser
                 ? [
-                    m(LoadingBtn, { className: 'a-btn p0 mx1', onclick: () => enableSignUpForm(true) }, 'Sign Up'),
-                    m(LoadingBtn, { className: 'a-btn p0 mx1', onclick: () => enableSignInForm(true) }, 'Sign In'),
+                    m(LoadingBtn, { className: 'a-btn p1 mx1', onclick: () => enableSignUpForm(true) }, 'Sign Up'),
+                    m(LoadingBtn, { className: 'a-btn p1 mx1', onclick: () => enableSignInForm(true) }, 'Sign In'),
                 ]
                 : null
             ,
@@ -43,25 +43,28 @@ export const Panel = {
             isFirebaseUser
                 ? [
                     m(LoadingBtn, {
-                        className: 'a-btn p0 mx1',
+                        className: 'a-btn px0 py1 mx1',
                         onclick: () => m.route.set('/')
                     }, 'Dashboard'),
     
                     m(LoadingBtn, {
-                        className: 'a-btn p0 mx1',
+                        className: 'a-btn px0 py1 mx1',
                         onclick: () => m.route.set('/u/:key', { key: username })
                     }, 'Profile'),
     
                     m(LoadingBtn, {
-                        className: 'a-btn p0 mx1',
+                        className: 'a-btn px0 py1 mx1',
                         onclick: () => m.route.set('/settings')
                     }, 'Settings'),
     
                     m(LoadingBtn, {
-                        className: 'a-btn p0 mx1',
+                        className: 'a-btn px0 py1 mx1',
                         onclick: () => {
                             signOut();
-                            m.route.set('/');
+                            
+                            if (m.route.get() === '/settings') {
+                                m.route.set('/');
+                            }
                         }
                     }, 'Sign Out')
                 ]

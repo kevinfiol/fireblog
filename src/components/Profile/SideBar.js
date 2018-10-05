@@ -18,18 +18,17 @@ export const Sidebar = {
          * View
          */
         return [
-            // Username & Display Pic
-            m('.col.col-12.py1', [
-                m('h2', user.username),
-
-                m('img.fit.py1', {
+            // Display Pic
+            m('.col.col-12.pt1', [
+                m('img.fit', {
                     style: { maxHeight: '120px', maxWidth: '120px' },
                     src: user.photoURL || '/img/favicon.png'
                 }),
             ]),
 
             // Bio
-            m('.col.col-12.py1', [
+            m('.col.col-12', [
+                m('h2', user.username),
                 m('code', user.bio)
             ])
         ];

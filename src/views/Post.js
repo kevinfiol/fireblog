@@ -40,6 +40,7 @@ export const Post = {
         const username = model().global.userData.username;
         const showEditor = model().global.showEditor;
 
+        const postUsername = model().post.username;
         const doc_id = model().post.doc_id;
         const title = model().post.title;
         const date = model().post.date;
@@ -49,7 +50,7 @@ export const Post = {
          * Computed
          */
         const isPostDataLoaded = title !== null;
-        const isSignedInUsersPost = username === model().post.username;
+        const isSignedInUsersPost = username === postUsername;
 
         /**
          * View
@@ -76,9 +77,12 @@ export const Post = {
                         : null
                     ,
                     
-                    m('h1',title),
-                    m('h3', m('a', { oncreate: m.route.link, href: `/u/${username}` }, username)),
-                    m('h3', date),
+                    m('h1', title),
+                    m('.h4', [
+                        m('span.muted', 'by '),
+                        m('a', { oncreate: m.route.link, href: `/u/${postUsername}` }, postUsername)
+                    ]),
+                    m('.h5.muted', date),
                     m('p', m.trust( marked( content ) ))
                 ])
                 : null

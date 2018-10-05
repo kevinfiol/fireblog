@@ -25,12 +25,13 @@ export const Controls = {
         const enableEditor = attrs.enableEditor;
         const createBlogPost = attrs.createBlogPost;
         const getBlogPage = attrs.getBlogPage;
+        const getBlogPageNumbers = attrs.getBlogPageNumbers;
 
         /**
          * View
          */
         return [
-            m(LoadingBtn, { className: 'mx1', onclick: () => enableEditor(true) }, '+ New Post'),
+            m(LoadingBtn, { className: 'btn-outline', onclick: () => enableEditor(true) }, 'New Post'),
     
             showEditor
                 ? m(Modal, {
@@ -44,7 +45,8 @@ export const Controls = {
                         // Actions
                         createBlogPost,
                         enableEditor,
-                        getBlogPage
+                        getBlogPage,
+                        getBlogPageNumbers
                     })
                 ])
                 : null

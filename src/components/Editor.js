@@ -37,6 +37,7 @@ export const Editor = () => {
             const updateBlogPost = attrs.updateBlogPost || null;
             const getBlogPage = attrs.getBlogPage || null;
             const getPost = attrs.getPost || null;
+            const getBlogPageNumbers = attrs.getBlogPageNumbers || null;
 
             /**
              * Computed
@@ -67,6 +68,7 @@ export const Editor = () => {
                                 // Creating Blog Post
                                 createBlogPost(username, titleStream(), contentStream())
                                     .then(() => getBlogPage(username, blog.page.pageNo))
+                                    .then(() => getBlogPageNumbers(username))
                                     .then(() => enableEditor(false))
                                 ;
                             } else if (updateBlogPost) {

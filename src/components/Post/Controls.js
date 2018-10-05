@@ -34,10 +34,11 @@ export const Controls = {
          * View
          */
         return [
-            m(LoadingBtn, { className: 'mx1', onclick: () => enableEditor(true) }, 'Edit'),
+            m(LoadingBtn, { className: 'btn-outline mr1', onclick: () => enableEditor(true) }, 'Edit'),
     
             m(ConfirmBtn, {
                 className: 'mx1',
+                btnClassName: 'btn-outline mx1',
                 label: 'Delete',
                 action: () => {
                     deleteBlogPost(doc_id)

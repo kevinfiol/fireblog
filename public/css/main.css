@@ -2,15 +2,14 @@ body { background-color: #fdfdfd; color: #313131; }
 
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
-* { animation: fade-in 0.08s; }
+*:not(a) { animation: fade-in 0.08s; }
 .exit { animation: fade-out 0.06s; }
 
 /* a { text-decoration: none; color: #39CCCC; transition: color .06s ease-in-out; } */
 /* a:hover { color: #F5FCFF; } */
 a, .a-btn {
     color: #4e5192;
-    padding: 0 1px 2px 1px;
-    transition: all .1s ease-in-out;
+    transition: all .08s ease-in-out;
     text-decoration: none;
     border-top: 0;
     border-right: 0;
@@ -20,6 +19,9 @@ a, .a-btn {
 
 a:hover, .a-btn:hover { color: #5c5fb1; border-color: #3d3f80; }
 .a-btn:disabled { color: rgba(0, 0, 0, 0.2); }
+
+.un { border-bottom: 1px solid #3d3f80; }
+.muted { opacity: 0.4; }
 
 body { font-family: 'PT Serif', serif; }
 blockquote { font-size: 1rem; font-style: normal; margin-left: 2rem; }

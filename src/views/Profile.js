@@ -68,7 +68,7 @@ export const Profile = {
                 : null
             ,
 
-            isGlobalUsersProfile
+            isGlobalUsersProfile && isProfileLoaded
                 ? m('.col.col-12.mt2', [
                     m(Controls, {
                         // State
@@ -79,6 +79,7 @@ export const Profile = {
                         // Actions
                         createBlogPost,
                         getBlogPage,
+                        getBlogPageNumbers,
                         enableEditor
                     })
                 ])
@@ -86,22 +87,23 @@ export const Profile = {
             ,
 
             isBlogLoaded
-                ? m('.col.col-12.mt2', [
-                    m(BlogContainer, {
-                        // State
-                        blog
-                    }),
-    
-                    m(Pagination, {
-                        // State
-                        username: profileUser.username,
-                        currentPage: pageNo,
-                        pageNos,
-    
-                        // Actions
-                        getBlogPage
-                    })
-                ])
+                ? [
+                    m('.col.col-12.mt2', [
+                        m(BlogContainer, {
+                            // State
+                            blog
+                        })
+                    ]),
+
+                    m('.col.col-12.mt2', [
+                        m(Pagination, {
+                            // State
+                            username: profileUser.username,
+                            currentPage: pageNo,
+                            pageNos
+                        })
+                    ])
+                ]
                 : null
             ,
         ]);

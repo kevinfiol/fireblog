@@ -8,14 +8,15 @@ const Post = {
      * View Method
      * @param {Object} attrs View Attributes
      */
-    view: ({attrs}) => m('.my1', [
-        m('h2', [
-            m('a.charcoal', {
+    view: ({attrs}) => m('.my2', [
+        m('span', [
+            m('.h5.inline.muted', attrs.post.date),
+            m('span.inline.muted.px1', '•'),
+            m('a.h2.inline', {
                 oncreate: m.route.link,
                 href: `/p/${attrs.post.doc_id}`
             }, attrs.post.title)
-        ]),
-        m('h3', attrs.post.date)
+        ])
     ])
 };
 
