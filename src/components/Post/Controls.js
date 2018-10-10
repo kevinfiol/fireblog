@@ -56,15 +56,15 @@ export const Controls = {
                 }, [
                     m(Editor, {
                         // State
-                        username,
                         title,
                         content,
-                        doc_id,
-    
-                        // Actions
-                        updatePostBlogPost,
-                        getPost,
-                        enableEditor
+
+                        onSaveEvent: (newTitle, newContent) => {
+                            updatePostBlogPost(doc_id, newTitle, newContent)
+                                .then(() => getPost(doc_id))
+                                .then(() => enableEditor(false))
+                            ;
+                        }
                     })
                 ])
                 : null

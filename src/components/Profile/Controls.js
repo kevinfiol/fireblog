@@ -38,15 +38,13 @@ export const Controls = {
                     enableModal: enableEditor,
                 }, [
                     m(Editor, {
-                        // State
-                        username,
-                        blog,
-    
-                        // Actions
-                        createProfileBlogPost,
-                        enableEditor,
-                        getProfileBlogPage,
-                        getProfileBlogPageNos
+                        onSaveEvent: (newTitle, newContent) => {
+                            createProfileBlogPost(username, newTitle, newContent)
+                                .then(() => getProfileBlogPage(username, blog.page.pageNo))
+                                .then(() => getProfileBlogPageNos(username))
+                                .then(() => enableEditor(false))
+                            ;
+                        }
                     })
                 ])
                 : null
