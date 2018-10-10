@@ -11,7 +11,10 @@ const GET_PROFILE_USER         = 'GET_PROFILE_USER';
 const GET_PROFILE_BLOG_PAGE    = 'GET_PROFILE_BLOG_PAGE';
 const GET_PROFILE_BLOG_PAGENOS = 'GET_PROFILE_BLOG_PAGENOS';
 
-const CREATE_PROFILE_BLOGPOST  = 'CREATE_PROFILE_BLOGPOST';
+const CREATE_PROFILE_BLOG_POST  = 'CREATE_PROFILE_BLOG_POST';
+
+const CREATE_PROFILE_BLOG_LISTENER = 'CREATE_PROFILE_BLOGLISTENER';
+const CREATE_PROFILE_USER_LISTENER = 'CREATE_PROFILE_USER_LISTENER';
 
 /**
  * Profile Actions
@@ -109,12 +112,22 @@ module.exports = (update, Firebase, queue) => {
      * Actions
      */
     const createProfileBlogPost = (username, title, content) => {
-        const action = { type: CREATE_PROFILE_BLOGPOST };
+        const action = { type: CREATE_PROFILE_BLOG_POST };
         queue.enqueue(action);
 
         return Firebase.createUserBlogPost(username, title, content)
             .finally(() => queue.dequeue(action))
         ;
+    };
+
+    const createProfileBlogListener = (username, onDocExists) => {
+        const action = { type: CREATE_PROFILE_BLOG_LISTENER };
+        return Firebase.createBlogListener(username, onDocExists);
+    };
+
+    const createProfileUserListener = (username, onDocExists) => {
+        const action = { type: CREATE_PROFILE_USER_LISTENER };
+        return Firebase.createUserListener(username, onDocExists);
     };
 
     return {
@@ -130,6 +143,9 @@ module.exports = (update, Firebase, queue) => {
         getProfileBlogPageNos,
 
         // Actions
-        createProfileBlogPost
+        createProfileBlogPost,
+
+        createProfileBlogListener,
+        createProfileUserListener
     };
 };

@@ -28,7 +28,6 @@ export const Controls = {
         const enableEditor       = attrs.enableEditor;
         const deletePostBlogPost = attrs.deletePostBlogPost;
         const updatePostBlogPost = attrs.updatePostBlogPost;
-        const getPost            = attrs.getPost;
 
         /**
          * View
@@ -59,9 +58,9 @@ export const Controls = {
                         title,
                         content,
 
+                        // Actions
                         onSaveEvent: (newTitle, newContent) => {
                             updatePostBlogPost(doc_id, newTitle, newContent)
-                                .then(() => getPost(doc_id))
                                 .then(() => enableEditor(false))
                             ;
                         }

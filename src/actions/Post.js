@@ -7,6 +7,8 @@ const GET_POST             = 'GET_POST';
 const UPDATE_POST_BLOGPOST = 'POST_UPDATE_BLOGPOST';
 const DELETE_POST_BLOGPOST = 'POST_DELETE_BLOGPOST';
 
+const CREATE_POST_LISTENER = 'CREATE_POST_LISTENER';
+
 /**
  * Post Actions
  */
@@ -58,5 +60,10 @@ module.exports = (update, Firebase, queue) => {
         ;
     };
 
-    return { setPost, getPost, updatePostBlogPost, deletePostBlogPost };
+    const createPostListener = (doc_id, onDocExists) => {
+        const action = { type: CREATE_POST_LISTENER };
+        return Firebase.createPostListener(doc_id, onDocExists);
+    };
+
+    return { setPost, getPost, updatePostBlogPost, deletePostBlogPost, createPostListener };
 };

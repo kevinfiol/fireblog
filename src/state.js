@@ -29,6 +29,7 @@ const initialState = {
 
     profile: {
         user: {
+            timestamp: null,
             username: null,
             bio: null,
             email: null,
@@ -36,12 +37,14 @@ const initialState = {
             uid: null
         },
         blog: {
+            timestamp: null,
             page: { pageNo: null, posts: null },
             pageNos: []
         }
     },
 
     post: {
+        timestamp: null,
         doc_id: null,
         username: null,
         title: null,

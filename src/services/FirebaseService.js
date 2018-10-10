@@ -2,6 +2,7 @@ module.exports = (firebase, Pager, nanoid) => {
     const db   = firebase.firestore();
     const auth = firebase.auth();
     const settings = { timestampsInSnapshots: true };
+    const getTimestamp = () => firebase.firestore.FieldValue.serverTimestamp();
 
     db.settings(settings);
 
@@ -29,6 +30,7 @@ module.exports = (firebase, Pager, nanoid) => {
 
     const updateUserData = (username, prop, val) => {
         return db.collection('users').doc(username).set({
+            timestamp: getTimestamp(),
             [prop]: val
         }, { merge: true });
     };
@@ -49,7 +51,12 @@ module.exports = (firebase, Pager, nanoid) => {
             .then(snap => {
                 const users = [];
                 snap.forEach(doc => users.push( doc.data() ));
-                return users[0] || null;
+
+                if (!users[0]) return null;
+                const user = users[0];
+                
+                user.timestamp = user.timestamp.toDate().toJSON();
+                return user;
             })
         ;
     };
@@ -60,13 +67,19 @@ module.exports = (firebase, Pager, nanoid) => {
             .then(snap => {
                 const users = [];
                 snap.forEach(doc => users.push( doc.data() ));
-                return users[0] || null;
+
+                if (!users[0]) return null;
+                const user = users[0];
+                
+                user.timestamp = user.timestamp.toDate().toJSON();
+                return user;
             })
         ;
     };
 
     const addUserToDatabase = (username, email, uid) => {
         return db.collection('users').doc(username).set({
+            timestamp: getTimestamp(),
             username,
             email,
             uid
@@ -77,6 +90,7 @@ module.exports = (firebase, Pager, nanoid) => {
         const pager = Pager();
 
         return db.collection('blogs').doc(username).set({
+            timestamp: getTimestamp(),
             pages: pager.getPages()
         });
     };
@@ -127,6 +141,7 @@ module.exports = (firebase, Pager, nanoid) => {
     };
 
     const createUserBlogPost = (username, title, content) => {
+        const timestamp = getTimestamp();
         const date = new Date().toLocaleDateString();
         const userBlogRef = db.collection('blogs').doc(username);
         const allPostsRef = db.collection('posts');
@@ -139,13 +154,13 @@ module.exports = (firebase, Pager, nanoid) => {
                     if (pages) {
                         const uid = nanoid(11);
                         const doc_id = `${username}-${uid}`;
-                        allPostsRef.doc(doc_id).set({ doc_id, username, title, content, date });
+                        allPostsRef.doc(doc_id).set({ timestamp, doc_id, username, title, content, date });
 
                         const postRef = allPostsRef.doc(doc_id);
                         const pager = Pager(pages);
                         pager.addPost(doc_id, postRef);
 
-                        userBlogRef.set({ pages: pager.getPages() });
+                        userBlogRef.set({ timestamp, pages: pager.getPages() });
                         return;
                     }
                 }
@@ -156,6 +171,7 @@ module.exports = (firebase, Pager, nanoid) => {
     };
 
     const deleteUserBlogPost = doc_id => {
+        const timestamp = getTimestamp();
         const allPostsRef = db.collection('posts');
         let userBlogRef;
 
@@ -172,7 +188,7 @@ module.exports = (firebase, Pager, nanoid) => {
                 pager.deletePost(doc_id);
 
                 // Update User's blog pages with post removed
-                userBlogRef.set({ pages: pager.getPages() });
+                userBlogRef.set({ timestamp, pages: pager.getPages() });
                 return allPostsRef.doc(doc_id).delete();
             })
             .catch(() => {
@@ -183,9 +199,58 @@ module.exports = (firebase, Pager, nanoid) => {
 
     const updateUserBlogPost = (doc_id, title, content) => {
         return db.collection('posts').doc(doc_id).update({
+            timestamp: getTimestamp(),
             title,
             content
         });
+    };
+
+    const createPostListener = (doc_id, onDocExists) => {
+        const unsubscribe = db.collection('posts').doc(doc_id)
+            .onSnapshot(doc => {
+                const post = doc.data();
+
+                if (post.timestamp) {
+                    post.timestamp = post.timestamp.toDate().toJSON();
+                }
+
+                onDocExists(post);
+            })
+        ;
+
+        return unsubscribe;
+    };
+
+    const createBlogListener = (username, onDocExists) => {
+        const unsubscribe = db.collection('blogs').doc(username)
+            .onSnapshot(doc => {
+                const blog = doc.data();
+
+                if (blog.timestamp) {
+                    blog.timestamp = blog.timestamp.toDate().toJSON();
+                }
+
+                onDocExists(blog);
+            })
+        ;
+
+        return unsubscribe;
+    };
+
+    const createUserListener = (username, onDocExists) => {
+        const unsubscribe = db.collection('users').doc(username)
+            .onSnapshot(doc => {
+                const user = doc.data();
+
+                if (user.timestamp) {
+                    user.timestamp = user.timestamp.toDate().toJSON();
+                }
+
+                onDocExists(user);
+            })
+        ;
+
+        return unsubscribe;
     };
 
     return {
@@ -205,6 +270,10 @@ module.exports = (firebase, Pager, nanoid) => {
         getBlogPost,
         createUserBlogPost,
         updateUserBlogPost,
-        deleteUserBlogPost
+        deleteUserBlogPost,
+
+        createPostListener,
+        createBlogListener,
+        createUserListener
     };
 };
