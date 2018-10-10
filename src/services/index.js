@@ -10,4 +10,7 @@ firebase.initializeApp(FIREBASE_CONFIG);
 import FirebaseService from './FirebaseService';
 const Firebase = FirebaseService(firebase, Pager, nanoid);
 
-export default { Firebase };
+import StorageService from './StorageService';
+const LocalStore = StorageService();
+
+export default { Firebase, LocalStore };

@@ -7,8 +7,9 @@ import { Controls } from 'components/Post/Controls';
 /**
  * Actions
  */
+const { setCache, getCache } = actions.cache;
 const { enableEditor } = actions.global;
-const { setPostData, getPost, updateBlogPost, deleteBlogPost } = actions.post;
+const { setPost, getPost, updatePostBlogPost, deletePostBlogPost } = actions.post;
 
 /**
  * Post View
@@ -19,15 +20,16 @@ export const Post = {
      * @param {Object} attrs View Attributes
      */
     oninit: ({attrs}) => {
-        setPostData({
-            doc_id: null,
-            username: null,
-            title: null,
-            date: null,
-            content: null
-        });
-        
-        getPost(attrs.doc_id);
+        const route = m.route.get();
+        const cache = getCache(route);
+
+        if (cache) {
+            setPost(cache);
+        } else {
+            getPost(attrs.doc_id).then(() => {
+                setCache(route, model().post);
+            });
+        }
     },
 
     /**
@@ -37,19 +39,19 @@ export const Post = {
         /**
          * State Variables
          */
-        const username = model().global.userData.username;
-        const showEditor = model().global.showEditor;
+        const username     = model().global.userData.username;
+        const showEditor   = model().global.showEditor;
 
         const postUsername = model().post.username;
-        const doc_id = model().post.doc_id;
-        const title = model().post.title;
-        const date = model().post.date;
-        const content = model().post.content;
+        const doc_id       = model().post.doc_id;
+        const title        = model().post.title;
+        const date         = model().post.date;
+        const content      = model().post.content;
 
         /**
          * Computed
          */
-        const isPostDataLoaded = title !== null;
+        const isPostDataLoaded    = title !== null;
         const isSignedInUsersPost = username === postUsername;
 
         /**
@@ -68,10 +70,9 @@ export const Post = {
                             doc_id,
     
                             // Actions
-                            deleteBlogPost,
+                            deletePostBlogPost,
                             enableEditor,
-                            updateBlogPost,
-                            setPostData,
+                            updatePostBlogPost,
                             getPost
                         })
                         : null

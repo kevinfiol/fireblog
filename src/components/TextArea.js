@@ -21,12 +21,12 @@ export const TextArea = () => {
          * @param {Object} attrs View Attributes
          */
         oninit: ({attrs}) => {
-            value = attrs.value || '';
+            value       = attrs.value || '';
             inputStream = attrs.input;
             if (value) inputStream(value);
 
-            maxlength = attrs.maxlength || '';
-            rows = attrs.rows || '4';
+            maxlength   = attrs.maxlength   || '';
+            rows        = attrs.rows        || '4';
             placeholder = attrs.placeholder || '';
 
             if (attrs.textareaOncreate) textareaOncreate = attrs.textareaOncreate;

@@ -16,16 +16,16 @@ export const Controls = {
          * State
          */
         const showEditor = attrs.showEditor;
-        const username = attrs.username;
-        const blog = attrs.blog;
+        const username   = attrs.username;
+        const blog       = attrs.blog;
 
         /**
          * Actions
          */
-        const enableEditor = attrs.enableEditor;
-        const createBlogPost = attrs.createBlogPost;
-        const getBlogPage = attrs.getBlogPage;
-        const getBlogPageNumbers = attrs.getBlogPageNumbers;
+        const enableEditor          = attrs.enableEditor;
+        const createProfileBlogPost = attrs.createProfileBlogPost;
+        const getProfileBlogPage    = attrs.getProfileBlogPage;
+        const getProfileBlogPageNos = attrs.getProfileBlogPageNos;
 
         /**
          * View
@@ -43,10 +43,10 @@ export const Controls = {
                         blog,
     
                         // Actions
-                        createBlogPost,
+                        createProfileBlogPost,
                         enableEditor,
-                        getBlogPage,
-                        getBlogPageNumbers
+                        getProfileBlogPage,
+                        getProfileBlogPageNos
                     })
                 ])
                 : null

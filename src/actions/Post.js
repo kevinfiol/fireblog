@@ -1,35 +1,47 @@
 /**
  * Post Action Types
  */
+const SET_POST             = 'SET_POST';
+const GET_POST             = 'GET_POST';
 
-const POST_SET_POST        = 'POST_SET_POST';
-const POST_GET_POST        = 'POST_GET_POST';
-
-const POST_UPDATE_BLOGPOST = 'POST_UPDATE_BLOGPOST';
-const POST_DELETE_BLOGPOST = 'POST_DELETE_BLOGPOST';
+const UPDATE_POST_BLOGPOST = 'POST_UPDATE_BLOGPOST';
+const DELETE_POST_BLOGPOST = 'POST_DELETE_BLOGPOST';
 
 /**
  * Post Actions
  */
-
 module.exports = (update, Firebase, queue) => {
-    const setPostData = post => update(() => ({
-        type: POST_SET_POST,
+    /**
+     * Setters
+     */
+    const setPost = post => update(() => ({
+        type: SET_POST,
         model: { post }
     }));
 
+    /**
+     * Getters
+     */
     const getPost = doc_id => {
-        const action = { type: POST_GET_POST };
+        const action = { type: GET_POST };
         queue.enqueue(action);
 
+        setPost({
+            doc_id: null,
+            username: null,
+            title: null,
+            date: null,
+            content: null
+        });
+        
         return Firebase.getBlogPost(doc_id)
-            .then(setPostData)
+            .then(setPost)
             .finally(() => queue.dequeue(action))
         ;
     };
 
-    const updateBlogPost = (doc_id, title, content) => {
-        const action = { type: POST_UPDATE_BLOGPOST };
+    const updatePostBlogPost = (doc_id, title, content) => {
+        const action = { type: UPDATE_POST_BLOGPOST };
         queue.enqueue(action);
 
         return Firebase.updateUserBlogPost(doc_id, title, content)
@@ -37,8 +49,8 @@ module.exports = (update, Firebase, queue) => {
         ;
     };
 
-    const deleteBlogPost = doc_id => {
-        const action = { type: POST_DELETE_BLOGPOST };
+    const deletePostBlogPost = doc_id => {
+        const action = { type: DELETE_POST_BLOGPOST };
         queue.enqueue(action);
 
         return Firebase.deleteUserBlogPost(doc_id)
@@ -46,5 +58,5 @@ module.exports = (update, Firebase, queue) => {
         ;
     };
 
-    return { setPostData, getPost, updateBlogPost, deleteBlogPost };
+    return { setPost, getPost, updatePostBlogPost, deletePostBlogPost };
 };

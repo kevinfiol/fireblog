@@ -2,15 +2,16 @@
  * Profile Action Types
  */
 
-const PROFILE_SET_PROFILEUSER = 'PROFILE_SET_PROFILEUSER';
-const PROFILE_SET_PAGEDATA    = 'PROFILE_SET_PAGEDATA';
-const PROFILE_SET_PAGENOS     = 'PROFILE_SET_PAGENOS';
+const SET_PROFILE              = 'SET_PROFILE';
+const SET_PROFILE_USER         = 'SET_PROFILE_USER';
+const SET_PROFILE_BLOG_PAGE    = 'SET_PROFILE_BLOG_PAGE';
+const SET_PROFILE_BLOG_PAGENOS = 'SET_PROFILE_BLOG_PAGENOS';
 
-const PROFILE_GET_PROFILEDATA = 'PROFILE_GET_PROFILEDATA';
-const PROFILE_GET_BLOGPAGE    = 'PROFILE_GET_BLOGPAGE';
-const PROFILE_GET_BLOGPAGENOS = 'PROFILE_GET_BLOGPAGENOS';
+const GET_PROFILE_USER         = 'GET_PROFILE_USER';
+const GET_PROFILE_BLOG_PAGE    = 'GET_PROFILE_BLOG_PAGE';
+const GET_PROFILE_BLOG_PAGENOS = 'GET_PROFILE_BLOG_PAGENOS';
 
-const PROFILE_CREATE_BLOGPOST = 'PROFILE_CREATE_BLOGPOST';
+const CREATE_PROFILE_BLOGPOST  = 'CREATE_PROFILE_BLOGPOST';
 
 /**
  * Profile Actions
@@ -18,10 +19,17 @@ const PROFILE_CREATE_BLOGPOST = 'PROFILE_CREATE_BLOGPOST';
  * @param {Object} Firebase FirebaseService
  * @param {Object} queue    Queue Actions
  */
-
 module.exports = (update, Firebase, queue) => {
+    /**
+     * Setters 
+     */
+    const setProfile = profile => update(() => ({
+        type: SET_PROFILE,
+        model: { profile }
+    }));
+
     const setProfileUser = data => update(() => {
-        const type = PROFILE_SET_PROFILEUSER;
+        const type = SET_PROFILE_USER;
         let user = {};
 
         if (!data) {
@@ -44,8 +52,8 @@ module.exports = (update, Firebase, queue) => {
         };
     });
 
-    const setPageData = data => update(() => {
-        const type = PROFILE_SET_PAGEDATA;
+    const setProfileBlogPage = data => update(() => {
+        const type = SET_PROFILE_BLOG_PAGE;
         let page = {};
 
         if (!data) page = { pageNo: null, posts: null };
@@ -57,13 +65,16 @@ module.exports = (update, Firebase, queue) => {
         };
     });
 
-    const setPageNumbers = pageNos => update(() => ({
-        type: PROFILE_SET_PAGENOS,
+    const setProfileBlogPageNos = pageNos => update(() => ({
+        type: SET_PROFILE_BLOG_PAGENOS,
         model: { profile: { blog: { pageNos } } }
     }));
 
-    const getProfileData = username => {
-        const action = { type: PROFILE_GET_PROFILEDATA };
+    /**
+     * Getters
+     */
+    const getProfileUser = username => {
+        const action = { type: GET_PROFILE_USER };
         queue.enqueue(action);
 
         setProfileUser(null);
@@ -73,29 +84,32 @@ module.exports = (update, Firebase, queue) => {
         ;
     };
 
-    const getBlogPage = (username, pageNo) => {
-        const action = { type: PROFILE_GET_BLOGPAGE };
+    const getProfileBlogPage = (username, pageNo) => {
+        const action = { type: GET_PROFILE_BLOG_PAGE };
         queue.enqueue(action);
 
-        setPageData(null);
+        setProfileBlogPage(null);
         return Firebase.getUserBlogPage(username, pageNo)
-            .then(setPageData)
+            .then(setProfileBlogPage)
             .finally(() => queue.dequeue(action))
         ;
     };
 
-    const getBlogPageNumbers = username => {
-        const action = { type: PROFILE_GET_BLOGPAGENOS };
+    const getProfileBlogPageNos = username => {
+        const action = { type: GET_PROFILE_BLOG_PAGENOS };
         queue.enqueue(action);
 
         return Firebase.getUserBlogPageNumbers(username)
-            .then(setPageNumbers)
+            .then(setProfileBlogPageNos)
             .finally(() => queue.dequeue(action))
         ;
     };
 
-    const createBlogPost = (username, title, content) => {
-        const action = { type: PROFILE_CREATE_BLOGPOST };
+    /**
+     * Actions
+     */
+    const createProfileBlogPost = (username, title, content) => {
+        const action = { type: CREATE_PROFILE_BLOGPOST };
         queue.enqueue(action);
 
         return Firebase.createUserBlogPost(username, title, content)
@@ -104,12 +118,18 @@ module.exports = (update, Firebase, queue) => {
     };
 
     return {
-        getProfileData,
-        getBlogPageNumbers,
+        // Setters
+        setProfile,
         setProfileUser,
-        setPageData,
-        setPageNumbers,
-        getBlogPage,
-        createBlogPost
+        setProfileBlogPage,
+        setProfileBlogPageNos,
+
+        // Getters
+        getProfileUser,
+        getProfileBlogPage,
+        getProfileBlogPageNos,
+
+        // Actions
+        createProfileBlogPost
     };
 };

@@ -14,31 +14,49 @@ export const Editor = () => {
     const titleStream = stream('');
     const contentStream = stream('');
 
+    /**
+     * State
+     */
+    let username;
+    let blog;
+    let doc_id;
+    let title;
+    let content;
+
+    /**
+     * Actions
+     */
+    let enableEditor;
+    let createProfileBlogPost;
+    let updatePostBlogPost;
+    let getProfileBlogPage;
+    let getPost;
+    let getProfileBlogPageNos;
+
     return {
         /**
-         * View Method
+         * Oninit Method
          * @param {Object} attrs View Attributes
          */
-        view: ({attrs}) => {
-            /**
-             * State
-             */
-            const username = attrs.username;
-            const blog = attrs.blog;
-            const doc_id = attrs.doc_id;
-            const title = attrs.title;
-            const content = attrs.content;
+        oninit: ({attrs}) => {
+            username = attrs.username;
+            blog     = attrs.blog;
+            doc_id   = attrs.doc_id;
+            title    = attrs.title;
+            content  = attrs.content;
 
-            /**
-             * Actions
-             */
-            const enableEditor = attrs.enableEditor;
-            const createBlogPost = attrs.createBlogPost || null;
-            const updateBlogPost = attrs.updateBlogPost || null;
-            const getBlogPage = attrs.getBlogPage || null;
-            const getPost = attrs.getPost || null;
-            const getBlogPageNumbers = attrs.getBlogPageNumbers || null;
+            enableEditor          = attrs.enableEditor;
+            createProfileBlogPost = attrs.createProfileBlogPost || null;
+            updatePostBlogPost    = attrs.updatePostBlogPost    || null;
+            getProfileBlogPage    = attrs.getProfileBlogPage    || null;
+            getPost               = attrs.getPost               || null;
+            getProfileBlogPageNos = attrs.getProfileBlogPageNos || null;
+        },
 
+        /**
+         * View Method
+         */
+        view: () => {
             /**
              * Computed
              */
@@ -64,16 +82,16 @@ export const Editor = () => {
                     ? m(LoadingBtn, {
                         className: 'mx1 my2 btn-outline',
                         onclick: () => {
-                            if (createBlogPost) {
+                            if (createProfileBlogPost) {
                                 // Creating Blog Post
-                                createBlogPost(username, titleStream(), contentStream())
-                                    .then(() => getBlogPage(username, blog.page.pageNo))
-                                    .then(() => getBlogPageNumbers(username))
+                                createProfileBlogPost(username, titleStream(), contentStream())
+                                    .then(() => getProfileBlogPage(username, blog.page.pageNo))
+                                    .then(() => getProfileBlogPageNos(username))
                                     .then(() => enableEditor(false))
                                 ;
-                            } else if (updateBlogPost) {
+                            } else if (updatePostBlogPost) {
                                 // Editing Blog Post
-                                updateBlogPost(doc_id, titleStream(), contentStream())
+                                updatePostBlogPost(doc_id, titleStream(), contentStream())
                                     .then(() => getPost(doc_id))
                                     .then(() => enableEditor(false))
                                 ;

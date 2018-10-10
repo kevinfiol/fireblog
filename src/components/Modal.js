@@ -24,18 +24,6 @@ export const Modal = {
      */
     view({attrs, children}) {
         /**
-         * State
-         */
-        const disabledCondition = attrs.disabledCondition;
-
-        /**
-         * Actions
-         */
-        const saveMethod = attrs.saveMethod || null;
-        const cancelMethod = attrs.cancelMethod || null;
-        const enableModal = attrs.enableModal;
-
-        /**
          * View
          */
         return m('.z4.fixed.left-0.right-0.top-0.bottom-0.charcoal.bg-paper.p3.overflow-auto', [
@@ -44,18 +32,18 @@ export const Modal = {
                     m(LoadingBtn, {
                         className: 'right mx1 btn-outline',
                         onclick: () => {
-                            if (cancelMethod) cancelMethod();
-                            enableModal(false);
+                            if (attrs.cancelMethod) attrs.cancelMethod();
+                            attrs.enableModal(false);
                         }
                     }, 'Cancel'),
     
-                    saveMethod
+                    attrs.saveMethod
                         ? m(LoadingBtn, {
                             className: 'right mx1 btn-outline',
-                            disabled: disabledCondition || false,
+                            disabled: attrs.disabledCondition || false,
                             onclick: () => {
-                                saveMethod();
-                                enableModal(false);
+                                attrs.saveMethod();
+                                attrs.enableModal(false);
                             }
                         }, 'Save')
                         : null

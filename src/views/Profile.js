@@ -9,8 +9,9 @@ import { Pagination } from 'components/Profile/Pagination';
 /**
  * Actions
  */
+const { setCache, getCache } = actions.cache;
 const { enableEditor } = actions.global;
-const { getProfileData, getBlogPage, getBlogPageNumbers, createBlogPost } = actions.profile;
+const { setProfile, getProfileUser, getProfileBlogPage, getProfileBlogPageNos, createProfileBlogPost } = actions.profile;
 
 /**
  * Profile View
@@ -21,14 +22,23 @@ export const Profile = {
      * @param {Object} attrs View Attributes
      */
     oninit: ({attrs}) => {
-        const username = attrs.username;
-        const pageNo = attrs.key;
+        const route = m.route.get();
+        const cache = getCache(route);
 
-        Promise.all([
-            getBlogPageNumbers(username),
-            getProfileData(username),
-            getBlogPage(username, pageNo)
-        ]);
+        if (cache) {
+            setProfile(cache);
+        } else {
+            const profileUsername = attrs.username;
+            const pageNo = attrs.key;
+    
+            Promise.all([
+                getProfileUser(profileUsername),
+                getProfileBlogPage(profileUsername, pageNo),
+                getProfileBlogPageNos(profileUsername)
+            ]).then(() => {
+                setCache(route, model().profile);
+            });
+        }
     },
 
     /**
@@ -38,20 +48,20 @@ export const Profile = {
         /**
          * State
          */
-        const globalUser = model().global.userData;
-        const showEditor = model().global.showEditor;
+        const globalUser  = model().global.userData;
+        const showEditor  = model().global.showEditor;
 
         const profileUser = model().profile.user;
-        const blog = model().profile.blog;
-        const pageNo = model().profile.blog.page.pageNo;
-        const pageNos = model().profile.blog.pageNos;
-        const pageLength = model().profile.blog.pageNos.length;
+        const blog        = model().profile.blog;
+        const pageNo      = model().profile.blog.page.pageNo;
+        const pageNos     = model().profile.blog.pageNos;
+        const pageLength  = model().profile.blog.pageNos.length;
 
         /**
          * Computed
          */
-        const isProfileLoaded = profileUser.uid !== null;
-        const isBlogLoaded = pageNo !== null && pageLength > 0;
+        const isProfileLoaded      = profileUser.uid !== null;
+        const isBlogLoaded         = pageNo !== null && pageLength > 0;
         const isGlobalUsersProfile = profileUser.username === globalUser.username;
 
         /**
@@ -77,9 +87,9 @@ export const Profile = {
                         showEditor,
 
                         // Actions
-                        createBlogPost,
-                        getBlogPage,
-                        getBlogPageNumbers,
+                        createProfileBlogPost,
+                        getProfileBlogPage,
+                        getProfileBlogPageNos,
                         enableEditor
                     })
                 ])

@@ -6,6 +6,9 @@ import services from 'services';
 import Queue from './Queue';
 const queue = Queue(update);
 
+import Cache from './Cache';
+const cache = Cache(services.LocalStore);
+
 import Global from './Global';
 const global = Global(update, services.Firebase, queue);
 
@@ -15,4 +18,4 @@ const profile = Profile(update, services.Firebase, queue);
 import Post from './Post';
 const post = Post(update, services.Firebase, queue);
 
-export default { queue, global, profile, post };
+export default { queue, cache, global, profile, post };

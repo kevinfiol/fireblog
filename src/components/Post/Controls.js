@@ -16,19 +16,19 @@ export const Controls = {
         /**
          * State
          */
-        const username = attrs.username;
-        const doc_id = attrs.doc_id;
-        const title = attrs.title;
-        const content = attrs.content;
+        const username   = attrs.username;
+        const doc_id     = attrs.doc_id;
+        const title      = attrs.title;
+        const content    = attrs.content;
         const showEditor = attrs.showEditor;
 
         /**
          * Actions
          */
-        const enableEditor = attrs.enableEditor;
-        const deleteBlogPost = attrs.deleteBlogPost;
-        const updateBlogPost = attrs.updateBlogPost;
-        const getPost = attrs.getPost;
+        const enableEditor       = attrs.enableEditor;
+        const deletePostBlogPost = attrs.deletePostBlogPost;
+        const updatePostBlogPost = attrs.updatePostBlogPost;
+        const getPost            = attrs.getPost;
 
         /**
          * View
@@ -41,7 +41,7 @@ export const Controls = {
                 btnClassName: 'btn-outline mx1',
                 label: 'Delete',
                 action: () => {
-                    deleteBlogPost(doc_id)
+                    deletePostBlogPost(doc_id)
                         .then(() => {
                             // Route back to profile upon deletion
                             m.route.set(`/u/${username}`);
@@ -62,7 +62,7 @@ export const Controls = {
                         doc_id,
     
                         // Actions
-                        updateBlogPost,
+                        updatePostBlogPost,
                         getPost,
                         enableEditor
                     })

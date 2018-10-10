@@ -6,28 +6,31 @@ import { LoadingBtn } from 'components/LoadingBtn';
  */
 export const ConfirmBtn = () => {
     /**
-     * Local State
+     * Local State & Actions
      */
     let confirm = false;
+    let className;
+    let btnClassName;
+    let label;
+    let action;
 
     return {
+        /**
+         * Oninit Method
+         * @param {Object} attrs View Attributes
+         */
+        oninit: ({attrs}) => {
+            className    = attrs.className;
+            btnClassName = attrs.btnClassName;
+            label        = attrs.label;
+            action       = attrs.action;
+        },
+
         /**
          * View Method
          * @param {Object} attrs View Attributes
          */
-        view: ({attrs}) => {
-            /**
-             * State
-             */
-            const className = attrs.className;
-            const btnClassName = attrs.btnClassName;
-            const label = attrs.label;
-
-            /**
-             * Actions
-             */
-            const action = attrs.action;
-
+        view: () => {
             /**
              * View
              */
