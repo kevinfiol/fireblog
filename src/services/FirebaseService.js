@@ -205,12 +205,18 @@ module.exports = (firebase, Pager, nanoid) => {
         });
     };
 
+    const updateBlogTimestamp = username => {
+        return db.collection('blogs').doc(username).update({
+            timestamp: getTimestamp()
+        });
+    };
+
     const createPostListener = (doc_id, onDocExists) => {
         const unsubscribe = db.collection('posts').doc(doc_id)
             .onSnapshot(doc => {
-                const post = doc.data();
+                const post = doc.data() || null;
 
-                if (post.timestamp) {
+                if (post && post.timestamp) {
                     post.timestamp = post.timestamp.toDate().toJSON();
                 }
 
@@ -221,16 +227,18 @@ module.exports = (firebase, Pager, nanoid) => {
         return unsubscribe;
     };
 
-    const createBlogListener = (username, onDocExists) => {
+    const createBlogListener = (username, pageNo, onDocExists) => {
         const unsubscribe = db.collection('blogs').doc(username)
             .onSnapshot(doc => {
-                const blog = doc.data();
+                const data = doc.data();
 
-                if (blog.timestamp) {
-                    blog.timestamp = blog.timestamp.toDate().toJSON();
-                }
+                const blogPage = {
+                    timestamp: data.timestamp ? data.timestamp.toDate().toJSON() : null,
+                    page: data.pages[pageNo],
+                    pageNos: Object.keys(data.pages).map(Number).sort()
+                };
 
-                onDocExists(blog);
+                onDocExists(blogPage);
             })
         ;
 
@@ -271,6 +279,8 @@ module.exports = (firebase, Pager, nanoid) => {
         createUserBlogPost,
         updateUserBlogPost,
         deleteUserBlogPost,
+
+        updateBlogTimestamp,
 
         createPostListener,
         createBlogListener,

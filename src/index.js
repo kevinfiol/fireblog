@@ -4,6 +4,7 @@ import meiosisTracer from 'meiosis-tracer';
 import { model, record } from 'state';
 import { Layout } from 'views/Layout';
 import { Index } from 'views/Index';
+import { ErrorPage } from 'views/ErrorPage';
 import { Profile } from 'views/Profile';
 import { Post } from 'views/Post';
 import { Settings } from 'views/Settings';
@@ -30,6 +31,10 @@ m.route(document.getElementById('app'), '/', {
 
     '/p/:doc_id': {
         render: ({attrs}) => m(Layout, m(Post, { doc_id: attrs.doc_id }))
+    },
+
+    '/404': {
+        render: () => m(Layout, m(ErrorPage))
     },
 
     '/settings': {

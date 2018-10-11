@@ -9,7 +9,7 @@ import { Controls } from 'components/Post/Controls';
  */
 const { setCache, getCache } = actions.cache;
 const { enableEditor } = actions.global;
-const { setPost, updatePostBlogPost, deletePostBlogPost, createPostListener } = actions.post;
+const { setPost, updatePostBlogPost, deletePostBlogPost, createPostListener, updatePostBlogTimestamp } = actions.post;
 
 /**
  * Post View
@@ -28,21 +28,26 @@ export const Post = () => {
         oninit: ({attrs}) => {
             const route = m.route.get();
             const cache = getCache(route);
+
             if (cache) setPost(cache);
+            else setPost(null);
 
             listener = createPostListener(attrs.doc_id, data => {
-                if (!cache) {
-                    setCache(route, data);
-                    setPost(data);
-                } else {
+                // Hacky, shouldn't be accessing profile model
+                // We should delete the cache for a post once the post is deleted.
+                if (!data && !model().profile.user.username) {
+                    m.route.set('/404');
+                    return;
+                }
+
+                if (cache) {
                     const cachedTS = new Date(cache.timestamp).getTime();
                     const dataTS = new Date(data.timestamp).getTime();
-
-                    if (dataTS > cachedTS) {
-                        setCache(route, data);
-                        setPost(data);
-                    }
+                    if (cachedTS >= dataTS) return;
                 }
+
+                setCache(route, data);
+                setPost(data);
             });
         },
 
@@ -89,6 +94,7 @@ export const Post = () => {
                                 doc_id,
         
                                 // Actions
+                                updatePostBlogTimestamp,
                                 deletePostBlogPost,
                                 enableEditor,
                                 updatePostBlogPost,

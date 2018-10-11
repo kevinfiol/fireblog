@@ -4,6 +4,7 @@
 
 const SET_PROFILE              = 'SET_PROFILE';
 const SET_PROFILE_USER         = 'SET_PROFILE_USER';
+const SET_PROFILE_BLOG         = 'SET_PROFILE_BLOG';
 const SET_PROFILE_BLOG_PAGE    = 'SET_PROFILE_BLOG_PAGE';
 const SET_PROFILE_BLOG_PAGENOS = 'SET_PROFILE_BLOG_PAGENOS';
 
@@ -22,13 +23,13 @@ const CREATE_PROFILE_USER_LISTENER = 'CREATE_PROFILE_USER_LISTENER';
  * @param {Object} Firebase FirebaseService
  * @param {Object} queue    Queue Actions
  */
-module.exports = (update, Firebase, queue) => {
+module.exports = (update, queue, initial, Firebase) => {
     /**
      * Setters 
      */
     const setProfile = profile => update(() => ({
         type: SET_PROFILE,
-        model: { profile }
+        model: { profile: profile || initial }
     }));
 
     const setProfileUser = data => update(() => {
@@ -54,6 +55,11 @@ module.exports = (update, Firebase, queue) => {
             model: { profile: { user } }
         };
     });
+
+    const setProfileBlog = blog => update(() => ({
+        type: SET_PROFILE_BLOG,
+        model: { profile: { blog } }
+    }));
 
     const setProfileBlogPage = data => update(() => {
         const type = SET_PROFILE_BLOG_PAGE;
@@ -120,9 +126,9 @@ module.exports = (update, Firebase, queue) => {
         ;
     };
 
-    const createProfileBlogListener = (username, onDocExists) => {
+    const createProfileBlogListener = (username, pageNo, onDocExists) => {
         const action = { type: CREATE_PROFILE_BLOG_LISTENER };
-        return Firebase.createBlogListener(username, onDocExists);
+        return Firebase.createBlogListener(username, pageNo, onDocExists);
     };
 
     const createProfileUserListener = (username, onDocExists) => {
@@ -134,6 +140,7 @@ module.exports = (update, Firebase, queue) => {
         // Setters
         setProfile,
         setProfileUser,
+        setProfileBlog,
         setProfileBlogPage,
         setProfileBlogPageNos,
 

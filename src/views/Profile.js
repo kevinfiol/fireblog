@@ -13,12 +13,10 @@ const { setCache, getCache } = actions.cache;
 const { enableEditor } = actions.global;
 const {
     setProfile,
-    getProfileUser,
-    getProfileBlogTimestamp,
-    getProfileBlogPage,
-    getProfileBlogPageNos,
-    createProfileBlogPost,
+    setProfileUser,
+    setProfileBlog,
 
+    createProfileBlogPost,
     createProfileBlogListener,
     createProfileUserListener
 } = actions.profile;
@@ -44,42 +42,64 @@ export const Profile = () => {
 
             const route = m.route.get();
             const cache = getCache(route);
+
             if (cache) setProfile(cache);
+            else setProfile(null);
 
             userListener = createProfileUserListener(profileUsername, data => {
-                console.log(data);
+                if (cache && cache.user) {
+                    // If Cache is up to date, Do Nothing
+                    const cachedTS = new Date(cache.user.timestamp).getTime();
+                    const dataTS = new Date(data.timestamp).getTime();
+                    if (cachedTS >= dataTS) return;
+                }
+
+                if (!cache) {
+                    setCache(route, { user: data });
+                    setProfileUser(data);
+                } else {
+                    cache.user = data;
+                    setCache(route, cache);
+                    setProfileUser(data);
+                }
             });
 
-            blogListener = createProfileBlogListener(profileUsername, data => {
-                // For this make sure you check for the page number
-                // Also, you still have to update the blog timestamp 'on Post update'
-                console.log(data);
+            blogListener = createProfileBlogListener(profileUsername, pageNo, data => {
+                if (cache && cache.blog) {
+                    // If Cache is up to date, Do Nothing
+                    const cachedTS = new Date(cache.blog.timestamp).getTime();
+                    const dataTS = new Date(data.timestamp).getTime();
+                    if (cachedTS >= dataTS) return;
+                }
+
+                // If page doesn't exist
+                if (!data.page) {
+                    m.route.set('/u/:username', { username: profileUsername });
+                    return;
+                }
+
+                const refsToPosts = data.page.posts.map(post => post.data);
+                Promise.all( refsToPosts.map(ref => ref.get().then( doc => doc.data() )) )
+                    .then(posts => {
+                        const blog = data;
+                        blog.page.posts = posts;
+                        
+                        if (!cache) {
+                            setCache(route, { blog });
+                            setProfileBlog(blog);
+                        } else {
+                            cache.blog = blog;
+                            setCache(route, cache);
+                            setProfileBlog(blog);
+                        }
+                    })
+                ;
             });
+        },
 
-            // Promise.all([
-            //     getProfileUser(profileUsername),
-            //     getProfileBlogTimestamp(profileUsername),
-            //     getProfileBlogPage(profileUsername, pageNo),
-            //     getProfileBlogPageNos(profileUsername)
-            // ]);
-
-            // const route = m.route.get();
-            // const cache = getCache(route);
-
-            // if (cache) {
-            //     setProfile(cache);
-            // } else {
-            //     const profileUsername = attrs.username;
-            //     const pageNo = attrs.key;
-        
-            //     Promise.all([
-            //         getProfileUser(profileUsername),
-            //         getProfileBlogPage(profileUsername, pageNo),
-            //         getProfileBlogPageNos(profileUsername)
-            //     ]).then(() => {
-            //         setCache(route, model().profile);
-            //     });
-            // }
+        onremove: () => {
+            userListener();
+            blogListener();
         },
 
         /**
@@ -101,7 +121,7 @@ export const Profile = () => {
             /**
              * Computed
              */
-            const isProfileLoaded      = profileUser.uid !== null;
+            const isProfileLoaded      = profileUser.username !== null;
             const isBlogLoaded         = pageNo !== null && pageLength > 0;
             const isGlobalUsersProfile = profileUser.username === globalUser.username;
 
@@ -124,13 +144,10 @@ export const Profile = () => {
                         m(Controls, {
                             // State
                             username: globalUser.username,
-                            blog,
                             showEditor,
 
                             // Actions
                             createProfileBlogPost,
-                            getProfileBlogPage,
-                            getProfileBlogPageNos,
                             enableEditor
                         })
                     ])

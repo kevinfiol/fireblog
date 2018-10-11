@@ -23,7 +23,7 @@ const GLOBAL_SIGNOUT            = 'GLOBAL_SIGNOUT';
  * @param {Object} queue    Queue Actions
  */
 
-module.exports = (update, Firebase, queue) => {
+module.exports = (update, queue, initial, Firebase) => {
     /**
      * UI Actions
      */

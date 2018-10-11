@@ -1,5 +1,5 @@
 /** Dependencies */
-import { update } from 'state';
+import { update, initialState } from 'state';
 import services from 'services';
 
 /** Actions */
@@ -10,12 +10,12 @@ import Cache from './Cache';
 const cache = Cache(services.LocalStore);
 
 import Global from './Global';
-const global = Global(update, services.Firebase, queue);
+const global = Global(update, queue, initialState.global, services.Firebase);
 
 import Profile from './Profile';
-const profile = Profile(update, services.Firebase, queue);
+const profile = Profile(update, queue, initialState.profile, services.Firebase);
 
 import Post from './Post';
-const post = Post(update, services.Firebase, queue);
+const post = Post(update, queue, initialState.post, services.Firebase);
 
 export default { queue, cache, global, profile, post };

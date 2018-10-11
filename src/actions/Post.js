@@ -1,24 +1,23 @@
 /**
  * Post Action Types
  */
-const SET_POST             = 'SET_POST';
-const GET_POST             = 'GET_POST';
+const SET_POST                   = 'SET_POST';
+const GET_POST                   = 'GET_POST';
 
-const UPDATE_POST_BLOGPOST = 'POST_UPDATE_BLOGPOST';
-const DELETE_POST_BLOGPOST = 'POST_DELETE_BLOGPOST';
-
-const CREATE_POST_LISTENER = 'CREATE_POST_LISTENER';
+const UPDATE_POST_BLOGPOST       = 'POST_UPDATE_BLOGPOST';
+const UPDATE_POST_BLOG_TIMESTAMP = 'UPDATE_POST_BLOG_TIMESTAMP';
+const DELETE_POST_BLOGPOST       = 'POST_DELETE_BLOGPOST';
 
 /**
  * Post Actions
  */
-module.exports = (update, Firebase, queue) => {
+module.exports = (update, queue, initial, Firebase) => {
     /**
      * Setters
      */
     const setPost = post => update(() => ({
         type: SET_POST,
-        model: { post }
+        model: { post: post || initial }
     }));
 
     /**
@@ -27,14 +26,6 @@ module.exports = (update, Firebase, queue) => {
     const getPost = doc_id => {
         const action = { type: GET_POST };
         queue.enqueue(action);
-
-        setPost({
-            doc_id: null,
-            username: null,
-            title: null,
-            date: null,
-            content: null
-        });
         
         return Firebase.getBlogPost(doc_id)
             .then(setPost)
@@ -60,10 +51,25 @@ module.exports = (update, Firebase, queue) => {
         ;
     };
 
+    const updatePostBlogTimestamp = username => {
+        const action = { type: UPDATE_POST_BLOG_TIMESTAMP };
+        queue.enqueue(action);
+
+        return Firebase.updateBlogTimestamp(username)
+            .finally(() => queue.dequeue(action))
+        ;
+    };
+
     const createPostListener = (doc_id, onDocExists) => {
-        const action = { type: CREATE_POST_LISTENER };
         return Firebase.createPostListener(doc_id, onDocExists);
     };
 
-    return { setPost, getPost, updatePostBlogPost, deletePostBlogPost, createPostListener };
+    return {
+        setPost,
+        getPost,
+        updatePostBlogPost,
+        deletePostBlogPost,
+        updatePostBlogTimestamp,
+        createPostListener
+    };
 };

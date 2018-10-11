@@ -17,15 +17,12 @@ export const Controls = {
          */
         const showEditor = attrs.showEditor;
         const username   = attrs.username;
-        const blog       = attrs.blog;
 
         /**
          * Actions
          */
         const enableEditor          = attrs.enableEditor;
         const createProfileBlogPost = attrs.createProfileBlogPost;
-        const getProfileBlogPage    = attrs.getProfileBlogPage;
-        const getProfileBlogPageNos = attrs.getProfileBlogPageNos;
 
         /**
          * View
@@ -40,8 +37,6 @@ export const Controls = {
                     m(Editor, {
                         onSaveEvent: (newTitle, newContent) => {
                             createProfileBlogPost(username, newTitle, newContent)
-                                .then(() => getProfileBlogPage(username, blog.page.pageNo))
-                                .then(() => getProfileBlogPageNos(username))
                                 .then(() => enableEditor(false))
                             ;
                         }
