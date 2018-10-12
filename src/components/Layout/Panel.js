@@ -31,7 +31,7 @@ export const Panel = {
         /**
          * View
          */
-        return m('.clearfix.right', [
+        return [
             !isFirebaseUser
                 ? [
                     m(LoadingBtn, { className: 'a-btn p1 mx1', onclick: () => enableSignUpForm(true) }, 'Sign Up'),
@@ -70,6 +70,6 @@ export const Panel = {
                 ]
                 : null
             ,
-        ]);
+        ];
     }
 };

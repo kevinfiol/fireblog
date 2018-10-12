@@ -6,6 +6,13 @@ import { LoadingBtn } from 'components/LoadingBtn';
  */
 export const Modal = {
     /**
+     * Oninit Method
+     */
+    oninit() {
+        document.body.style.overflow = 'hidden';
+    },
+
+    /**
      * Onbeforeremove Method
      * @param {Object} dom Reference to DOM Object
      */
@@ -15,6 +22,13 @@ export const Modal = {
         return new Promise(res => {
             dom.addEventListener('animationend', res);
         });
+    },
+
+    /**
+     * Onremove Method
+     */
+    onremove() {
+        document.body.style.overflow = '';
     },
 
     /**

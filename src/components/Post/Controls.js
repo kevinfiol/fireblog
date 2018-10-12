@@ -29,6 +29,7 @@ export const Controls = {
         const deletePostBlogPost      = attrs.deletePostBlogPost;
         const updatePostBlogPost      = attrs.updatePostBlogPost;
         const updatePostBlogTimestamp = attrs.updatePostBlogTimestamp;
+        const removeCache             = attrs.removeCache;
 
         /**
          * View
@@ -41,12 +42,11 @@ export const Controls = {
                 btnClassName: 'btn-outline mx1',
                 label: 'Delete',
                 action: () => {
-                    deletePostBlogPost(doc_id)
-                        .then(() => {
-                            // Route back to profile upon deletion
-                            m.route.set(`/u/${username}`);
-                        })
-                    ;
+                    m.route.set('/u/:username', { username });
+                    const route = m.route.get();
+
+                    deletePostBlogPost(doc_id);
+                    removeCache(route);
                 }
             }),
     

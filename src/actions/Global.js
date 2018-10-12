@@ -1,7 +1,6 @@
 /**
  * Global Action Types
  */
-
 const GLOBAL_ENABLE_POSTEDITOR  = 'GLOBAL_ENABLE_POSTEDITOR';
 const GLOBAL_ENABLE_SIGNUP      = 'GLOBAL_ENABLE_SIGNUP';
 const GLOBAL_ENABLE_SIGNIN      = 'GLOBAL_ENABLE_SIGNIN';
@@ -22,7 +21,6 @@ const GLOBAL_SIGNOUT            = 'GLOBAL_SIGNOUT';
  * @param {Object} Firebase FirebaseService
  * @param {Object} queue    Queue Actions
  */
-
 module.exports = (update, queue, initial, Firebase) => {
     /**
      * UI Actions
@@ -55,50 +53,23 @@ module.exports = (update, queue, initial, Firebase) => {
     /**
      * User Account Methods
      */
-    const setUserData = data => update(() => {
-        const type = GLOBAL_SET_USERDATA;
-        let userData = {};
-
-        if (!data) {
-            userData = {
-                username: null,
-                uid: null,
-                photoURL: null,
-                bio: null
-            };
-        } else {
-            for (let key in data) {
-                userData[key] = data[key];
-            }
-        }
-
-        return {
-            type,
-            model: { global: { userData } }
-        };
-    });
+    const setUserData = userData => update(() => ({
+        type: GLOBAL_SET_USERDATA,
+        model: { global: { userData: userData || initial.userData } }
+    }));
 
     const setFirebaseUser = user => update(() => {
         const type = GLOBAL_SET_FIREBASEUSER;
-        let firebaseUser = {};
+        let firebaseUser;
 
-        if (!user) {
-            firebaseUser = {
-                displayName: null,
-                email: null,
-                photoURL: null,
-                emailVerified: null,
-                uid: null
-            };
-        } else {
-            firebaseUser = {
-                displayName: user.displayName,
-                email: user.email,
-                photoURL: user.photoURL,
-                emailVerified: user.emailVerified,
-                uid: user.uid
-            };
-        }
+        if (!user) firebaseUser = initial.firebaseUser;
+        else firebaseUser = {
+            displayName: user.displayName,
+            email: user.email,
+            photoURL: user.photoURL,
+            emailVerified: user.emailVerified,
+            uid: user.uid
+        };
 
         return {
             type,

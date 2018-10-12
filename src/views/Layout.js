@@ -46,25 +46,29 @@ export const Layout = {
          * View
          */
         return m('.clearfix', [
-            m('.top-0.left-0', [
-                m(Panel, {
-                    // State
-                    firebaseUser,
-                    username,
-    
-                    // Actions
-                    enableSignInForm,
-                    enableSignUpForm,
-                    signOut
-                })
+            m('.top-0.clearfix', { style: { height: '36px' } }, [
+                m('.left', [
+                    isLoading
+                        ? m(Spinner)
+                        : null
+                    ,
+                ]),
+
+                m('.right', [
+                    m(Panel, {
+                        // State
+                        firebaseUser,
+                        username,
+        
+                        // Actions
+                        enableSignInForm,
+                        enableSignUpForm,
+                        signOut
+                    })
+                ])
             ]),
     
-            m('.my3', children),
-    
-            isLoading
-                ? m(Spinner)
-                : null
-            ,
+            m('.col.col-12.my1', children),
     
             showSignUp
                 ? m(Modal, { enableModal: enableSignUpForm, cancelMethod: () => setSignUpMsg(null) }, [

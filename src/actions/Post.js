@@ -27,7 +27,7 @@ module.exports = (update, queue, initial, Firebase) => {
         const action = { type: GET_POST };
         queue.enqueue(action);
         
-        return Firebase.getBlogPost(doc_id)
+        return Firebase.getUserBlogPost(doc_id)
             .then(setPost)
             .finally(() => queue.dequeue(action))
         ;
@@ -65,8 +65,8 @@ module.exports = (update, queue, initial, Firebase) => {
     };
 
     return {
-        setPost,
         getPost,
+        setPost,
         updatePostBlogPost,
         deletePostBlogPost,
         updatePostBlogTimestamp,

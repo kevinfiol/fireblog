@@ -15,7 +15,6 @@ const {
     setProfile,
     setProfileUser,
     setProfileBlog,
-
     createProfileBlogPost,
     createProfileBlogListener,
     createProfileUserListener
@@ -64,7 +63,7 @@ export const Profile = () => {
                 }
             });
 
-            blogListener = createProfileBlogListener(profileUsername, pageNo, data => {
+            blogListener = createProfileBlogListener(profileUsername, pageNo, (data, enqueue, dequeue) => {
                 if (cache && cache.blog) {
                     // If Cache is up to date, Do Nothing
                     const cachedTS = new Date(cache.blog.timestamp).getTime();
@@ -79,6 +78,8 @@ export const Profile = () => {
                 }
 
                 const refsToPosts = data.page.posts.map(post => post.data);
+
+                enqueue();
                 Promise.all( refsToPosts.map(ref => ref.get().then( doc => doc.data() )) )
                     .then(posts => {
                         const blog = data;
@@ -92,6 +93,8 @@ export const Profile = () => {
                             setCache(route, cache);
                             setProfileBlog(blog);
                         }
+
+                        dequeue();
                     })
                 ;
             });
@@ -139,9 +142,9 @@ export const Profile = () => {
                     : null
                 ,
 
-                isGlobalUsersProfile && isProfileLoaded
-                    ? m('.col.col-12.mt2', [
-                        m(Controls, {
+                m('.col.col-12.mt3', { style: { height: '36px' } }, [
+                    isGlobalUsersProfile && isProfileLoaded
+                        ? m(Controls, {
                             // State
                             username: globalUser.username,
                             showEditor,
@@ -150,13 +153,13 @@ export const Profile = () => {
                             createProfileBlogPost,
                             enableEditor
                         })
-                    ])
-                    : null
-                ,
+                        : null
+                    ,
+                ]),
 
                 isBlogLoaded
                     ? [
-                        m('.col.col-12.mt2', [
+                        m('.col.col-12', [
                             m(BlogContainer, {
                                 // State
                                 blog

@@ -22,19 +22,6 @@ module.exports = (firebase, Pager, nanoid) => {
         return auth.onAuthStateChanged(f);
     };
 
-    const updateProfile = (prop, val) => {
-        return auth.currentUser.updateProfile({
-            [prop]: val
-        });
-    };
-
-    const updateUserData = (username, prop, val) => {
-        return db.collection('users').doc(username).set({
-            timestamp: getTimestamp(),
-            [prop]: val
-        }, { merge: true });
-    };
-
     const getUserNames = () => {
         return db.collection('users').get()
             .then(snap => {
@@ -61,28 +48,25 @@ module.exports = (firebase, Pager, nanoid) => {
         ;
     };
 
-    const getUserDataByUsername = username => {
-        return db.collection('users').where('username', '==', username)
-            .get()
-            .then(snap => {
-                const users = [];
-                snap.forEach(doc => users.push( doc.data() ));
-
-                if (!users[0]) return null;
-                const user = users[0];
-                
-                user.timestamp = user.timestamp.toDate().toJSON();
-                return user;
-            })
-        ;
-    };
-
     const addUserToDatabase = (username, email, uid) => {
         return db.collection('users').doc(username).set({
             timestamp: getTimestamp(),
             username,
             email,
             uid
+        });
+    };
+
+    const updateUserData = (username, prop, val) => {
+        return db.collection('users').doc(username).set({
+            timestamp: getTimestamp(),
+            [prop]: val
+        }, { merge: true });
+    };
+
+    const updateProfile = (prop, val) => {
+        return auth.currentUser.updateProfile({
+            [prop]: val
         });
     };
 
@@ -95,46 +79,8 @@ module.exports = (firebase, Pager, nanoid) => {
         });
     };
 
-    const getUserBlogPageNumbers = username => {
-        return db.collection('blogs').doc(username)
-            .get()
-            .then(doc => {
-                if (!doc.exists) return null;
-                const pages = doc.data().pages;
-                const pager = Pager(pages);
-
-                return pager.getPageNumbers();
-            })
-        ;
-    };
-
-    const getUserBlogPage = (username, pageNo) => {
-        return db.collection('blogs').doc(username)
-            .get()
-            .then(doc => {
-                if (!doc.exists) throw 'Document does not exist.';
-
-                const pages = doc.data().pages;
-                const page = Pager(pages).getPage(pageNo);
-                const refs = page.posts.map(post => post.data);
-
-                return Promise.all([
-                    page,
-                    ...refs.map(ref => ref.get().then(doc => doc.data()))
-                ]);
-            })
-            .then(res => {
-                const page = res.shift();
-                page.posts = [...res];
-
-                return page;
-            })
-            .catch(() => null)
-        ;
-    };
-
-    const getBlogPost = uid => {
-        return db.collection('posts').doc(uid)
+    const getUserBlogPost = doc_id => {
+        return db.collection('posts').doc(doc_id)
             .get()
             .then(doc => doc.exists ? doc.data() : null)
         ;
@@ -227,7 +173,7 @@ module.exports = (firebase, Pager, nanoid) => {
         return unsubscribe;
     };
 
-    const createBlogListener = (username, pageNo, onDocExists) => {
+    const createBlogListener = (username, pageNo, onDocExists, enqueue, dequeue) => {
         const unsubscribe = db.collection('blogs').doc(username)
             .onSnapshot(doc => {
                 const data = doc.data();
@@ -238,7 +184,7 @@ module.exports = (firebase, Pager, nanoid) => {
                     pageNos: Object.keys(data.pages).map(Number).sort()
                 };
 
-                onDocExists(blogPage);
+                onDocExists(blogPage, enqueue, dequeue);
             })
         ;
 
@@ -262,24 +208,23 @@ module.exports = (firebase, Pager, nanoid) => {
     };
 
     return {
-        getUserDataByEmail,
-        getUserDataByUsername,
         createUser,
         signInUser,
-        onAuthStateChanged,
         signOut,
-        updateProfile,
-        getUserNames,
-        addUserToDatabase,
-        createUserBlog,
-        updateUserData,
-        getUserBlogPage,
-        getUserBlogPageNumbers,
-        getBlogPost,
-        createUserBlogPost,
-        updateUserBlogPost,
-        deleteUserBlogPost,
+        onAuthStateChanged,
 
+        getUserNames,
+        getUserDataByEmail,
+        addUserToDatabase,
+
+        updateUserData,
+        updateProfile,
+        
+        createUserBlog,
+        getUserBlogPost,
+        createUserBlogPost,
+        deleteUserBlogPost,
+        updateUserBlogPost,
         updateBlogTimestamp,
 
         createPostListener,

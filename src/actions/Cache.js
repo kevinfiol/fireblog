@@ -10,5 +10,9 @@ module.exports = LocalStore => {
         return LocalStore.getItem(route);
     };
 
-    return { setCache, getCache };
+    const removeCache = route => {
+        LocalStore.removeItem(route);
+    };
+
+    return { setCache, getCache, removeCache };
 };
