@@ -87,7 +87,15 @@ module.exports = (update, queue, initial, Firebase) => {
         queue.enqueue(action);
 
         // Check if userName exists first
-        return Firebase.getUserNames()
+        const isUsernameValid = username => new Promise(resolve => {
+            resolve( !/[-!$%^&*()+|~=`\\#{}\[\]:";'<>?,.\/]/.test(username) );
+        });
+
+        return isUsernameValid(username)
+            .then(isValid => {
+                if (!isValid) throw { message: 'Username cannot contain special characters.' };
+                else return Firebase.getUserNames();
+            })
             .then(users => users.includes(username))
             .then(userExists => {
                 // Throw Error if user exists

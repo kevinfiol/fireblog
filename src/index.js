@@ -22,11 +22,11 @@ m.route(document.getElementById('app'), '/', {
     },
 
     '/u/:username': {
-        onmatch: ({username}) => m.route.set('/u/:username/:key', { username, key: 1 })
+        onmatch: ({username}) => m.route.set('/u/:username/:pageNo', { username, pageNo: 1 })
     },
 
-    '/u/:username/:key': {
-        render: ({attrs, key}) => m(Layout, m(Profile, { username: attrs.username, key }))
+    '/u/:username/:pageNo': {
+        render: ({attrs}) => m(Layout, m(Profile, { key: `${attrs.username}/${attrs.pageNo}` }))
     },
 
     '/p/:doc_id': {

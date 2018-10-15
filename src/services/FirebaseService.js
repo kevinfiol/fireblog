@@ -51,6 +51,8 @@ module.exports = (firebase, Pager, nanoid) => {
     const addUserToDatabase = (username, email, uid) => {
         return db.collection('users').doc(username).set({
             timestamp: getTimestamp(),
+            bio: null,
+            photoURL: null,
             username,
             email,
             uid
@@ -173,19 +175,23 @@ module.exports = (firebase, Pager, nanoid) => {
         return unsubscribe;
     };
 
-    const createBlogListener = (username, pageNo, onDocExists, enqueue, dequeue) => {
+    const createBlogListener = (username, pageNo, onDocExists) => {
         const unsubscribe = db.collection('blogs').doc(username)
             .onSnapshot(doc => {
-                const data = doc.data();
+                try {
+                    const data = doc.data();
 
-                const blogPage = {
-                    timestamp: data.timestamp ? data.timestamp.toDate().toJSON() : null,
-                    page: data.pages[pageNo],
-                    pageNos: Object.keys(data.pages).map(Number).sort()
-                };
-
-                onDocExists(blogPage, enqueue, dequeue);
-            })
+                    const blogPage = {
+                        timestamp: data.timestamp ? data.timestamp.toDate().toJSON() : null,
+                        page: data.pages[pageNo],
+                        pageNos: Object.keys(data.pages).map(Number).sort()
+                    };
+    
+                    onDocExists(blogPage);
+                } catch(e) {
+                    onDocExists(null);
+                }
+            }, () => null)
         ;
 
         return unsubscribe;
@@ -194,14 +200,18 @@ module.exports = (firebase, Pager, nanoid) => {
     const createUserListener = (username, onDocExists) => {
         const unsubscribe = db.collection('users').doc(username)
             .onSnapshot(doc => {
-                const user = doc.data();
+                try {
+                    const user = doc.data();
 
-                if (user.timestamp) {
-                    user.timestamp = user.timestamp.toDate().toJSON();
+                    if (user.timestamp) {
+                        user.timestamp = user.timestamp.toDate().toJSON();
+                    }
+    
+                    onDocExists(user);
+                } catch(e) {
+                    onDocExists(null);
                 }
-
-                onDocExists(user);
-            })
+            }, () => null)
         ;
 
         return unsubscribe;

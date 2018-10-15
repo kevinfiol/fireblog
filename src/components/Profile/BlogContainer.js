@@ -38,6 +38,8 @@ export const BlogContainer = {
          * View
          */
         return [
+            m('h2', 'posts'),
+
             blog.page.posts.length > 0
                 ? blog.page.posts.map(post => m(Post, { post }))
                 : m('i', 'User has made no posts.')

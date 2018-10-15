@@ -43,7 +43,7 @@ export const SignUpForm = () => {
             /**
              * View
              */
-            return m('.clearfix', [
+            return m('div', [
                 m('h3', 'Sign Up'),
 
                 m(InputText, {

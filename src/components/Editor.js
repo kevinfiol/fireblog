@@ -48,7 +48,7 @@ export const Editor = () => {
             /**
              * View
              */
-            return m('.clearfix', [
+            return [
                 m(InputText, {
                     placeholder: 'title...',
                     value: title,
@@ -71,7 +71,7 @@ export const Editor = () => {
                     }, 'Save Post')
                     : null
                 ,
-            ]);
+            ];
         }
     };
 };

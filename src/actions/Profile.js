@@ -7,7 +7,6 @@ const SET_PROFILE_USER         = 'SET_PROFILE_USER';
 const SET_PROFILE_BLOG         = 'SET_PROFILE_BLOG';
 
 const CREATE_PROFILE_BLOG_POST    = 'CREATE_PROFILE_BLOG_POST';
-const LISTEN_PROFILE_BLOG_CHANGES = 'LISTEN_PROFILE_BLOG_CHANGES';
 
 /**
  * Profile Actions
@@ -47,11 +46,7 @@ module.exports = (update, queue, initial, Firebase) => {
     };
 
     const createProfileBlogListener = (username, pageNo, onDocExists) => {
-        const action = { type: LISTEN_PROFILE_BLOG_CHANGES };
-        const enqueue = () => queue.enqueue(action);
-        const dequeue = () => queue.dequeue(action);
-
-        return Firebase.createBlogListener(username, pageNo, onDocExists, enqueue, dequeue);
+        return Firebase.createBlogListener(username, pageNo, onDocExists);
     };
 
     const createProfileUserListener = (username, onDocExists) => {

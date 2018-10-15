@@ -35,7 +35,7 @@ export const ProfileForm = () => {
             /**
              * View
              */
-            return m('.clearfix', [
+            return [
                 m(InputText, {
                     placeholder: 'photo url',
                     value: photoURL || '',
@@ -58,7 +58,7 @@ export const ProfileForm = () => {
                     className: 'mt1 mb3 btn-outline',
                     onclick: () => updateUserData(username, 'bio', bioStream())
                 }, 'Update Bio')
-            ]);
+            ];
         }
     };
 };

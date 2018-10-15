@@ -36,8 +36,7 @@ export const Profile = () => {
          * @param {Object} attrs View Attributes
          */
         oninit: ({attrs}) => {
-            const profileUsername = attrs.username;
-            const pageNo = attrs.key;
+            const [profileUsername, pageNo] = attrs.key.split('/');
 
             const route = m.route.get();
             const cache = getCache(route);
@@ -46,7 +45,10 @@ export const Profile = () => {
             else setProfile(null);
 
             userListener = createProfileUserListener(profileUsername, data => {
-                if (cache && cache.user) {
+                if (!data) {
+                    m.route.set('/404');
+                    return;
+                } else if (cache && cache.user) {
                     // If Cache is up to date, Do Nothing
                     const cachedTS = new Date(cache.user.timestamp).getTime();
                     const dataTS = new Date(data.timestamp).getTime();
@@ -63,8 +65,11 @@ export const Profile = () => {
                 }
             });
 
-            blogListener = createProfileBlogListener(profileUsername, pageNo, (data, enqueue, dequeue) => {
-                if (cache && cache.blog) {
+            blogListener = createProfileBlogListener(profileUsername, pageNo, data => {
+                if (!data) {
+                    m.route.set('/404');
+                    return;
+                } else if (cache && cache.blog) {
                     // If Cache is up to date, Do Nothing
                     const cachedTS = new Date(cache.blog.timestamp).getTime();
                     const dataTS = new Date(data.timestamp).getTime();
@@ -79,7 +84,6 @@ export const Profile = () => {
 
                 const refsToPosts = data.page.posts.map(post => post.data);
 
-                enqueue();
                 Promise.all( refsToPosts.map(ref => ref.get().then( doc => doc.data() )) )
                     .then(posts => {
                         const blog = data;
@@ -93,8 +97,6 @@ export const Profile = () => {
                             setCache(route, cache);
                             setProfileBlog(blog);
                         }
-
-                        dequeue();
                     })
                 ;
             });
@@ -142,7 +144,7 @@ export const Profile = () => {
                     : null
                 ,
 
-                m('.col.col-12.mt3', { style: { height: '36px' } }, [
+                m('.col.col-12.my2', { style: { height: '36px' } }, [
                     isGlobalUsersProfile && isProfileLoaded
                         ? m(Controls, {
                             // State

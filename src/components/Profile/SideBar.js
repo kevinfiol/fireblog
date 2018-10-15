@@ -29,7 +29,7 @@ export const Sidebar = {
             // Bio
             m('.col.col-12', [
                 m('h2', user.username),
-                m('code', user.bio)
+                m('p', user.bio)
             ])
         ];
     }
