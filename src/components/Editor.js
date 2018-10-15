@@ -12,7 +12,7 @@ export const Editor = () => {
      * Local State
      */
     const titleStream = stream('');
-    const contentStream = stream('');
+    const woofmarkInstance = {};
 
     /**
      * State
@@ -43,7 +43,7 @@ export const Editor = () => {
             /**
              * Computed
              */
-            const isEditorFilled = titleStream() && contentStream();
+            const isEditorFilled = titleStream();
 
             /**
              * View
@@ -58,13 +58,16 @@ export const Editor = () => {
                 m(Woofmark, {
                     placeholder: 'content...',
                     value: content,
-                    input: contentStream
+                    woofmarkInstance,
                 }),
     
                 isEditorFilled
                     ? m(LoadingBtn, {
                         className: 'mx1 my2 btn-outline',
-                        onclick: () => onSaveEvent( titleStream(), contentStream() )
+                        onclick: () => {
+                            const content = woofmarkInstance.textarea.value;
+                            onSaveEvent( titleStream(), content );
+                        }
                     }, 'Save Post')
                     : null
                 ,
