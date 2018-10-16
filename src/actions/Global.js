@@ -88,7 +88,7 @@ module.exports = (update, queue, initial, Firebase) => {
 
         // Check if userName exists first
         const isUsernameValid = username => new Promise(resolve => {
-            resolve( !/[-!$%^&*()+|~=`\\#{}\[\]:";'<>?,.\/]/.test(username) );
+            resolve( !/[-!$%^&*@()+|~=`\\#{}\[\]:";'<>?,.\/]/.test(username) );
         });
 
         return isUsernameValid(username)

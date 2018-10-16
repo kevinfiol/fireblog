@@ -1,6 +1,7 @@
 import m from 'mithril';
 import actions from 'actions';
 import { model } from 'state';
+import { Comments } from 'components/Comments';
 import { Sidebar } from 'components/Profile/SideBar';
 import { Controls } from 'components/Profile/Controls';
 import { BlogContainer } from 'components/Profile/BlogContainer';
@@ -16,6 +17,7 @@ const {
     setProfileUser,
     setProfileBlog,
     createProfileBlogPost,
+    createProfileBlogComment,
     createProfileBlogListener,
     createProfileUserListener
 } = actions.profile;
@@ -117,15 +119,17 @@ export const Profile = () => {
             const globalUser  = model().global.userData;
             const showEditor  = model().global.showEditor;
 
-            const profileUser = model().profile.user;
-            const blog        = model().profile.blog;
-            const pageNo      = model().profile.blog.page.pageNo;
-            const pageNos     = model().profile.blog.pageNos;
-            const pageLength  = model().profile.blog.pageNos.length;
+            const profileUser  = model().profile.user;
+            const blog         = model().profile.blog;
+            const pageNo       = model().profile.blog.page.pageNo;
+            const pageNos      = model().profile.blog.pageNos;
+            const pageLength   = model().profile.blog.pageNos.length;
+            const blogComments = model().profile.blog.comments;
 
             /**
              * Computed
              */
+            const isUserLoggedIn       = globalUser.username !== null;
             const isProfileLoaded      = profileUser.username !== null;
             const isBlogLoaded         = pageNo !== null && pageLength > 0;
             const isGlobalUsersProfile = profileUser.username === globalUser.username;
@@ -177,6 +181,21 @@ export const Profile = () => {
                             })
                         ])
                     ]
+                    : null
+                ,
+
+                isUserLoggedIn
+                    ? m('.col.col-12', [
+                        m(Comments, {
+                            // State
+                            globalUsername: globalUser.username,
+                            identifier: profileUser.username,
+                            comments: blogComments,
+
+                            // Actions
+                            createComment: createProfileBlogComment
+                        })
+                    ])
                     : null
                 ,
             ]);

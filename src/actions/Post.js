@@ -7,6 +7,7 @@ const GET_POST                   = 'GET_POST';
 const UPDATE_POST_BLOGPOST       = 'POST_UPDATE_BLOGPOST';
 const UPDATE_POST_BLOG_TIMESTAMP = 'UPDATE_POST_BLOG_TIMESTAMP';
 const DELETE_POST_BLOGPOST       = 'POST_DELETE_BLOGPOST';
+const CREATE_POST_COMMENT        = 'CREATE_POST_COMMENT';
 
 /**
  * Post Actions
@@ -60,6 +61,15 @@ module.exports = (update, queue, initial, Firebase) => {
         ;
     };
 
+    const createPostComment = (globalUsername, post_doc_id, content) => {
+        const action = { type: CREATE_POST_COMMENT };
+        queue.enqueue(action);
+
+        return Firebase.createPostComment(globalUsername, post_doc_id, content)
+            .finally(() => queue.dequeue(action))
+        ;
+    };
+
     const createPostListener = (doc_id, onDocExists) => {
         return Firebase.createPostListener(doc_id, onDocExists);
     };
@@ -70,6 +80,7 @@ module.exports = (update, queue, initial, Firebase) => {
         updatePostBlogPost,
         deletePostBlogPost,
         updatePostBlogTimestamp,
-        createPostListener
+        createPostListener,
+        createPostComment
     };
 };

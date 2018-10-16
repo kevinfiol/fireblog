@@ -77,7 +77,8 @@ module.exports = (firebase, Pager, nanoid) => {
 
         return db.collection('blogs').doc(username).set({
             timestamp: getTimestamp(),
-            pages: pager.getPages()
+            pages: pager.getPages(),
+            comments: [],
         });
     };
 
@@ -102,13 +103,24 @@ module.exports = (firebase, Pager, nanoid) => {
                     if (pages) {
                         const uid = nanoid(11);
                         const doc_id = `${username}-${uid}`;
-                        allPostsRef.doc(doc_id).set({ timestamp, doc_id, username, title, content, date });
 
+                        // Create Post Document
+                        allPostsRef.doc(doc_id).set({
+                            timestamp,
+                            doc_id,
+                            username,
+                            title,
+                            content,
+                            date,
+                            comments: [],
+                        });
+
+                        // Update Blog Document's Pages to include new Post
                         const postRef = allPostsRef.doc(doc_id);
                         const pager = Pager(pages);
                         pager.addPost(doc_id, postRef);
 
-                        userBlogRef.set({ timestamp, pages: pager.getPages() });
+                        userBlogRef.update({ timestamp, pages: pager.getPages() });
                         return;
                     }
                 }
@@ -136,7 +148,7 @@ module.exports = (firebase, Pager, nanoid) => {
                 pager.deletePost(doc_id);
 
                 // Update User's blog pages with post removed
-                userBlogRef.set({ timestamp, pages: pager.getPages() });
+                userBlogRef.update({ timestamp, pages: pager.getPages() });
                 return allPostsRef.doc(doc_id).delete();
             })
             .catch(() => {
@@ -157,6 +169,52 @@ module.exports = (firebase, Pager, nanoid) => {
         return db.collection('blogs').doc(username).update({
             timestamp: getTimestamp()
         });
+    };
+
+    const createUserBlogComment = (globalUsername, profileUsername, content) => {
+        const timestamp = getTimestamp();
+        const userBlogRef = db.collection('blogs').doc(profileUsername);
+
+        const date = new Date().toLocaleDateString();
+        const id = `${profileUsername}-comment-${nanoid(11)}`;
+
+        return userBlogRef.get()
+            .then(doc => doc.exists ? doc.data() : null)
+            .then(data => {
+                if (!data) throw 'Doc does not exist.';
+
+                const comment = { username: globalUsername, id, date, content };
+                const comments = [...data.comments];
+
+                comments.unshift(comment);
+                return comments;
+            }).then(comments => {
+                return userBlogRef.update({ timestamp, comments });
+            })
+        ;
+    };
+
+    const createPostComment = (globalUsername, post_doc_id, content) => {
+        const timestamp = getTimestamp();
+        const postRef = db.collection('posts').doc(post_doc_id);
+
+        const date = new Date().toLocaleDateString();
+        const id = `${post_doc_id}-comment-${nanoid(11)}`;
+
+        return postRef.get()
+            .then(doc => doc.exists ? doc.data() : null)
+            .then(data => {
+                if (!data) throw 'Doc does not exist.';
+
+                const comment = { username: globalUsername, id, date, content };
+                const comments = [...data.comments];
+
+                comments.unshift(comment);
+                return comments;
+            }).then(comments => {
+                return postRef.update({ timestamp, comments });
+            })
+        ;
     };
 
     const createPostListener = (doc_id, onDocExists) => {
@@ -184,7 +242,8 @@ module.exports = (firebase, Pager, nanoid) => {
                     const blogPage = {
                         timestamp: data.timestamp ? data.timestamp.toDate().toJSON() : null,
                         page: data.pages[pageNo],
-                        pageNos: Object.keys(data.pages).map(Number).sort()
+                        pageNos: Object.keys(data.pages).map(Number).sort(),
+                        comments: data.comments
                     };
     
                     onDocExists(blogPage);
@@ -236,6 +295,8 @@ module.exports = (firebase, Pager, nanoid) => {
         deleteUserBlogPost,
         updateUserBlogPost,
         updateBlogTimestamp,
+        createUserBlogComment,
+        createPostComment,
 
         createPostListener,
         createBlogListener,

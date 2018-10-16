@@ -39,7 +39,8 @@ const initialState = {
         blog: {
             timestamp: null,
             page: { pageNo: null, posts: null },
-            pageNos: []
+            pageNos: [],
+            comments: [],
         }
     },
 
@@ -49,7 +50,8 @@ const initialState = {
         username: null,
         title: null,
         date: null,
-        content: null
+        content: null,
+        comments: []
     }
 };
 

@@ -2,6 +2,7 @@ import m from 'mithril';
 import marked from 'marked';
 import actions from 'actions';
 import { model } from 'state';
+import { Comments } from 'components/Comments';
 import { Controls } from 'components/Post/Controls';
 
 /**
@@ -9,7 +10,15 @@ import { Controls } from 'components/Post/Controls';
  */
 const { setCache, getCache, removeCache } = actions.cache;
 const { enableEditor } = actions.global;
-const { getPost, setPost, updatePostBlogPost, deletePostBlogPost, createPostListener, updatePostBlogTimestamp } = actions.post;
+const {
+    getPost,
+    setPost,
+    updatePostBlogPost,
+    deletePostBlogPost,
+    createPostListener,
+    createPostComment,
+    updatePostBlogTimestamp
+} = actions.post;
 
 /**
  * Post View
@@ -75,10 +84,12 @@ export const Post = () => {
             const title          = model().post.title;
             const date           = model().post.date;
             const content        = model().post.content;
+            const comments       = model().post.comments;
 
             /**
              * Computed
              */
+            const isUserLoggedIn      = globalUsername !== null;
             const isPostDataLoaded    = title !== null;
             const showControls        = globalUsername === postUsername;
 
@@ -117,6 +128,19 @@ export const Post = () => {
                         m('.h5.muted', date),
                         m('p', m.trust( marked( content ) ))
                     ]
+                    : null
+                ,
+
+                isUserLoggedIn
+                    ? m(Comments, {
+                        // State
+                        globalUsername,
+                        identifier: doc_id,
+                        comments,
+
+                        // Actions
+                        createComment: createPostComment
+                    })
                     : null
                 ,
             ];

@@ -38,7 +38,7 @@ export const BlogContainer = {
          * View
          */
         return [
-            m('h2', 'posts'),
+            m('h4', 'posts'),
 
             blog.page.posts.length > 0
                 ? blog.page.posts.map(post => m(Post, { post }))
