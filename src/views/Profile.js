@@ -2,7 +2,7 @@ import m from 'mithril';
 import actions from 'actions';
 import { model } from 'state';
 import { Comments } from 'components/Comments';
-import { Sidebar } from 'components/Profile/SideBar';
+import { UserInfo } from 'components/Profile/UserInfo';
 import { Controls } from 'components/Profile/Controls';
 import { BlogContainer } from 'components/Profile/BlogContainer';
 import { Pagination } from 'components/Profile/Pagination';
@@ -140,7 +140,7 @@ export const Profile = () => {
             return m('.clearfix', [
                 isProfileLoaded
                     ? m('.col.col-12', [
-                        m(Sidebar, {
+                        m(UserInfo, {
                             // State
                             user: profileUser
                         })
@@ -148,56 +148,56 @@ export const Profile = () => {
                     : null
                 ,
 
-                m('.col.col-12.my2', { style: { height: '36px' } }, [
-                    isGlobalUsersProfile && isProfileLoaded
-                        ? m(Controls, {
-                            // State
-                            username: globalUser.username,
-                            showEditor,
+                // m('.col.col-12.my2', { style: { height: '36px' } }, [
+                //     isGlobalUsersProfile && isProfileLoaded
+                //         ? m(Controls, {
+                //             // State
+                //             username: globalUser.username,
+                //             showEditor,
 
-                            // Actions
-                            createProfileBlogPost,
-                            enableEditor
-                        })
-                        : null
-                    ,
-                ]),
+                //             // Actions
+                //             createProfileBlogPost,
+                //             enableEditor
+                //         })
+                //         : null
+                //     ,
+                // ]),
 
-                isBlogLoaded
-                    ? [
-                        m('.col.col-12', [
-                            m(BlogContainer, {
-                                // State
-                                blog
-                            })
-                        ]),
+                // isBlogLoaded
+                //     ? [
+                //         m('.col.col-12', [
+                //             m(BlogContainer, {
+                //                 // State
+                //                 blog
+                //             })
+                //         ]),
 
-                        m('.col.col-12.mt2', [
-                            m(Pagination, {
-                                // State
-                                username: profileUser.username,
-                                currentPage: pageNo,
-                                pageNos
-                            })
-                        ])
-                    ]
-                    : null
-                ,
+                //         m('.col.col-12.mt2', [
+                //             m(Pagination, {
+                //                 // State
+                //                 username: profileUser.username,
+                //                 currentPage: pageNo,
+                //                 pageNos
+                //             })
+                //         ])
+                //     ]
+                //     : null
+                // ,
 
-                isUserLoggedIn
-                    ? m('.col.col-12', [
-                        m(Comments, {
-                            // State
-                            globalUsername: globalUser.username,
-                            identifier: profileUser.username,
-                            comments: blogComments,
+                // isUserLoggedIn
+                //     ? m('.col.col-12', [
+                //         m(Comments, {
+                //             // State
+                //             globalUsername: globalUser.username,
+                //             identifier: profileUser.username,
+                //             comments: blogComments,
 
-                            // Actions
-                            createComment: createProfileBlogComment
-                        })
-                    ])
-                    : null
-                ,
+                //             // Actions
+                //             createComment: createProfileBlogComment
+                //         })
+                //     ])
+                //     : null
+                // ,
             ]);
         }
     };

@@ -24,21 +24,25 @@ export const SignUpForm = () => {
         return allFieldsFilled && pwdsMatch();
     }, [email, pwdsMatch]);
 
+    /**
+     * Actions
+     */
+    let createUser;
+
     return {
+        oninit: ({attrs}) => {
+            createUser = attrs.createUser;
+        },
+
         /**
          * View Method
          * @param {Object} attrs
          */
-        view({attrs}) {
+        view: ({attrs}) => {
             /**
              * State
              */
             const signUpMsg = attrs.signUpMsg;
-
-            /**
-             * Actions
-             */
-            const createUser = attrs.createUser;
 
             /**
              * View

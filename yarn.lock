@@ -1162,6 +1162,10 @@ levn@^0.3.0, levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
+linkify-lite@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/linkify-lite/-/linkify-lite-1.0.0.tgz#04b122280128475cacef01f8ca1f5e9d2b9c8213"
+
 local-storage@1.4.2:
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/local-storage/-/local-storage-1.4.2.tgz#7ec2d3fb7f1ea91a85b160d3a785058f87bfbfa5"
@@ -1404,10 +1408,6 @@ mute-stream@0.0.7:
 nan@^2.0.0:
   version "2.10.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.10.0.tgz#96d0cd610ebd58d4b4de9cc0c6828cda99c7548f"
-
-nanoid@^1.2.4:
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-1.2.4.tgz#4f0e19e7e63341e9fe9adaa8d96ba594f5dcc6db"
 
 natural-compare@^1.4.0:
   version "1.4.0"

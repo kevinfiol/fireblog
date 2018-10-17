@@ -41,7 +41,7 @@ module.exports = (update, queue, initial, Firebase) => {
         const action = { type: CREATE_PROFILE_BLOG_POST };
         queue.enqueue(action);
 
-        return Firebase.createUserBlogPost(username, title, content)
+        return Firebase.createPost(username, title, content)
             .finally(() => queue.dequeue(action))
         ;
     };
@@ -50,7 +50,7 @@ module.exports = (update, queue, initial, Firebase) => {
         const action = { type: CREATE_PROFILE_BLOG_COMMENT };
         queue.enqueue(action);
 
-        return Firebase.createUserBlogComment(globalUsername, profileUsername, content)
+        return Firebase.createBlogComment(globalUsername, profileUsername, content)
             .finally(() => queue.dequeue(action))
         ;
     };

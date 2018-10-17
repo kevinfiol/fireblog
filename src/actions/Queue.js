@@ -3,9 +3,9 @@ const m = require('mithril');
 /**
  * Queue Action Types
  */
-const QUEUE_SET_LOADING = 'QUEUE_SET_LOADING';
-const QUEUE_ENQUEUE     = 'QUEUE_ENQUEUE';
-const QUEUE_DEQUEUE     = 'QUEUE_DEQUEUE';
+const SET_QUEUE_LOADING = 'QUEUE_SET_LOADING';
+const ENQUEUE_QUEUE     = 'QUEUE_ENQUEUE';
+const DEQUEUE_QUEUE     = 'QUEUE_DEQUEUE';
 
 /**
  * Queue Actions
@@ -13,12 +13,12 @@ const QUEUE_DEQUEUE     = 'QUEUE_DEQUEUE';
  */
 module.exports = update => {
     const setLoading = isLoading => update(() => ({
-        type: QUEUE_SET_LOADING,
+        type: SET_QUEUE_LOADING,
         model: { isLoading }
     }));
 
     const enqueue = action => {
-        const type = QUEUE_ENQUEUE;
+        const type = ENQUEUE_QUEUE;
 
         // Record Action
         update(() => action);
@@ -36,7 +36,7 @@ module.exports = update => {
     };
 
     const dequeue = action => {
-        const type = QUEUE_DEQUEUE;
+        const type = DEQUEUE_QUEUE;
         let queueLength = null;
 
         // Dequeue

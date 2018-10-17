@@ -28,31 +28,31 @@ module.exports = (update, queue, initial, Firebase) => {
         const action = { type: GET_POST };
         queue.enqueue(action);
         
-        return Firebase.getUserBlogPost(doc_id)
+        return Firebase.getPost(doc_id)
             .then(setPost)
             .finally(() => queue.dequeue(action))
         ;
     };
 
-    const updatePostBlogPost = (doc_id, title, content) => {
+    const updatePost = (doc_id, title, content) => {
         const action = { type: UPDATE_POST_BLOGPOST };
         queue.enqueue(action);
 
-        return Firebase.updateUserBlogPost(doc_id, title, content)
+        return Firebase.updatePost(doc_id, title, content)
             .finally(() => queue.dequeue(action))
         ;
     };
 
-    const deletePostBlogPost = doc_id => {
+    const deletePost = doc_id => {
         const action = { type: DELETE_POST_BLOGPOST };
         queue.enqueue(action);
 
-        return Firebase.deleteUserBlogPost(doc_id)
+        return Firebase.deletePost(doc_id)
             .finally(() => queue.dequeue(action))
         ;
     };
 
-    const updatePostBlogTimestamp = username => {
+    const updateBlogTimestamp = username => {
         const action = { type: UPDATE_POST_BLOG_TIMESTAMP };
         queue.enqueue(action);
 
@@ -77,9 +77,9 @@ module.exports = (update, queue, initial, Firebase) => {
     return {
         getPost,
         setPost,
-        updatePostBlogPost,
-        deletePostBlogPost,
-        updatePostBlogTimestamp,
+        updatePost,
+        deletePost,
+        updateBlogTimestamp,
         createPostListener,
         createPostComment
     };

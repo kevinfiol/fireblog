@@ -1,0 +1,63 @@
+module.exports = (db, nanoid, Pager, getTimestamp) => ({
+    createBlog: username => {
+        const pager = Pager();
+
+        return db.collection('blogs').doc(username).set({
+            timestamp: getTimestamp(),
+            pages: pager.getPages(),
+            comments: [],
+        });
+    },
+
+    updateBlogTimestamp: username => {
+        return db.collection('blogs').doc(username).update({
+            timestamp: getTimestamp()
+        });
+    },
+
+    createBlogComment: (globalUsername, profileUsername, content) => {
+        const timestamp = getTimestamp();
+        const userBlogRef = db.collection('blogs').doc(profileUsername);
+
+        const date = new Date().toLocaleDateString();
+        const id = `${profileUsername}-comment-${nanoid(11)}`;
+
+        return userBlogRef.get()
+            .then(doc => doc.exists ? doc.data() : null)
+            .then(data => {
+                if (!data) throw 'Doc does not exist.';
+
+                const comment = { username: globalUsername, id, date, content };
+                const comments = [...data.comments];
+
+                comments.unshift(comment);
+                return comments;
+            }).then(comments => {
+                return userBlogRef.update({ timestamp, comments });
+            })
+        ;
+    },
+
+    createBlogListener: (username, pageNo, onDocExists) => {
+        const unsubscribe = db.collection('blogs').doc(username)
+            .onSnapshot(doc => {
+                try {
+                    const data = doc.data();
+
+                    const blogPage = {
+                        timestamp: data.timestamp ? data.timestamp.toDate().toJSON() : null,
+                        page: data.pages[pageNo],
+                        pageNos: Object.keys(data.pages).map(Number).sort(),
+                        comments: data.comments
+                    };
+    
+                    onDocExists(blogPage);
+                } catch(e) {
+                    onDocExists(null);
+                }
+            }, () => null)
+        ;
+
+        return unsubscribe;
+    }
+});

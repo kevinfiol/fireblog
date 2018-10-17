@@ -1,19 +1,19 @@
 /**
  * Global Action Types
  */
-const GLOBAL_ENABLE_POSTEDITOR  = 'GLOBAL_ENABLE_POSTEDITOR';
-const GLOBAL_ENABLE_SIGNUP      = 'GLOBAL_ENABLE_SIGNUP';
-const GLOBAL_ENABLE_SIGNIN      = 'GLOBAL_ENABLE_SIGNIN';
+const ENABLE_GLOBAL_POSTEDITOR  = 'ENABLE_GLOBAL_POSTEDITOR';
+const ENABLE_GLOBAL_SIGNUP      = 'ENABLE_GLOBAL_SIGNUP';
+const ENABLE_GLOBAL_SIGNIN      = 'ENABLE_GLOBAL_SIGNIN';
 
-const GLOBAL_SET_SIGNUPMSG      = 'GLOBAL_SET_SIGNUPMSG';
-const GLOBAL_SET_SIGNINMSG      = 'GLOBAL_SET_SIGNINMSG';
-const GLOBAL_SET_USERDATA       = 'GLOBAL_SET_USERDATA';
-const GLOBAL_SET_FIREBASEUSER   = 'GLOBAL_SET_FIREBASEUSER';
+const SET_GLOBAL_SIGNUPMSG      = 'SET_GLOBAL_SIGNUPMSG';
+const SET_GLOBAL_SIGNINMSG      = 'SET_GLOBAL_SIGNINMSG';
+const SET_GLOBAL_USERDATA       = 'SET_GLOBAL_USERDATA';
+const SET_GLOBAL_FIREBASEUSER   = 'SET_GLOBAL_FIREBASEUSER';
 
-const GLOBAL_CREATE_USER        = 'GLOBAL_CREATE_USER';
-const GLOBAL_SIGNIN_USER        = 'GLOBAL_SIGNIN_USER';
-const GLOBAL_UPDATE_USERDATA    = 'GLOBAL_UPDATE_USERDATA';
-const GLOBAL_SIGNOUT            = 'GLOBAL_SIGNOUT';
+const CREATE_GLOBAL_USER        = 'CREATE_GLOBAL_USER';
+const SIGNIN_GLOBAL_USER        = 'SIGNIN_GLOBAL_USER';
+const UPDATE_GLOBAL_USERDATA    = 'UPDATE_GLOBAL_USERDATA';
+const SIGNOUT_GLOBAL_USER       = 'SIGNOUT_GLOBAL_USER';
 
 /**
  * Global Actions
@@ -26,40 +26,40 @@ module.exports = (update, queue, initial, Firebase) => {
      * UI Actions
      */
     const enableEditor = showEditor => update(() => ({
-        type: GLOBAL_ENABLE_POSTEDITOR,
+        type: ENABLE_GLOBAL_POSTEDITOR,
         model: { global: { showEditor } }
     }));
 
     const enableSignUpForm = showSignUp => update(() => ({
-        type: GLOBAL_ENABLE_SIGNUP,
+        type: ENABLE_GLOBAL_SIGNUP,
         model: { global: { showSignUp } }
     }));
 
     const enableSignInForm = showSignIn => update(() => ({
-        type: GLOBAL_ENABLE_SIGNIN,
+        type: ENABLE_GLOBAL_SIGNIN,
         model: { global: { showSignIn } }
     }));
 
     const setSignUpMsg = signUpMsg => update(() => ({
-        type: GLOBAL_SET_SIGNUPMSG,
+        type: SET_GLOBAL_SIGNUPMSG,
         model: { global: { signUpMsg } }
     }));
 
     const setSignInMsg = signInMsg => update(() => ({
-        type: GLOBAL_SET_SIGNINMSG,
+        type: SET_GLOBAL_SIGNINMSG,
         model: { global: { signInMsg } }
     }));
 
     /**
-     * User Account Methods
+     * View Data
      */
     const setUserData = userData => update(() => ({
-        type: GLOBAL_SET_USERDATA,
+        type: SET_GLOBAL_USERDATA,
         model: { global: { userData: userData || initial.userData } }
     }));
 
     const setFirebaseUser = user => update(() => {
-        const type = GLOBAL_SET_FIREBASEUSER;
+        const type = SET_GLOBAL_FIREBASEUSER;
         let firebaseUser;
 
         if (!user) firebaseUser = initial.firebaseUser;
@@ -81,14 +81,13 @@ module.exports = (update, queue, initial, Firebase) => {
      * Async Actions
      */
     const createUser = (username, email, pwd) => {
-        const action = { type: GLOBAL_CREATE_USER };
+        const action = { type: CREATE_GLOBAL_USER };
 
         // Queue Async Action
         queue.enqueue(action);
 
-        // Check if userName exists first
         const isUsernameValid = username => new Promise(resolve => {
-            resolve( !/[-!$%^&*@()+|~=`\\#{}\[\]:";'<>?,.\/]/.test(username) );
+            resolve( !/[-!$%^&*@()+|~=`\\#{}\[\]:";'<>?,./]/.test(username) );
         });
 
         return isUsernameValid(username)
@@ -111,7 +110,7 @@ module.exports = (update, queue, initial, Firebase) => {
                     // Add User to /users/{username}
                     Firebase.addUserToDatabase(username, email, user.uid),
                     // Create User Blog at /blogs/{username}
-                    Firebase.createUserBlog(username)
+                    Firebase.createBlog(username)
                 ]);
             })
             .then(() => {
@@ -128,13 +127,13 @@ module.exports = (update, queue, initial, Firebase) => {
     };
 
     const signInUser = (email, pwd) => {
-        const action = { type: GLOBAL_SIGNIN_USER };
+        const action = { type: SIGNIN_GLOBAL_USER };
 
         // Queue Async Action
         queue.enqueue(action);
 
         return Firebase.signInUser(email, pwd)
-            .then(() => Firebase.getUserDataByEmail(email))
+            .then(() => Firebase.getUserByEmail(email))
             .then(setUserData)
             .then(() => {
                 setSignInMsg(null);
@@ -150,12 +149,12 @@ module.exports = (update, queue, initial, Firebase) => {
     };
 
     const updateUserData = (username, prop, val) => {
-        const action = { type: GLOBAL_UPDATE_USERDATA };
+        const action = { type: UPDATE_GLOBAL_USERDATA };
 
         // Queue Async Action
         queue.enqueue(action);
 
-        return Firebase.updateUserData(username, prop, val)
+        return Firebase.updateUser(username, prop, val)
             .then(() => {
                 setUserData({ [prop]: val });
             })
@@ -166,7 +165,7 @@ module.exports = (update, queue, initial, Firebase) => {
     };
 
     const signOut = () => {
-        const action = { type: GLOBAL_SIGNOUT };
+        const action = { type: SIGNOUT_GLOBAL_USER };
 
         // Queue Async Action
         queue.enqueue(action);

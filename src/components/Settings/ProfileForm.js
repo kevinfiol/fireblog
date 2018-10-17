@@ -14,7 +14,16 @@ export const ProfileForm = () => {
     const photoURLStream = stream('');
     const bioStream      = stream('');
 
+    /**
+     * Actions
+     */
+    let updateUserData;
+
     return {
+        oninit: ({attrs}) => {
+            updateUserData = attrs.updateUserData;
+        },
+
         /**
          * View Method
          * @param {Object} attrs View Attributes
@@ -25,12 +34,7 @@ export const ProfileForm = () => {
              */
             const username = attrs.username;
             const photoURL = attrs.photoURL;
-            const bio = attrs.bio;
-
-            /**
-             * Actions
-             */
-            const updateUserData = attrs.updateUserData;
+            const bio      = attrs.bio;
 
             /**
              * View

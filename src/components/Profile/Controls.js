@@ -6,44 +6,55 @@ import { Modal } from 'components/Modal';
 /**
  * Profile Controls Component
  */
-export const Controls = {
+export const Controls = () => {
     /**
-     * View Method
-     * @param {Object} attrs View Attributes
+     * Actions
      */
-    view: ({attrs}) => {
+    let enableEditor;
+    let createProfileBlogPost;
+
+    return {
         /**
-         * State
+         * Oninit Method
+         * @param {Object} attrs View Attributes
          */
-        const showEditor = attrs.showEditor;
-        const username   = attrs.username;
+        oninit: ({attrs}) => {
+            enableEditor          = attrs.enableEditor;
+            createProfileBlogPost = attrs.createProfileBlogPost;
+        },
 
         /**
-         * Actions
+         * View Method
+         * @param {Object} attrs View Attributes
          */
-        const enableEditor          = attrs.enableEditor;
-        const createProfileBlogPost = attrs.createProfileBlogPost;
+        view: ({attrs}) => {
+            /**
+             * State
+             */
+            const showEditor = attrs.showEditor;
+            const username   = attrs.username;
 
-        /**
-         * View
-         */
-        return [
-            m(LoadingBtn, { className: 'btn-outline', onclick: () => enableEditor(true) }, 'New Post'),
-    
-            showEditor
-                ? m(Modal, {
-                    enableModal: enableEditor,
-                }, [
-                    m(Editor, {
-                        onSaveEvent: (newTitle, newContent) => {
-                            createProfileBlogPost(username, newTitle, newContent)
-                                .then(() => enableEditor(false))
-                            ;
-                        }
-                    })
-                ])
-                : null
-            ,
-        ];
-    }
+            /**
+             * View
+             */
+            return [
+                m(LoadingBtn, { className: 'btn-outline', onclick: () => enableEditor(true) }, 'New Post'),
+        
+                showEditor
+                    ? m(Modal, {
+                        enableModal: enableEditor,
+                    }, [
+                        m(Editor, {
+                            onSaveEvent: (newTitle, newContent) => {
+                                createProfileBlogPost(username, newTitle, newContent)
+                                    .then(() => enableEditor(false))
+                                ;
+                            }
+                        })
+                    ])
+                    : null
+                ,
+            ];
+        }
+    };
 };

@@ -7,69 +7,83 @@ import { Modal } from 'components/Modal';
 /**
  * Post Controls Component
  */
-export const Controls = {
+export const Controls = () => {
     /**
-     * View Method
-     * @param {Object} attrs View Attributes
+     * Actions
      */
-    view: ({attrs}) => {
+    let enableEditor;
+    let deletePost;
+    let updatePost;
+    let updateBlogTimestamp;
+    let removeCache;
+
+    return {
         /**
-         * State
+         * Oninit Method
+         * @param {Object} attrs View Attributes
          */
-        const username   = attrs.username;
-        const doc_id     = attrs.doc_id;
-        const title      = attrs.title;
-        const content    = attrs.content;
-        const showEditor = attrs.showEditor;
+        oninit: ({attrs}) => {
+            enableEditor        = attrs.enableEditor;
+            deletePost          = attrs.deletePost;
+            updatePost          = attrs.updatePost;
+            updateBlogTimestamp = attrs.updateBlogTimestamp;
+            removeCache         = attrs.removeCache;
+        },
 
         /**
-         * Actions
+         * View Method
+         * @param {Object} attrs View Attributes
          */
-        const enableEditor            = attrs.enableEditor;
-        const deletePostBlogPost      = attrs.deletePostBlogPost;
-        const updatePostBlogPost      = attrs.updatePostBlogPost;
-        const updatePostBlogTimestamp = attrs.updatePostBlogTimestamp;
-        const removeCache             = attrs.removeCache;
+        view: ({attrs}) => {
+            /**
+             * State
+             */
+            const username   = attrs.username;
+            const doc_id     = attrs.doc_id;
+            const title      = attrs.title;
+            const content    = attrs.content;
+            const showEditor = attrs.showEditor;
 
-        /**
-         * View
-         */
-        return [
-            m(LoadingBtn, { className: 'btn-outline mr1', onclick: () => enableEditor(true) }, 'Edit'),
-    
-            m(ConfirmBtn, {
-                className: 'mx1',
-                btnClassName: 'btn-outline mx1',
-                label: 'Delete',
-                action: () => {
-                    m.route.set('/u/:username', { username });
-                    const route = m.route.get();
+            /**
+             * View
+             */
+            return [
+                m(LoadingBtn, { className: 'btn-outline mr1', onclick: () => enableEditor(true) }, 'Edit'),
+        
+                m(ConfirmBtn, {
+                    className: 'mx1',
+                    btnClassName: 'btn-outline mx1',
+                    label: 'Delete',
+                    action: () => {
+                        m.route.set('/u/:username', { username });
+                        const route = m.route.get();
 
-                    deletePostBlogPost(doc_id);
-                    removeCache(route);
-                }
-            }),
-    
-            showEditor
-                ? m(Modal, {
-                    enableModal: enableEditor,
-                }, [
-                    m(Editor, {
-                        // State
-                        title,
-                        content,
+                        deletePost(doc_id);
+                        removeCache(route);
+                    }
+                }),
+        
+                showEditor
+                    ? m(Modal, {
+                        enableModal: enableEditor,
+                    }, [
+                        m(Editor, {
+                            // State
+                            title,
+                            content,
 
-                        // Actions
-                        onSaveEvent: (newTitle, newContent) => {
-                            updatePostBlogPost(doc_id, newTitle, newContent)
-                                .then(() => updatePostBlogTimestamp(username))
-                                .then(() => enableEditor(false))
-                            ;
-                        }
-                    })
-                ])
-                : null
-            ,
-        ];
-    }
+                            // Actions
+                            onSaveEvent: (newTitle, newContent) => {
+                                updatePost(doc_id, newTitle, newContent)
+                                    .then(() => updateBlogTimestamp(username))
+                                    .then(() => enableEditor(false))
+                                ;
+                            }
+                        })
+                    ])
+                    : null
+                ,
+            ];
+        }
+    };
 };

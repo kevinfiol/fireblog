@@ -13,11 +13,11 @@ const { enableEditor } = actions.global;
 const {
     getPost,
     setPost,
-    updatePostBlogPost,
-    deletePostBlogPost,
+    updatePost,
+    deletePost,
     createPostListener,
     createPostComment,
-    updatePostBlogTimestamp
+    updateBlogTimestamp
 } = actions.post;
 
 /**
@@ -109,10 +109,10 @@ export const Post = () => {
 
                             // Actions
                             removeCache,
-                            updatePostBlogTimestamp,
-                            deletePostBlogPost,
+                            updateBlogTimestamp,
+                            deletePost,
                             enableEditor,
-                            updatePostBlogPost,
+                            updatePost,
                         })
                         : null
                     ,

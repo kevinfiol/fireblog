@@ -17,7 +17,6 @@ export const Settings = {
      */
     oninit() {
         const firebaseUser = model().global.firebaseUser;
-
         // If not signed in, redirect to dash
         if (!firebaseUser.uid) m.route.set('/');
     },

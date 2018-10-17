@@ -18,21 +18,29 @@ export const SignInForm = () => {
         return email() && pwd();
     }, [email, pwd]);
 
+    /**
+     * Actions
+     */
+    let signInUser;
+
     return {
         /**
-         * View Method
-         * @param {Object} attrs
+         * Oninit
+         * @param {Object} attrs View Attributes 
          */
-        view({attrs}) {
+        oninit: ({attrs}) => {
+            signInUser = attrs.signInUser;
+        },
+
+        /**
+         * View Method
+         * @param {Object} attrs View Attributes
+         */
+        view: ({attrs}) => {
             /**
              * State
              */
             const signInMsg = attrs.signInMsg;
-
-            /**
-             * Actions
-             */
-            const signInUser = attrs.signInUser;
 
             /**
              * View
