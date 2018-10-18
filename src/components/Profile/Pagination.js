@@ -21,8 +21,6 @@ export const Pagination = {
          * View
          */
         return [
-            m('span.pt1.pb1.mr1', 'page'),
-
             pageNos.map(pageNo => {
                 return m('span.px1', [
                     m(LoadingBtn, {

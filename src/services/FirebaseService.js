@@ -1,6 +1,6 @@
-const User = require('./FirebaseService/User').default;
-const Blog = require('./FirebaseService/Blog').default;
-const Post = require('./FirebaseService/Post').default;
+const User = require('./FirebaseService/User');
+const Blog = require('./FirebaseService/Blog');
+const Post = require('./FirebaseService/Post');
 
 module.exports = (firebase, Pager, nanoid) => {
     const db   = firebase.firestore();

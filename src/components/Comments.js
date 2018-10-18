@@ -1,6 +1,7 @@
 import m from 'mithril';
 import stream from 'mithril/stream';
-import { Btn } from 'components/Btn';
+import { EmptyState } from 'components/EmptyState';
+import { LoadingBtn } from 'components/LoadingBtn';
 import { TextArea } from 'components/TextArea';
 
 export const Comments = () => {
@@ -32,49 +33,53 @@ export const Comments = () => {
             /**
              * State
              */
+            const isUserLoggedIn  = attrs.isUserLoggedIn || false;
             const globalUsername  = attrs.globalUsername;
             const identifier      = attrs.identifier;
             const comments        = attrs.comments;
 
             return [
-                m('h4', 'comments'),
+                isUserLoggedIn
+                    ? m('.py2', [
+                        // New Comment Box
+                        m(TextArea, {
+                            // State
+                            input: newCommentStream,
+                            maxlength: '800',
+                            rows: '1',
+                            textareaOncreate: ({dom}) => textareaElement = dom
+                        }),
 
-                // New Comment Box
-                m(TextArea, {
-                    // State
-                    input: newCommentStream,
-                    maxlength: '800',
-                    rows: '1',
-                    textareaOncreate: ({dom}) => textareaElement = dom
-                }),
-
-                // Create Comment Button
-                m(Btn, {
-                    className: 'my1 btn-outline right',
-                    disabled: !newCommentStream(),
-                    onclick: () => {
-                        createComment(globalUsername, identifier, newCommentStream())
-                            .then(() => {
-                                // Empty Comment Box after posting comment.
-                                newCommentStream('');
-                                textareaElement.value = '';
-                            })
-                        ;
-                    }
-                }, 'Post'),
+                        // Create Comment Button
+                        m(LoadingBtn, {
+                            className: 'my1 btn-outline right',
+                            altDisabled: !newCommentStream(),
+                            onclick: () => {
+                                createComment(globalUsername, identifier, newCommentStream())
+                                    .then(() => {
+                                        // Empty Comment Box after posting comment.
+                                        newCommentStream('');
+                                        textareaElement.value = '';
+                                    })
+                                ;
+                            }
+                        }, 'Post'),
+                    ])
+                    : null
+                ,
 
                 // Comments List
                 comments.length > 0
-                    ? comments.map(c => m('div', [
-                        m('span.h6', [
+                    ? comments.map(c => m('.my3', [
+                        m('span.h5', [
                             // m('img.inline.micro', { src: c.photoURL || '/img/favicon.png' }),
                             m('a.inline', { href: `/u/${c.username}`, oncreate: m.route.link }, c.username),
                             m('span.inline.muted.px1', '•'),
                             m('.inline.muted', c.date),
                         ]),
-                        m('p', c.content)
+                        m('p.my1', c.content)
                     ]))
-                    : null
+                    : m(EmptyState, 'There are no comments here yet.')
                 ,
             ];
         }

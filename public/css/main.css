@@ -5,8 +5,7 @@ body { background-color: #fdfdfd; color: #313131; }
 *:not(a) { animation: fade-in 0.08s; }
 .exit { animation: fade-out 0.06s; }
 
-/* a { text-decoration: none; color: #39CCCC; transition: color .06s ease-in-out; } */
-/* a:hover { color: #F5FCFF; } */
+.btn {  font-weight: 400; font-size: 14px; }
 a, .a-btn {
     color: #4e5192;
     transition: all .08s ease-in-out;
@@ -21,7 +20,7 @@ a:hover, .a-btn:hover { color: #5c5fb1; border-color: #3d3f80; }
 .a-btn:disabled { color: rgba(0, 0, 0, 0.2); }
 
 .un { border-bottom: 1px solid #3d3f80; }
-.muted { opacity: 0.4; }
+.muted { color: rgba(0, 0, 0, 0.8); }
 
 body { font-family: 'PT Serif', serif; }
 blockquote { font-size: 1rem; font-style: normal; margin-left: 2rem; }
@@ -30,7 +29,7 @@ blockquote { font-size: 1rem; font-style: normal; margin-left: 2rem; }
 .btn-bg:hover { background-color: #ebebeb }
 
 .bg-lighten { background-color: rgba(255, 255, 255, 0.1); }
-.bg-darken { background-color: rgba(0, 0, 0, 0.1); }
+.bg-darken { background-color: rgba(0, 0, 0, 0.06); }
 
 .bg-paper { background-color: #fdfdfd; }
 .charcoal { color: #313131; }
@@ -43,3 +42,5 @@ blockquote { font-size: 1rem; font-style: normal; margin-left: 2rem; }
 .max-height-2 { max-height: 8rem; }
 .max-height-3 { max-height: 12rem; }
 .max-height-4 { max-height: 16rem; }
+
+hr { height: 1px; margin: 2em 0; border: 0; background: rgba(0, 0, 0, 0.05); }

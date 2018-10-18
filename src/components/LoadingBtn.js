@@ -7,7 +7,7 @@ import { Btn } from 'components/Btn';
  */
 export const LoadingBtn = {
     view: ({attrs, children}) => m(Btn,
-        Object.assign({}, attrs, { disabled: model().isLoading }),
+        Object.assign({}, attrs, { disabled: model().isLoading || (attrs.altDisabled || false) }),
         children
     )
 };

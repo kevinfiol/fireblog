@@ -1,3 +1,5 @@
+import marked from 'marked';
+
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyAico7GEIIIUML-XCjwlxZ3TSPfimZfN1E',
     authDomain: 'botnet-profiles.firebaseapp.com',
@@ -7,4 +9,18 @@ const FIREBASE_CONFIG = {
     messagingSenderId: '112180117024'
 };
 
-export { FIREBASE_CONFIG };
+const RENDERER = (() => {
+    const r = new marked.Renderer();
+
+    r.image = (href, title, text) => {
+        var out = '<p class="center"><img src="' + href + '" alt="' + text + '"';
+        if (title) out += ' title="' + title + '"';
+
+        out += '/></p>';
+        return out;
+    };
+
+    return r;
+})();
+
+export { FIREBASE_CONFIG, RENDERER };

@@ -2,8 +2,13 @@ import m from 'mithril';
 import marked from 'marked';
 import actions from 'actions';
 import { model } from 'state';
+import { RENDERER } from 'config';
+import { EmptyState } from 'components/EmptyState';
 import { Comments } from 'components/Comments';
 import { Controls } from 'components/Post/Controls';
+
+// Set Marked Renderer
+marked.setOptions({ renderer: RENDERER, sanitize: true });
 
 /**
  * Actions
@@ -40,6 +45,7 @@ export const Post = () => {
 
             if (cache) {
                 setPost(cache);
+                document.title = model().post.title;
             } else {
                 setPost(null);
                 getPost(attrs.doc_id);
@@ -59,6 +65,7 @@ export const Post = () => {
 
                 setCache(route, data);
                 setPost(data);
+                document.title = model().post.title;
             });
         },
 
@@ -91,7 +98,7 @@ export const Post = () => {
              */
             const isUserLoggedIn      = globalUsername !== null;
             const isPostDataLoaded    = title !== null;
-            const showControls        = globalUsername === postUsername;
+            const showControls        = isUserLoggedIn && (globalUsername === postUsername);
 
             /**
              * View
@@ -126,21 +133,31 @@ export const Post = () => {
                             m('a', { oncreate: m.route.link, href: `/u/${postUsername}` }, postUsername)
                         ]),
                         m('.h5.muted', date),
-                        m('p', m.trust( marked( content ) ))
+                        m('p', content
+                            ? m.trust( marked( content ) )
+                            : m(EmptyState, 'This post has no content yet.')
+                        )
                     ]
                     : null
                 ,
 
-                isUserLoggedIn
-                    ? m(Comments, {
-                        // State
-                        globalUsername,
-                        identifier: doc_id,
-                        comments,
+                isPostDataLoaded
+                    ? [
+                        m('.col.col-12', m('hr')),
 
-                        // Actions
-                        createComment: createPostComment
-                    })
+                        m('h4', { style: { margin: '0' } }, 'comments'),
+
+                        m(Comments, {
+                            // State
+                            isUserLoggedIn,
+                            globalUsername,
+                            identifier: doc_id,
+                            comments,
+        
+                            // Actions
+                            createComment: createPostComment
+                        })
+                    ]
                     : null
                 ,
             ];
