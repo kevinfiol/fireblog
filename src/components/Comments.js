@@ -15,6 +15,7 @@ export const Comments = () => {
      * Actions
      */
     let createComment;
+    let deleteComment;
 
     return {
         /**
@@ -23,6 +24,7 @@ export const Comments = () => {
          */
         oninit: ({attrs}) => {
             createComment = attrs.createComment;
+            deleteComment = attrs.deleteComment;
         },
 
         /**
@@ -36,11 +38,11 @@ export const Comments = () => {
             const isUserLoggedIn  = attrs.isUserLoggedIn || false;
             const globalUsername  = attrs.globalUsername;
             const identifier      = attrs.identifier;
-            const comments        = attrs.comments;
+            const comments        = [...attrs.comments].reverse();
 
             return [
                 isUserLoggedIn
-                    ? m('.py2', [
+                    ? m('div', [
                         // New Comment Box
                         m(TextArea, {
                             // State
@@ -51,34 +53,45 @@ export const Comments = () => {
                         }),
 
                         // Create Comment Button
-                        m(LoadingBtn, {
-                            className: 'my1 btn-outline right',
-                            altDisabled: !newCommentStream(),
-                            onclick: () => {
-                                createComment(globalUsername, identifier, newCommentStream())
-                                    .then(() => {
-                                        // Empty Comment Box after posting comment.
-                                        newCommentStream('');
-                                        textareaElement.value = '';
-                                    })
-                                ;
-                            }
-                        }, 'Post'),
+                        m('.right-align', [
+                            m(LoadingBtn, {
+                                className: 'btn-outline',
+                                altDisabled: !newCommentStream(),
+                                onclick: () => {
+                                    createComment(globalUsername, identifier, newCommentStream())
+                                        .then(() => {
+                                            // Empty Comment Box after posting comment.
+                                            newCommentStream('');
+                                            textareaElement.value = '';
+                                        })
+                                    ;
+                                }
+                            }, 'Post'),
+                        ])
                     ])
                     : null
                 ,
 
                 // Comments List
                 comments.length > 0
-                    ? comments.map(c => m('.my3', [
-                        m('span.h5', [
-                            // m('img.inline.micro', { src: c.photoURL || '/img/favicon.png' }),
-                            m('a.inline', { href: `/u/${c.username}`, oncreate: m.route.link }, c.username),
-                            m('span.inline.muted.px1', '•'),
-                            m('.inline.muted', c.date),
-                        ]),
-                        m('p.my1', c.content)
-                    ]))
+                    ? comments.map(c => {
+                        const isGlobalUsersPost = globalUsername === c.username;
+
+                        return m('.my3', [
+                            m('span.h5', [
+                                // m('img.inline.micro', { src: c.photoURL || '/img/favicon.png' }),
+                                m('a.inline', { href: `/u/${c.username}`, oncreate: m.route.link }, c.username),
+                                m('span.inline.muted.px1', '•'),
+                                m('.inline.muted', c.date),
+
+                                isGlobalUsersPost
+                                    ? m('.inline.muted.c-hand.right.a-btn', { onclick: () => deleteComment(identifier, c.id) }, 'delete')
+                                    : null
+                                ,
+                            ]),
+                            m('p.my1', c.content)
+                        ]);
+                    })
                     : m(EmptyState, 'There are no comments here yet.')
                 ,
             ];

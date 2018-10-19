@@ -22,6 +22,7 @@ const {
     deletePost,
     createPostListener,
     createPostComment,
+    deletePostComment,
     updateBlogTimestamp
 } = actions.post;
 
@@ -155,7 +156,8 @@ export const Post = () => {
                             comments,
         
                             // Actions
-                            createComment: createPostComment
+                            createComment: createPostComment,
+                            deleteComment: deletePostComment
                         })
                     ]
                     : null

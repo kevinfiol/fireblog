@@ -8,6 +8,7 @@ const UPDATE_POST_BLOGPOST       = 'POST_UPDATE_BLOGPOST';
 const UPDATE_POST_BLOG_TIMESTAMP = 'UPDATE_POST_BLOG_TIMESTAMP';
 const DELETE_POST_BLOGPOST       = 'POST_DELETE_BLOGPOST';
 const CREATE_POST_COMMENT        = 'CREATE_POST_COMMENT';
+const DELETE_POST_COMMENT        = 'DELETE_POST_COMMENT';
 
 /**
  * Post Actions
@@ -70,6 +71,15 @@ module.exports = (update, queue, initial, Firebase) => {
         ;
     };
 
+    const deletePostComment = (post_doc_id, commentId) => {
+        const action = { type: DELETE_POST_COMMENT };
+        queue.enqueue(action);
+
+        return Firebase.deletePostComment(post_doc_id, commentId)
+            .finally(() => queue.dequeue(action))
+        ;
+    };
+
     const createPostListener = (doc_id, onDocExists) => {
         return Firebase.createPostListener(doc_id, onDocExists);
     };
@@ -81,6 +91,7 @@ module.exports = (update, queue, initial, Firebase) => {
         deletePost,
         updateBlogTimestamp,
         createPostListener,
-        createPostComment
+        createPostComment,
+        deletePostComment
     };
 };

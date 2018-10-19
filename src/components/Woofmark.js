@@ -10,8 +10,8 @@ export const Woofmark = {
      * @param {Object} attrs View Attributes
      */
     view: ({attrs}) => m('div', [
-        m('textarea.textarea.bg-paper.charcoal.my1', {
-            rows: '14',
+        m('textarea.textarea.bg-paper.charcoal.mt1.mb0', {
+            rows: '24',
             placeholder: attrs.placeholder,
             oncreate: ({dom}) => {
                 dom.value = attrs.value || '';

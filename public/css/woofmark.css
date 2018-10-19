@@ -12,6 +12,7 @@
 }
 
 .wk-container { background-color: #fdfdfd; }
+.wk-container > textarea { font-family: monospace; font-size: 1em; }
 
 .wk-commands > button:hover,
 .wk-switchboard > button:hover,

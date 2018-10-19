@@ -8,6 +8,7 @@ const SET_PROFILE_BLOG         = 'SET_PROFILE_BLOG';
 
 const CREATE_PROFILE_BLOG_POST    = 'CREATE_PROFILE_BLOG_POST';
 const CREATE_PROFILE_BLOG_COMMENT = 'CREATE_PROFILE_BLOG_COMMENT';
+const DELETE_PROFILE_BLOG_COMMENT = 'DELETE_PROFILE_BLOG_COMMENT';
 
 /**
  * Profile Actions
@@ -55,6 +56,15 @@ module.exports = (update, queue, initial, Firebase) => {
         ;
     };
 
+    const deleteProfileBlogComment = (profileUsername, commentId) => {
+        const action = { type: DELETE_PROFILE_BLOG_COMMENT };
+        queue.enqueue(action);
+
+        return Firebase.deleteBlogComment(profileUsername, commentId)
+            .finally(() => queue.dequeue(action))
+        ;
+    };
+
     const createProfileBlogListener = (username, pageNo, onDocExists) => {
         return Firebase.createBlogListener(username, pageNo, onDocExists);
     };
@@ -73,6 +83,8 @@ module.exports = (update, queue, initial, Firebase) => {
         createProfileBlogPost,
         createProfileBlogComment,
         createProfileBlogListener,
-        createProfileUserListener
+        createProfileUserListener,
+
+        deleteProfileBlogComment
     };
 };

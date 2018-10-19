@@ -1,4 +1,5 @@
 import m from 'mithril';
+import { EmptyState } from 'components/EmptyState';
 
 /**
  * BlogContainer Post Subcomponent
@@ -40,7 +41,7 @@ export const BlogContainer = {
         return [
             blog.page.posts.length > 0
                 ? blog.page.posts.map(post => m(Post, { post }))
-                : m('i', 'User has made no posts.')
+                : m(EmptyState, 'User has made no posts.')
             ,
         ];
     }

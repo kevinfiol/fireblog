@@ -20,10 +20,12 @@ export const UserInfo = {
          */
         return [
             m('.col.col-12.md-col-3', [
-                m('img.fit.rounded.left.my1', {
-                    style: { maxHeight: '120px', maxWidth: '120px' },
-                    src: user.photoURL || '/img/favicon.png'
-                }),
+                m('.left.my1', { style: { height: '120px', width: '120px' } }, [
+                    m('img.fit.rounded', {
+                        style: { maxHeight: '120px', maxWidth: '120px' },
+                        src: user.photoURL || '/img/favicon.png'
+                    })
+                ])
             ]),
 
             // Bio

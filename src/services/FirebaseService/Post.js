@@ -85,9 +85,8 @@ module.exports = (db, nanoid, Pager, getTimestamp) => ({
     createPostComment: (globalUsername, post_doc_id, content) => {
         const timestamp = getTimestamp();
         const postRef = db.collection('posts').doc(post_doc_id);
-
         const date = new Date().toLocaleDateString();
-        const id = `${post_doc_id}-comment-${nanoid(11)}`;
+        const id = `comment-${nanoid(11)}`;
 
         return postRef.get()
             .then(doc => doc.exists ? doc.data() : null)
@@ -96,8 +95,28 @@ module.exports = (db, nanoid, Pager, getTimestamp) => ({
 
                 const comment = { username: globalUsername, id, date, content };
                 const comments = [...data.comments];
+                comments.push(comment);
 
-                comments.unshift(comment);
+                return comments;
+            }).then(comments => {
+                return postRef.update({ timestamp, comments });
+            })
+        ;
+    },
+
+    deletePostComment: (post_doc_id, commentId) => {
+        const timestamp = getTimestamp();
+        const postRef = db.collection('posts').doc(post_doc_id);
+
+        return postRef.get()
+            .then(doc => doc.exists ? doc.data() : null)
+            .then(data => {
+                if (!data) throw 'Doc does not exist';
+
+                const comments = [...data.comments];
+                const index = comments.findIndex(c => c.id === commentId);
+
+                if (index > -1) comments.splice(index, 1);
                 return comments;
             }).then(comments => {
                 return postRef.update({ timestamp, comments });

@@ -18,6 +18,7 @@ const {
     setProfileBlog,
     createProfileBlogPost,
     createProfileBlogComment,
+    deleteProfileBlogComment,
     createProfileBlogListener,
     createProfileUserListener
 } = actions.profile;
@@ -149,31 +150,31 @@ export const Profile = () => {
                     : null
                 ,
 
-                m('.col.col-12', m('hr')),
-
-                m('.col.col-12.flex.items-center', { style: { height: '36px' } }, [
-                    m('.col.col-6', [
-                        m('h4', { style: { margin: '0' } }, 'posts')
-                    ]),
-
-                    m('.col.col-6', m('div.right', [
-                        showControls
-                            ? m(Controls, {
-                                // State
-                                username: globalUser.username,
-                                showEditor,
-    
-                                // Actions
-                                createProfileBlogPost,
-                                enableEditor
-                            })
-                            : null
-                        ,
-                    ]))
-                ]),
-
                 isBlogLoaded
                     ? [
+                        m('.col.col-12', m('hr')),
+
+                        m('.col.col-12.flex.items-center', { style: { height: '36px' } }, [
+                            m('.col.col-6', [
+                                m('h4', { style: { margin: '0' } }, 'posts')
+                            ]),
+        
+                            m('.col.col-6', m('div.right', [
+                                showControls
+                                    ? m(Controls, {
+                                        // State
+                                        username: globalUser.username,
+                                        showEditor,
+            
+                                        // Actions
+                                        createProfileBlogPost,
+                                        enableEditor
+                                    })
+                                    : null
+                                ,
+                            ]))
+                        ]),
+
                         m('.col.col-12', [
                             m(BlogContainer, {
                                 // State
@@ -188,27 +189,28 @@ export const Profile = () => {
                                 currentPage: pageNo,
                                 pageNos
                             })
+                        ]),
+
+                        m('.col.col-12', m('hr')),
+
+                        m('.col.col-12', [
+                            m('h4', { style: { margin: '0' } }, 'comments'),
+        
+                            m(Comments, {
+                                // State
+                                isUserLoggedIn,
+                                globalUsername: globalUser.username,
+                                identifier: profileUser.username,
+                                comments: blogComments,
+        
+                                // Actions
+                                createComment: createProfileBlogComment,
+                                deleteComment: deleteProfileBlogComment
+                            })
                         ])
                     ]
                     : null
                 ,
-                
-                m('.col.col-12', m('hr')),
-
-                m('.col.col-12', [
-                    m('h4', { style: { margin: '0' } }, 'comments'),
-
-                    m(Comments, {
-                        // State
-                        isUserLoggedIn,
-                        globalUsername: globalUser.username,
-                        identifier: profileUser.username,
-                        comments: blogComments,
-
-                        // Actions
-                        createComment: createProfileBlogComment
-                    })
-                ])
             ]);
         }
     };
