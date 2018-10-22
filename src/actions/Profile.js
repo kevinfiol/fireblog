@@ -1,7 +1,6 @@
 /**
  * Profile Action Types
  */
-
 const SET_PROFILE              = 'SET_PROFILE';
 const SET_PROFILE_USER         = 'SET_PROFILE_USER';
 const SET_PROFILE_BLOG         = 'SET_PROFILE_BLOG';

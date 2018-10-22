@@ -13,7 +13,7 @@ module.exports = (Firebase, actions) => {
             setFirebaseUser(user);
 
             if (initialLoad) {
-                Firebase.getUserByEmail(user.email)
+                Firebase.getUserBy('email', user.email)
                     .then(setUserData)
                     .finally(() => {
                         dequeue(action);

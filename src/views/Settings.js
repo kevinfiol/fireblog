@@ -6,7 +6,7 @@ import { ProfileForm } from 'components/Settings/ProfileForm';
 /**
  * Actions
  */
-const { updateUserData } = actions.global;
+const { updateUserData, updateUserEmail } = actions.global;
 
 /**
  * Settings View
@@ -29,9 +29,10 @@ export const Settings = {
          * State
          */
         const firebaseUser = model().global.firebaseUser;
-        const username = model().global.userData.username;
-        const photoURL = model().global.userData.photoURL;
-        const bio = model().global.userData.bio;
+        const username     = model().global.userData.username;
+        const email        = model().global.userData.email;
+        const photoURL     = model().global.userData.photoURL;
+        const bio          = model().global.userData.bio;
 
         /**
          * Computed
@@ -46,11 +47,13 @@ export const Settings = {
                 ? m(ProfileForm, {
                     // State
                     username,
+                    email,
                     photoURL,
                     bio,
 
                     // Actions
-                    updateUserData
+                    updateUserData,
+                    updateUserEmail
                 })
                 : m('p', 'Not logged in.')
             ,

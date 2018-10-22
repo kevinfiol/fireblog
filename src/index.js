@@ -3,16 +3,16 @@ import observers from 'observers';
 import meiosisTracer from 'meiosis-tracer';
 import { model, record } from 'state';
 import { Layout } from 'views/Layout';
-import { Index } from 'views/Index';
+import { Dashboard } from 'views/Dashboard';
 import { ErrorPage } from 'views/ErrorPage';
 import { Profile } from 'views/Profile';
 import { Post } from 'views/Post';
 import { Settings } from 'views/Settings';
 
-// meiosisTracer({ selector: '#tracer', streams: [
-//     // { stream: record, hide: false },
-//     { stream: model, hide: false }
-// ]});
+meiosisTracer({ selector: '#tracer', streams: [
+    // { stream: record, hide: false },
+    { stream: model, hide: false }
+]});
 
 model.map(() => setTimeout(m.redraw, 2));
 
@@ -23,8 +23,8 @@ const setWindow = title => {
 
 m.route(document.getElementById('app'), '/', {
     '/': {
-        onmatch: () => setWindow('botnet profiles'),
-        render: () => m(Layout, m(Index))
+        onmatch: () => setWindow('Latest'),
+        render: () => m(Layout, m(Dashboard))
     },
 
     '/u/:username': {

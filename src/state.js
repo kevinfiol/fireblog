@@ -5,6 +5,10 @@ const initialState = {
     queue: [],
     isLoading: false,
 
+    dashboard: {
+    	posts: []
+    },
+
     global: {
         userData: {
             username: null,

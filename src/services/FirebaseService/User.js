@@ -17,8 +17,8 @@ module.exports = (db, auth, getTimestamp) => ({
         ;
     },
 
-    getUserByEmail: email => {
-        return db.collection('users').where('email', '==', email)
+    getUserBy: (type, identifier) => {
+        return db.collection('users').where(type, '==', identifier)
             .get()
             .then(snap => {
                 const users = [];
@@ -45,16 +45,14 @@ module.exports = (db, auth, getTimestamp) => ({
     },
 
     updateUser: (username, prop, val) => {
-        return db.collection('users').doc(username).set({
+        return db.collection('users').doc(username).update({
             timestamp: getTimestamp(),
             [prop]: val
-        }, { merge: true });
+        });
     },
 
-    updateProfile: (prop, val) => {
-        return auth.currentUser.updateProfile({
-            [prop]: val
-        });
+    updateUserEmail: newEmail => {
+        return auth.currentUser.updateEmail(newEmail);
     },
 
     createUserListener: (username, onDocExists) => {
@@ -71,7 +69,7 @@ module.exports = (db, auth, getTimestamp) => ({
                 } catch(e) {
                     onDocExists(null);
                 }
-            }, () => null)
+            }, () => onDocExists(null))
         ;
 
         return unsubscribe;

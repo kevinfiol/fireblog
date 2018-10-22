@@ -81,11 +81,11 @@ export const Comments = () => {
                             m('span.h5', [
                                 // m('img.inline.micro', { src: c.photoURL || '/img/favicon.png' }),
                                 m('a.inline', { href: `/u/${c.username}`, oncreate: m.route.link }, c.username),
-                                m('span.inline.muted.px1', '•'),
-                                m('.inline.muted', c.date),
+                                m('span.inline.light-subdue.px1', '•'),
+                                m('.inline.light-subdue', c.date),
 
                                 isGlobalUsersPost
-                                    ? m('.inline.muted.c-hand.right.a-btn', { onclick: () => deleteComment(identifier, c.id) }, 'delete')
+                                    ? m('.inline.light-subdue.c-hand.right.a-btn', { onclick: () => deleteComment(identifier, c.id) }, 'delete')
                                     : null
                                 ,
                             ]),

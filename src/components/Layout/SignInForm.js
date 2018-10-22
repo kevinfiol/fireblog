@@ -10,13 +10,13 @@ export const SignInForm = () => {
     /**
      * Local State
      */
-    const email = stream('');
-    const pwd   = stream('');
+    const username = stream('');
+    const pwd      = stream('');
 
     // Check if fields are filled
-    const isFormValid = stream.combine((email, pwd) => {
-        return email() && pwd();
-    }, [email, pwd]);
+    const isFormValid = stream.combine((username, pwd) => {
+        return username() && pwd();
+    }, [username, pwd]);
 
     /**
      * Actions
@@ -49,8 +49,8 @@ export const SignInForm = () => {
                 m('h3', 'Sign In'),
 
                 m(InputText, {
-                    placeholder: 'email',
-                    input: email
+                    placeholder: 'username',
+                    input: username
                 }),
 
                 m(InputText, {
@@ -62,7 +62,7 @@ export const SignInForm = () => {
                 isFormValid()
                     ? m(LoadingBtn, { 
                         className: 'my1 btn-outline',
-                        onclick: () => signInUser( email(), pwd() ) 
+                        onclick: () => signInUser( username(), pwd() ) 
                     }, 'Submit')
                     : null
                 ,

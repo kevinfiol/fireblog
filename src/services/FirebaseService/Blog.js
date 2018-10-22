@@ -62,19 +62,17 @@ module.exports = (db, nanoid, Pager, getTimestamp) => ({
             .onSnapshot(doc => {
                 try {
                     const data = doc.data();
+                    const timestamp = data.timestamp ? data.timestamp.toDate().toJSON() : null;
+                    const page      = data.pages[pageNo];
+                    const pageNos   = Object.keys(data.pages).map(Number).sort();
+                    const comments  = data.comments;
 
-                    const blogPage = {
-                        timestamp: data.timestamp ? data.timestamp.toDate().toJSON() : null,
-                        page: data.pages[pageNo],
-                        pageNos: Object.keys(data.pages).map(Number).sort(),
-                        comments: data.comments
-                    };
-    
-                    onDocExists(blogPage);
+                    const newBlogState = { timestamp, page, pageNos, comments };
+                    onDocExists(newBlogState);
                 } catch(e) {
                     onDocExists(null);
                 }
-            }, () => null)
+            }, () => onDocExists(null))
         ;
 
         return unsubscribe;

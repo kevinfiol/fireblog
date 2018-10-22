@@ -11,6 +11,7 @@ export const ProfileForm = () => {
     /**
      * Local State
      */
+    const emailStream    = stream('');
     const photoURLStream = stream('');
     const bioStream      = stream('');
 
@@ -18,10 +19,12 @@ export const ProfileForm = () => {
      * Actions
      */
     let updateUserData;
+    let updateUserEmail;
 
     return {
         oninit: ({attrs}) => {
-            updateUserData = attrs.updateUserData;
+            updateUserData  = attrs.updateUserData;
+            updateUserEmail = attrs.updateUserEmail;
         },
 
         /**
@@ -33,6 +36,7 @@ export const ProfileForm = () => {
              * State
              */
             const username = attrs.username;
+            const email    = attrs.email;
             const photoURL = attrs.photoURL;
             const bio      = attrs.bio;
 
@@ -40,6 +44,20 @@ export const ProfileForm = () => {
              * View
              */
             return [
+                // m(InputText, {
+                //     placeholder: 'email',
+                //     value: email || '',
+                //     input: emailStream
+                // }),
+
+                // m(LoadingBtn, {
+                //     className: 'mt1 mb3 btn-outline',
+                //     onclick: () => Promise.all([
+                //         // updateUserData(username, 'email', emailStream()),
+                //         updateUserEmail(emailStream())
+                //     ])
+                // }, 'Update Email'),
+
                 m(InputText, {
                     placeholder: 'photo url',
                     value: photoURL || '',

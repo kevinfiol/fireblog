@@ -130,10 +130,10 @@ export const Post = () => {
                     ? [
                         m('h1', title),
                         m('.h4', [
-                            m('span.muted', 'by '),
+                            m('span.light-subdue', 'by '),
                             m('a', { oncreate: m.route.link, href: `/u/${postUsername}` }, postUsername)
                         ]),
-                        m('.h5.muted', date),
+                        m('.h5.light-subdue', date),
                         m('p', content
                             ? m.trust( marked( content ) )
                             : m(EmptyState, 'This post has no content yet.')

@@ -7,69 +7,65 @@ module.exports = (db, nanoid, Pager, getTimestamp) => ({
     },
 
     createPost: (username, title, content) => {
-        const timestamp = getTimestamp();
-        const date = new Date().toLocaleDateString();
-        const userBlogRef = db.collection('blogs').doc(username);
-        const allPostsRef = db.collection('posts');
+        const blogsRef = db.collection('blogs').doc(username);
+        const postsRef = db.collection('posts');
 
-        return userBlogRef.get()
-            .then(doc => {
-                if (doc.exists) {
-                    const pages = doc.data().pages || null;
+        return blogsRef.get()
+            .then(doc => doc.exists ? doc.data() : null)
+            .then(data => {
+                if (!data) throw 'Doc does not exist.';
+                return data.pages || null;
+            }).then(pages => {
+                if (!pages) throw 'Cannot create new page.';
+                
+                const timestamp = getTimestamp();
+                const doc_id = `${username}-${nanoid(11)}`;
+                const date = new Date().toLocaleDateString();
 
-                    if (pages) {
-                        const uid = nanoid(11);
-                        const doc_id = `${username}-${uid}`;
+                // Create Post Document
+                postsRef.doc(doc_id).set({
+                    timestamp,
+                    doc_id,
+                    username,
+                    title,
+                    content,
+                    date,
+                    comments: [],
+                });
 
-                        // Create Post Document
-                        allPostsRef.doc(doc_id).set({
-                            timestamp,
-                            doc_id,
-                            username,
-                            title,
-                            content,
-                            date,
-                            comments: [],
-                        });
+                // Update Blog Document's Pages to include new Post
+                const postRef = postsRef.doc(doc_id);
+                const pager = Pager(pages);
+                pager.addPost(doc_id, postRef);
 
-                        // Update Blog Document's Pages to include new Post
-                        const postRef = allPostsRef.doc(doc_id);
-                        const pager = Pager(pages);
-                        pager.addPost(doc_id, postRef);
-
-                        userBlogRef.update({ timestamp, pages: pager.getPages() });
-                        return;
-                    }
-                }
-
-                throw 'Error: Cannot create post!';
+                blogsRef.update({ timestamp, pages: pager.getPages() });
+                return;
             })
         ;
     },
 
     deletePost: doc_id => {
-        const timestamp = getTimestamp();
-        const allPostsRef = db.collection('posts');
+        const postsRef = db.collection('posts');
         let userBlogRef;
 
-        return allPostsRef.doc(doc_id)
-            .get()
-            .then(doc => doc.data())
-            .then(data => data.username)
+        return postsRef.doc(doc_id).get()
+            .then(doc => doc.exists ? doc.data() : null)
+            .then(data => {
+                if (!data) throw 'Doc does not exist.';
+                return data.username;
+            })
             .then(username => {
                 userBlogRef = db.collection('blogs').doc(username);
                 return userBlogRef.get().then(doc => doc.data().pages);
             })
             .then(pages => {
+                const timestamp = getTimestamp();
                 const pager = Pager(pages);
                 pager.deletePost(doc_id);
 
                 // Update User's blog pages with post removed
                 userBlogRef.update({ timestamp, pages: pager.getPages() });
-                return allPostsRef.doc(doc_id).delete();
-            })
-            .catch(() => {
-                throw 'Error: Could not delete post!';
+                return postsRef.doc(doc_id).delete();
             })
         ;
     },
@@ -83,29 +79,29 @@ module.exports = (db, nanoid, Pager, getTimestamp) => ({
     },
 
     createPostComment: (globalUsername, post_doc_id, content) => {
-        const timestamp = getTimestamp();
         const postRef = db.collection('posts').doc(post_doc_id);
-        const date = new Date().toLocaleDateString();
-        const id = `comment-${nanoid(11)}`;
-
+        
         return postRef.get()
             .then(doc => doc.exists ? doc.data() : null)
             .then(data => {
                 if (!data) throw 'Doc does not exist.';
 
+                const id = `comment-${nanoid(11)}`;
+                const date = new Date().toLocaleDateString();
+
                 const comment = { username: globalUsername, id, date, content };
                 const comments = [...data.comments];
-                comments.push(comment);
 
+                comments.push(comment);
                 return comments;
             }).then(comments => {
+                const timestamp = getTimestamp();
                 return postRef.update({ timestamp, comments });
             })
         ;
     },
 
     deletePostComment: (post_doc_id, commentId) => {
-        const timestamp = getTimestamp();
         const postRef = db.collection('posts').doc(post_doc_id);
 
         return postRef.get()
@@ -119,6 +115,7 @@ module.exports = (db, nanoid, Pager, getTimestamp) => ({
                 if (index > -1) comments.splice(index, 1);
                 return comments;
             }).then(comments => {
+                const timestamp = getTimestamp();
                 return postRef.update({ timestamp, comments });
             })
         ;
@@ -127,13 +124,30 @@ module.exports = (db, nanoid, Pager, getTimestamp) => ({
     createPostListener: (doc_id, onDocExists) => {
         const unsubscribe = db.collection('posts').doc(doc_id)
             .onSnapshot(doc => {
-                const post = doc.data() || null;
+                try {
+                    const post = doc.data() || null;
 
-                if (post && post.timestamp) {
-                    post.timestamp = post.timestamp.toDate().toJSON();
+                    if (post && post.timestamp) {
+                        post.timestamp = post.timestamp.toDate().toJSON();
+                    }
+    
+                    onDocExists(post);
+                } catch(e) {
+                    onDocExists(null);
                 }
+            }, () => onDocExists(null))
+        ;
 
-                onDocExists(post);
+        return unsubscribe;
+    },
+
+    createLatestPostsListener: onDocExists => {
+        const unsubscribe = db.collection('posts').orderBy('timestamp', 'desc')
+            .onSnapshot(snap => {
+                const posts = [];
+                snap.forEach(doc => posts.push( doc.data() ));
+
+                onDocExists(posts);
             })
         ;
 

@@ -1,5 +1,3 @@
-import marked from 'marked';
-
 const FIREBASE_CONFIG = {
     apiKey: 'AIzaSyAico7GEIIIUML-XCjwlxZ3TSPfimZfN1E',
     authDomain: 'botnet-profiles.firebaseapp.com',
@@ -10,6 +8,7 @@ const FIREBASE_CONFIG = {
 };
 
 const RENDERER = (() => {
+    const marked = require('marked');
     const r = new marked.Renderer();
 
     r.image = (href, title, text) => {
@@ -23,4 +22,4 @@ const RENDERER = (() => {
     return r;
 })();
 
-export { FIREBASE_CONFIG, RENDERER };
+module.exports = { FIREBASE_CONFIG, RENDERER };

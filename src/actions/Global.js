@@ -13,6 +13,7 @@ const SET_GLOBAL_FIREBASEUSER   = 'SET_GLOBAL_FIREBASEUSER';
 const CREATE_GLOBAL_USER        = 'CREATE_GLOBAL_USER';
 const SIGNIN_GLOBAL_USER        = 'SIGNIN_GLOBAL_USER';
 const UPDATE_GLOBAL_USERDATA    = 'UPDATE_GLOBAL_USERDATA';
+const UPDATE_GLOBAL_EMAIL       = 'UPDATE_GLOBAL_EMAIL';
 const SIGNOUT_GLOBAL_USER       = 'SIGNOUT_GLOBAL_USER';
 
 /**
@@ -126,15 +127,23 @@ module.exports = (update, queue, initial, Firebase) => {
         ;
     };
 
-    const signInUser = (email, pwd) => {
+    const signInUser = (username, pwd) => {
         const action = { type: SIGNIN_GLOBAL_USER };
 
         // Queue Async Action
         queue.enqueue(action);
 
-        return Firebase.signInUser(email, pwd)
-            .then(() => Firebase.getUserByEmail(email))
-            .then(setUserData)
+        return Firebase.getUserBy('username', username)
+            .then(userData => {
+                if (!userData || !userData.email)
+                    throw { message: 'User does not exist.' };
+
+                return Promise.all([
+                    userData,
+                    Firebase.signInUser(userData.email, pwd)
+                ]);
+            })
+            .then(res => setUserData(res[0]))
             .then(() => {
                 setSignInMsg(null);
                 enableSignInForm(false);
@@ -155,12 +164,17 @@ module.exports = (update, queue, initial, Firebase) => {
         queue.enqueue(action);
 
         return Firebase.updateUser(username, prop, val)
-            .then(() => {
-                setUserData({ [prop]: val });
-            })
-            .finally(() => {
-                queue.dequeue(action);
-            })
+            .then(() => setUserData({ [prop]: val }))
+            .finally(() => queue.dequeue(action))
+        ;
+    };
+
+    const updateUserEmail = newEmail => {
+        const action = { type: UPDATE_GLOBAL_EMAIL };
+        queue.enqueue(action);
+
+        return Firebase.updateUserEmail(newEmail)
+            .finally(() => queue.dequeue(action))
         ;
     };
 
@@ -187,6 +201,7 @@ module.exports = (update, queue, initial, Firebase) => {
         signInUser,
         signOut,
         setUserData,
-        updateUserData
+        updateUserData,
+        updateUserEmail
     };
 };
