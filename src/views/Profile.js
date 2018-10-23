@@ -100,6 +100,8 @@ export const Profile = () => {
                             setCache(route, cache);
                             setProfileBlog(blog);
                         }
+
+                        m.redraw();
                     })
                 ;
             });
@@ -139,7 +141,7 @@ export const Profile = () => {
             /**
              * View
              */
-            return m('.clearfix', [
+            return [
                 isProfileLoaded
                     ? m('.col.col-12', [
                         m(UserInfo, {
@@ -211,7 +213,7 @@ export const Profile = () => {
                     ]
                     : null
                 ,
-            ]);
+            ];
         }
     };
 

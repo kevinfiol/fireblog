@@ -42,7 +42,9 @@ export const Settings = {
         /**
          * View
          */
-        return m('.clearfix', [
+        return [
+            m('h3', 'settings'),
+
             isFirebaseUserLoaded
                 ? m(ProfileForm, {
                     // State
@@ -57,6 +59,6 @@ export const Settings = {
                 })
                 : m('p', 'Not logged in.')
             ,
-        ]);
+        ];
     }
 };

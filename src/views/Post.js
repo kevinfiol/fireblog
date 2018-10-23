@@ -67,6 +67,8 @@ export const Post = () => {
                 setCache(route, data);
                 setPost(data);
                 document.title = model().post.title;
+
+                m.redraw();
             });
         },
 

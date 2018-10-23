@@ -34,11 +34,11 @@ export const Layout = {
          * State Variables
          */
         const firebaseUser = model().global.firebaseUser;
-        const username = model().global.userData.username;
-        const signUpMsg = model().global.signUpMsg;
-        const signInMsg = model().global.signInMsg;
+        const username     = model().global.userData.username;
+        const signUpMsg    = model().global.signUpMsg;
+        const signInMsg    = model().global.signInMsg;
 
-        const isLoading = model().isLoading;
+        const isLoading  = model().isLoading;
         const showSignUp = model().global.showSignUp;
         const showSignIn = model().global.showSignIn;
 

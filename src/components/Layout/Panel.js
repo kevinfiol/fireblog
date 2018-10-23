@@ -43,21 +43,21 @@ export const Panel = () => {
              * View
              */
             return [
+                m(LoadingBtn, {
+                    className: 'a-btn px0 py1 mx1',
+                    onclick: () => m.route.set('/')
+                }, 'Latest'),
+
                 !isFirebaseUser
                     ? [
-                        m(LoadingBtn, { className: 'a-btn p1 mx1', onclick: () => enableSignUpForm(true) }, 'Sign Up'),
-                        m(LoadingBtn, { className: 'a-btn p1 mx1', onclick: () => enableSignInForm(true) }, 'Sign In'),
+                        m(LoadingBtn, { className: 'a-btn px0 py1 mx1', onclick: () => enableSignUpForm(true) }, 'Sign Up'),
+                        m(LoadingBtn, { className: 'a-btn px0 py1 mx1', onclick: () => enableSignInForm(true) }, 'Sign In'),
                     ]
                     : null
                 ,
-        
+
                 isFirebaseUser
                     ? [
-                        m(LoadingBtn, {
-                            className: 'a-btn px0 py1 mx1',
-                            onclick: () => m.route.set('/')
-                        }, 'Dashboard'),
-        
                         m(LoadingBtn, {
                             className: 'a-btn px0 py1 mx1',
                             onclick: () => m.route.set('/u/:key', { key: username })

@@ -1,7 +1,8 @@
 /**
  * Dashboard Action Types
  */
-const SET_DASHBOARD = 'SET_DASHBOARD';
+const SET_DASHBOARD             = 'SET_DASHBOARD';
+const GET_DASHBOARD_POSTS = 'GET_DASHBOARD_POSTS';
 
 /**
  * Global Actions
@@ -19,11 +20,24 @@ module.exports = (update, queue, initial, Firebase) => {
     }));
 
     /**
+     * Getters 
+     */
+    const getDashboardPosts = () => {
+        const action = { type: GET_DASHBOARD_POSTS };
+        queue.enqueue(action);
+
+        return Firebase.getLatestPosts()
+            .then(posts => setDashboard({ posts }))
+            .finally(() => queue.dequeue(action))
+        ;
+    };
+
+    /**
      * Actions
      */
     const createDashboardPostsListener = onDocExists => {
         return Firebase.createLatestPostsListener(onDocExists);
     };
 
-    return { setDashboard, createDashboardPostsListener };
+    return { setDashboard, getDashboardPosts, createDashboardPostsListener };
 };

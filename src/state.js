@@ -6,6 +6,7 @@ const initialState = {
     isLoading: false,
 
     dashboard: {
+        timestamp: null,
     	posts: []
     },
 
