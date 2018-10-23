@@ -12,7 +12,7 @@ const RENDERER = (() => {
     const r = new marked.Renderer();
 
     r.image = (href, title, text) => {
-        var out = '<p class="center"><img data-src="' + href + '" alt="' + text + '"';
+        var out = '<p class="center"><img src="' + href + '" alt="' + text + '"';
         if (title) out += ' title="' + title + '"';
 
         out += '/></p>';
