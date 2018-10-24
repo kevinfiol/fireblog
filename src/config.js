@@ -11,13 +11,16 @@ const RENDERER = (() => {
     const marked = require('marked');
     const r = new marked.Renderer();
 
-    r.image = (href, title, text) => {
-        var out = '<p class="center"><img src="' + href + '" alt="' + text + '"';
-        if (title) out += ' title="' + title + '"';
-
-        out += '/></p>';
-        return out;
-    };
+    r.image = (href, title, text) => `
+        <p class="center">
+            <img
+                class="lazy-load"
+                src="${href}"
+                alt="${text}"
+                ${ title ? `title=${title}` : '' }
+            />
+        </p>
+    `;
 
     return r;
 })();

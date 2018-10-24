@@ -3,6 +3,7 @@ import marked from 'marked';
 import actions from 'actions';
 import { model } from 'state';
 import { RENDERER } from 'config';
+// import { imgObserver } from 'observers';
 import { EmptyState } from 'components/EmptyState';
 import { Comments } from 'components/Comments';
 import { Controls } from 'components/Post/Controls';
@@ -71,6 +72,14 @@ export const Post = () => {
                 m.redraw();
             });
         },
+
+        // /**
+        //  * Onupdate Method
+        //  */
+        // onupdate: () => {
+        //     // Observe for .lazy-load images
+        //     imgObserver.observe();
+        // },
 
         /**
          * Onremove Method

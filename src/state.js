@@ -50,6 +50,7 @@ const initialState = {
     },
 
     post: {
+        created: null,
         timestamp: null,
         doc_id: null,
         username: null,

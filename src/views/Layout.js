@@ -71,27 +71,35 @@ export const Layout = {
             m('.col.col-12.my1', children),
     
             showSignUp
-                ? m(Modal, { enableModal: enableSignUpForm, cancelMethod: () => setSignUpMsg(null) }, [
-                    m(SignUpForm, {
-                        // State
-                        signUpMsg,
-
-                        // Actions
-                        createUser
-                    })
+                ? m(Modal, [
+                    m('.max-width-3.mx-auto', [
+                        m(SignUpForm, {
+                            // State
+                            signUpMsg,
+    
+                            // Actions
+                            enableSignUpForm,
+                            setSignUpMsg,
+                            createUser
+                        })
+                    ])
                 ])
                 : null
             ,
-    
-            showSignIn
-                ? m(Modal, { enableModal: enableSignInForm, cancelMethod: () => setSignInMsg(null) }, [
-                    m(SignInForm, {
-                        // State
-                        signInMsg,
 
-                        // Actions
-                        signInUser
-                    })
+            showSignIn
+                ? m(Modal, [
+                    m('.max-width-3.mx-auto', [
+                        m(SignInForm, {
+                            // State
+                            signInMsg,
+                            
+                            // Actions
+                            enableSignInForm,
+                            setSignInMsg,
+                            signInUser
+                        })
+                    ])
                 ])
                 : null
             ,

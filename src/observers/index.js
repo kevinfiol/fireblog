@@ -6,4 +6,9 @@ import services from 'services';
 import AuthObserver from './AuthObserver';
 const authObserver = AuthObserver(services.Firebase, actions);
 
-export default { authObserver };
+import lozad from 'lozad';
+const imgObserver = lozad('.lazy-load', {
+    rootMargin: '250px 0px'
+});
+
+export { authObserver, imgObserver };

@@ -9,7 +9,7 @@ module.exports = (db, nanoid, Pager, getTimestamp) => ({
 
     getLatestPosts: () => {
         return db.collection('posts').doc('posts_doc').collection('posts')
-            .orderBy('timestamp', 'desc')
+            .orderBy('created', 'desc')
             .get()
             .then(snap => {
                 const posts = [];
@@ -31,12 +31,14 @@ module.exports = (db, nanoid, Pager, getTimestamp) => ({
             }).then(pages => {
                 if (!pages) throw 'Cannot create new page.';
                 
-                const timestamp = getTimestamp();
+                const created = getTimestamp();
+                const timestamp = created;
                 const doc_id = `${username}-${nanoid(11)}`;
                 const date = new Date().toLocaleDateString();
 
                 // Create Post Document
                 postsRef.collection('posts').doc(doc_id).set({
+                    created,
                     timestamp,
                     doc_id,
                     username,

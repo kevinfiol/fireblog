@@ -27,11 +27,15 @@ export const SignUpForm = () => {
     /**
      * Actions
      */
+    let enableSignUpForm;
+    let setSignUpMsg;
     let createUser;
 
     return {
         oninit: ({attrs}) => {
-            createUser = attrs.createUser;
+            enableSignUpForm = attrs.enableSignUpForm;
+            setSignUpMsg     = attrs.setSignUpMsg;
+            createUser       = attrs.createUser;
         },
 
         /**
@@ -47,7 +51,7 @@ export const SignUpForm = () => {
             /**
              * View
              */
-            return m('div', [
+            return [
                 m('h3', 'Sign Up'),
 
                 m(InputText, {
@@ -72,13 +76,26 @@ export const SignUpForm = () => {
                     input: confirmPwd
                 }),
 
-                isFormValid()
-                    ? m(LoadingBtn, {
-                        className: 'my1 btn-outline',
-                        onclick: () => createUser( username(), email(), pwd() )
-                    }, 'Submit')
-                    : null
-                ,
+                // Buttons
+                m('.clearfix', [
+                    m('.col.col-12', [
+                        isFormValid()
+                            ? m(LoadingBtn, {
+                                className: 'my1 btn-outline left',
+                                onclick: () => createUser( username(), email(), pwd() )
+                            }, 'Submit')
+                            : null
+                        ,
+
+                        m(LoadingBtn, {
+                            className: 'my1 btn-outline right',
+                            onclick: () => {
+                                setSignUpMsg(null);
+                                enableSignUpForm(false);
+                            }
+                        }, 'Cancel'),
+                    ])
+                ]),
     
                 pwdsMatch()
                     ? null
@@ -89,7 +106,7 @@ export const SignUpForm = () => {
                     ? m('p.p2.rounded.bg-darken', signUpMsg)
                     : null
                 ,
-            ]);
+            ];
         }
     };
 };

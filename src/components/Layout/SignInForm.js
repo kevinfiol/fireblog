@@ -21,6 +21,8 @@ export const SignInForm = () => {
     /**
      * Actions
      */
+    let enableSignInForm;
+    let setSignInMsg;
     let signInUser;
 
     return {
@@ -29,7 +31,9 @@ export const SignInForm = () => {
          * @param {Object} attrs View Attributes 
          */
         oninit: ({attrs}) => {
-            signInUser = attrs.signInUser;
+            enableSignInForm = attrs.enableSignInForm;
+            setSignInMsg     = attrs.setSignInMsg;
+            signInUser       = attrs.signInUser;
         },
 
         /**
@@ -45,7 +49,7 @@ export const SignInForm = () => {
             /**
              * View
              */
-            return m('div', [
+            return [
                 m('h3', 'Sign In'),
 
                 m(InputText, {
@@ -59,19 +63,32 @@ export const SignInForm = () => {
                     input: pwd
                 }),
 
-                isFormValid()
-                    ? m(LoadingBtn, { 
-                        className: 'my1 btn-outline',
-                        onclick: () => signInUser( username(), pwd() ) 
-                    }, 'Submit')
-                    : null
-                ,
+                // Buttons
+                m('.clearfix', [
+                    m('.col.col-12', [
+                        isFormValid()
+                            ? m(LoadingBtn, { 
+                                className: 'my1 btn-outline left',
+                                onclick: () => signInUser( username(), pwd() ) 
+                            }, 'Submit')
+                            : null
+                        ,
+
+                        m(LoadingBtn, {
+                            className: 'my1 btn-outline right',
+                            onclick: () => {
+                                setSignInMsg(null);
+                                enableSignInForm(false);
+                            }
+                        }, 'Cancel'),
+                    ])
+                ]),
 
                 signInMsg
                     ? m('p.p2.rounded.bg-darken', signInMsg)
                     : null
                 ,
-            ]);
+            ];
         }
     };
 };
