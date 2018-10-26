@@ -13,9 +13,9 @@ export const Pagination = {
         /**
          * State
          */
-        const pageNos = attrs.pageNos;
+        const pageNos     = attrs.pageNos;
         const currentPage = attrs.currentPage;
-        const username = attrs.username;
+        const username    = attrs.username;
 
         /**
          * View

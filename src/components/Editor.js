@@ -9,21 +9,13 @@ import { Woofmark } from 'components/Woofmark';
  */
 export const Editor = () => {
     /**
-     * Local State
-     */
-    const titleStream = stream('');
-    const woofmarkInstance = {};
-
-    /**
      * State
      */
     let title;
     let content;
-
-    /**
-     * Actions
-     */
-    let onSaveEvent;
+    let titleStream;
+    let contentStream;
+    let editorRef;
 
     return {
         /**
@@ -31,20 +23,17 @@ export const Editor = () => {
          * @param {Object} attrs View Attributes
          */
         oninit: ({attrs}) => {
-            title       = attrs.title   || null;
-            content     = attrs.content || null;
-            onSaveEvent = attrs.onSaveEvent;
+            title         = attrs.title   || null;
+            content       = attrs.content || null;
+            titleStream   = attrs.titleStream;
+            contentStream = attrs.contentStream;
+            editorRef     = attrs.editorRef;
         },
 
         /**
          * View Method
          */
         view: () => {
-            /**
-             * Computed
-             */
-            const isEditorFilled = titleStream();
-
             /**
              * View
              */
@@ -58,19 +47,8 @@ export const Editor = () => {
                 m(Woofmark, {
                     placeholder: 'content...',
                     value: content,
-                    woofmarkInstance,
-                }),
-    
-                isEditorFilled
-                    ? m(LoadingBtn, {
-                        className: 'mx1 my2 btn-outline',
-                        onclick: () => {
-                            const content = woofmarkInstance.textarea.value;
-                            onSaveEvent( titleStream(), content );
-                        }
-                    }, 'Save Post')
-                    : null
-                ,
+                    woofmarkInstance: editorRef,
+                })
             ];
         }
     };

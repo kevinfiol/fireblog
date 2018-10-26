@@ -45,7 +45,9 @@ export const Modal = () => {
              * View
              */
             return m('.z4.fixed.left-0.right-0.top-0.bottom-0.charcoal.bg-paper.overflow-auto', [
-                m('.py4.px2', children)
+                m('.py4.px2', [
+                    m('.max-width-3.mx-auto', children)
+                ])
             ]);
         }
     };

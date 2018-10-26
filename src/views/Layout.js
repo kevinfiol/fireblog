@@ -72,17 +72,15 @@ export const Layout = {
     
             showSignUp
                 ? m(Modal, [
-                    m('.max-width-3.mx-auto', [
-                        m(SignUpForm, {
-                            // State
-                            signUpMsg,
-    
-                            // Actions
-                            enableSignUpForm,
-                            setSignUpMsg,
-                            createUser
-                        })
-                    ])
+                    m(SignUpForm, {
+                        // State
+                        signUpMsg,
+
+                        // Actions
+                        enableSignUpForm,
+                        setSignUpMsg,
+                        createUser
+                    })
                 ])
                 : null
             ,

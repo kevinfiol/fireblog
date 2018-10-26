@@ -1,4 +1,5 @@
 import m from 'mithril';
+import { EditPostEditor } from 'components/Post/Controls/EditPostEditor';
 import { Editor } from 'components/Editor';
 import { LoadingBtn } from 'components/LoadingBtn';
 import { ConfirmBtn } from 'components/ConfirmBtn';
@@ -49,7 +50,7 @@ export const Controls = () => {
              */
             return [
                 m(LoadingBtn, { className: 'btn-outline mr1', onclick: () => enableEditor(true) }, 'Edit'),
-        
+
                 m(ConfirmBtn, {
                     className: 'mx1',
                     btnClassName: 'btn-outline mx1',
@@ -62,23 +63,20 @@ export const Controls = () => {
                         removeCache(route);
                     }
                 }),
-        
+
                 showEditor
-                    ? m(Modal, {
-                        enableModal: enableEditor,
-                    }, [
-                        m(Editor, {
+                    ? m(Modal, [
+                        m(EditPostEditor, {
                             // State
+                            doc_id,
+                            username,
                             title,
                             content,
 
                             // Actions
-                            onSaveEvent: (newTitle, newContent) => {
-                                updatePost(doc_id, newTitle, newContent)
-                                    .then(() => updateBlogTimestamp(username))
-                                    .then(() => enableEditor(false))
-                                ;
-                            }
+                            enableEditor,
+                            updatePost,
+                            updateBlogTimestamp
                         })
                     ])
                     : null
