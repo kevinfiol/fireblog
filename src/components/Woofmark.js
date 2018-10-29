@@ -11,12 +11,12 @@ export const Woofmark = {
      */
     view: ({attrs}) => m('div', [
         m('textarea.textarea.bg-paper.charcoal.mt1.mb0', {
-            rows: '24',
+            rows: '28',
             placeholder: attrs.placeholder,
             oncreate: ({dom}) => {
                 dom.value = attrs.value || '';
                 const woof = woofmark(dom, { html: false, wysiwyg: false });
-                attrs.woofmarkInstance.textarea = woof.textarea;
+                attrs.woofmarkRef.textarea = woof.textarea;
             }
         })
     ])

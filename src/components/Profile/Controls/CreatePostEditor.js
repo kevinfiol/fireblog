@@ -3,7 +3,7 @@ import stream from 'mithril/stream';
 import { LoadingBtn } from 'components/LoadingBtn';
 import { Editor } from 'components/Editor';
 
-export const EditPostEditor = () => {
+export const CreatePostEditor = () => {
     /**
      * Local State
      */
@@ -14,8 +14,7 @@ export const EditPostEditor = () => {
      * Actions
      */
     let enableEditor;
-    let updatePost;
-    let updateBlogTimestamp;
+    let createProfileBlogPost;
 
     return {
         /**
@@ -23,12 +22,8 @@ export const EditPostEditor = () => {
          * @param {Object} attrs View Attributes
          */
         oninit: ({attrs}) => {
-            // Prepopulate titleStream
-            if (attrs.title) titleStream(attrs.title);
-
-            enableEditor        = attrs.enableEditor;
-            updatePost          = attrs.updatePost;
-            updateBlogTimestamp = attrs.updateBlogTimestamp;
+            enableEditor          = attrs.enableEditor;
+            createProfileBlogPost = attrs.createProfileBlogPost;
         },
 
         /**
@@ -39,10 +34,7 @@ export const EditPostEditor = () => {
             /**
              * State
              */
-            const doc_id   = attrs.doc_id;
             const username = attrs.username;
-            const title    = attrs.title;
-            const content  = attrs.content;
 
             /**
              * Computed
@@ -56,8 +48,6 @@ export const EditPostEditor = () => {
                 // Editor
                 m(Editor, {
                     // State
-                    title,
-                    content,
                     titleStream,
                     editorRef
                 }),
@@ -70,13 +60,12 @@ export const EditPostEditor = () => {
                                 className: 'my1 btn-outline left',
                                 onclick: () => {
                                     const content = editorRef.textarea.value;
-    
-                                    updatePost(doc_id, titleStream(), content)
-                                        .then(() => updateBlogTimestamp(username))
+
+                                    createProfileBlogPost(username, titleStream(), content)
                                         .then(() => enableEditor(false))
                                     ;
                                 }
-                            }, 'Save Changes')
+                            }, 'Create New Post')
                             : null
                         ,
 

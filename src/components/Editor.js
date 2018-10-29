@@ -1,6 +1,4 @@
 import m from 'mithril';
-import stream from 'mithril/stream';
-import { LoadingBtn } from 'components/LoadingBtn';
 import { InputText } from 'components/InputText';
 import { Woofmark } from 'components/Woofmark';
 
@@ -14,7 +12,6 @@ export const Editor = () => {
     let title;
     let content;
     let titleStream;
-    let contentStream;
     let editorRef;
 
     return {
@@ -26,7 +23,6 @@ export const Editor = () => {
             title         = attrs.title   || null;
             content       = attrs.content || null;
             titleStream   = attrs.titleStream;
-            contentStream = attrs.contentStream;
             editorRef     = attrs.editorRef;
         },
 
@@ -47,7 +43,7 @@ export const Editor = () => {
                 m(Woofmark, {
                     placeholder: 'content...',
                     value: content,
-                    woofmarkInstance: editorRef,
+                    woofmarkRef: editorRef,
                 })
             ];
         }

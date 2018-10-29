@@ -1,5 +1,5 @@
 import m from 'mithril';
-import { Editor } from 'components/Editor';
+import { CreatePostEditor } from 'components/Profile/Controls/CreatePostEditor';
 import { LoadingBtn } from 'components/LoadingBtn';
 import { Modal } from 'components/Modal';
 
@@ -41,15 +41,14 @@ export const Controls = () => {
                 m(LoadingBtn, { className: 'btn-outline', onclick: () => enableEditor(true) }, 'New Post'),
         
                 showEditor
-                    ? m(Modal, {
-                        enableModal: enableEditor,
-                    }, [
-                        m(Editor, {
-                            onSaveEvent: (newTitle, newContent) => {
-                                createProfileBlogPost(username, newTitle, newContent)
-                                    .then(() => enableEditor(false))
-                                ;
-                            }
+                    ? m(Modal, [
+                        m(CreatePostEditor, {
+                            // State
+                            username,
+
+                            // Actions
+                            enableEditor,
+                            createProfileBlogPost
                         })
                     ])
                     : null
