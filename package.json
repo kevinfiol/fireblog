@@ -1,8 +1,8 @@
 {
-  "name": "profiles",
+  "name": "fireblog",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "git@gitlab.com:kevinfiol/profiles.git",
+  "repository": "git@gitlab.com:kevinfiol/fireblog.git",
   "author": "keb",
   "license": "MIT",
   "scripts": {
