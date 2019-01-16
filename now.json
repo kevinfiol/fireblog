@@ -1,0 +1,11 @@
+{
+    "name": "fireblog",
+    "alias": "fireblog.now.sh",
+    "version": 2,
+    "routes": [
+        { "src": "^/css/(.*)", "dest": "/css/$1" },
+        { "src": "^/img/(.*)", "dest": "/img/$1" },
+        { "src": "^(.*)/app.js",   "dest": "/app.js" },
+        { "src": "^/(.*)",     "dest": "/index.html" }
+    ]
+}

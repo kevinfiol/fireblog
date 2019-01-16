@@ -8,7 +8,8 @@
   "scripts": {
     "start": "rollup -c -w --environment DEV",
     "build": "rollup -c --environment PROD",
-    "test": "node -r esm tests/tests.js"
+    "test": "node -r esm tests/tests.js",
+    "deploy": "now ./public -A ../now.json && now alias && now rm fireblog --safe --yes"
   },
   "dependencies": {
     "deepmerge": "^2.1.1",

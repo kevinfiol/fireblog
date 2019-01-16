@@ -1,7 +1,7 @@
 import m from 'mithril';
-import meiosisTracer from 'meiosis-tracer';
+// import meiosisTracer from 'meiosis-tracer';
 import { authObserver, imgObserver } from 'observers'; 
-import { model, record } from 'state';
+// import { model, record } from 'state';
 import { Layout } from 'views/Layout';
 import { Dashboard } from 'views/Dashboard';
 import { ErrorPage } from 'views/ErrorPage';
@@ -18,6 +18,8 @@ const setWindow = title => {
     document.title = title;
     document.body.scrollTop = document.documentElement.scrollTop = 0;
 };
+
+m.route.prefix('');
 
 m.route(document.getElementById('app'), '/', {
     '/': {
