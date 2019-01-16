@@ -28,7 +28,7 @@ const config = {
         nodeResolve(),
         commonjs(),
         alias(aliases),
-        buble(),
+        buble({ objectAssign: 'Object.assign' }),
     ],
 };
 

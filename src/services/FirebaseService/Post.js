@@ -1,14 +1,14 @@
 module.exports = (db, nanoid, Pager, getTimestamp) => ({
     getPost: doc_id => {
         return db.collection('posts')
-            .doc('posts_doc').collection('posts').doc(doc_id)
+            .doc(doc_id)
             .get()
             .then(doc => doc.exists ? doc.data() : null)
         ;
     },
 
     getLatestPosts: () => {
-        return db.collection('posts').doc('posts_doc').collection('posts')
+        return db.collection('posts')
             .orderBy('created', 'desc')
             .get()
             .then(snap => {
@@ -21,7 +21,8 @@ module.exports = (db, nanoid, Pager, getTimestamp) => ({
 
     createPost: (username, title, content) => {
         const blogsRef = db.collection('blogs').doc(username);
-        const postsRef = db.collection('posts').doc('posts_doc');
+        const postsRef = db.collection('posts');
+        const metaRef  = db.collection('meta').doc('posts');
 
         return blogsRef.get()
             .then(doc => doc.exists ? doc.data() : null)
@@ -37,7 +38,7 @@ module.exports = (db, nanoid, Pager, getTimestamp) => ({
                 const date = new Date().toLocaleDateString();
 
                 // Create Post Document
-                postsRef.collection('posts').doc(doc_id).set({
+                postsRef.doc(doc_id).set({
                     created,
                     timestamp,
                     doc_id,
@@ -49,10 +50,10 @@ module.exports = (db, nanoid, Pager, getTimestamp) => ({
                 });
 
                 // Update timestamp for posts
-                postsRef.set({ timestamp }, { merge: true });
+                metaRef.set({ timestamp }, { merge: true });
 
                 // Update Blog Document's Pages to include new Post
-                const postRef = postsRef.collection('posts').doc(doc_id);
+                const postRef = postsRef.doc(doc_id);
                 const pager = Pager(pages);
                 pager.addPost(doc_id, postRef);
 
@@ -63,11 +64,11 @@ module.exports = (db, nanoid, Pager, getTimestamp) => ({
     },
 
     deletePost: doc_id => {
-        const postsRef = db.collection('posts').doc('posts_doc');
-        const postsCollectionRef = db.collection('posts').doc('posts_doc').collection('posts');
+        const postsRef = db.collection('posts');
+        const metaRef  = db.collection('meta').doc('posts');
         let userBlogRef;
 
-        return postsCollectionRef.doc(doc_id).get()
+        return postsRef.doc(doc_id).get()
             .then(doc => doc.exists ? doc.data() : null)
             .then(data => {
                 if (!data) throw 'Doc does not exist.';
@@ -80,8 +81,8 @@ module.exports = (db, nanoid, Pager, getTimestamp) => ({
             .then(pages => {
                 const timestamp = getTimestamp();
 
-                // Update posts/posts_doc/timestamp
-                postsRef.set({ timestamp }, { merge: true });
+                // Update timestamp for posts
+                metaRef.set({ timestamp }, { merge: true });
 
                 // Update User's blog pages with post removed
                 const pager = Pager(pages);
@@ -89,25 +90,25 @@ module.exports = (db, nanoid, Pager, getTimestamp) => ({
                 userBlogRef.update({ timestamp, pages: pager.getPages() });
 
                 // Delete Post
-                return postsCollectionRef.doc(doc_id).delete();
+                return postsRef.doc(doc_id).delete();
             })
         ;
     },
 
     updatePost: (doc_id, title, content) => {
-        const postsRef = db.collection('posts').doc('posts_doc');
-        const postRef = db.collection('posts').doc('posts_doc').collection('posts').doc(doc_id);
+        const postRef = db.collection('posts').doc(doc_id);
+        const metaRef  = db.collection('meta').doc('posts');
         const timestamp = getTimestamp();
 
         return Promise.all([
-            postsRef.set({ timestamp }, { merge: true }),
+            metaRef.set({ timestamp }, { merge: true }),
             postRef.update({ timestamp, title, content })
         ]);
     },
 
     createPostComment: (globalUsername, post_doc_id, content) => {
-        const postRef = db.collection('posts').doc('posts_doc').collection('posts').doc(post_doc_id);
-        
+        const postRef = db.collection('posts').doc(post_doc_id);
+
         return postRef.get()
             .then(doc => doc.exists ? doc.data() : null)
             .then(data => {
@@ -129,7 +130,7 @@ module.exports = (db, nanoid, Pager, getTimestamp) => ({
     },
 
     deletePostComment: (post_doc_id, commentId) => {
-        const postRef = db.collection('posts').doc('posts_doc').collection('posts').doc(post_doc_id);
+        const postRef = db.collection('posts').doc(post_doc_id);
 
         return postRef.get()
             .then(doc => doc.exists ? doc.data() : null)
@@ -149,7 +150,7 @@ module.exports = (db, nanoid, Pager, getTimestamp) => ({
     },
 
     createPostListener: (doc_id, onDocExists) => {
-        const unsubscribe = db.collection('posts').doc('posts_doc').collection('posts').doc(doc_id)
+        const unsubscribe = db.collection('posts').doc(doc_id)
             .onSnapshot(doc => {
                 try {
                     const post = doc.data() || null;
@@ -169,7 +170,7 @@ module.exports = (db, nanoid, Pager, getTimestamp) => ({
     },
 
     createLatestPostsListener: onDocExists => {
-        const unsubscribe = db.collection('posts').doc('posts_doc')
+        const unsubscribe = db.collection('meta').doc('posts')
             .onSnapshot(doc => {
                 try {
                     const dashboard = {};

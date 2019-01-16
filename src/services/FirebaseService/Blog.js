@@ -62,6 +62,7 @@ module.exports = (db, nanoid, Pager, getTimestamp) => ({
             .onSnapshot(doc => {
                 try {
                     const data = doc.data();
+
                     const timestamp = data.timestamp ? data.timestamp.toDate().toJSON() : null;
                     const page      = data.pages[pageNo];
                     const pageNos   = Object.keys(data.pages).map(Number).sort();

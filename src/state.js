@@ -7,7 +7,7 @@ const initialState = {
 
     dashboard: {
         timestamp: null,
-    	posts: []
+        posts: []
     },
 
     global: {
