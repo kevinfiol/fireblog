@@ -1,6 +1,12 @@
 Fireblog
 ===
 
+## THIS PROJECT IS DEFUNCT & ABANDONED
+
+Google made some drastic changes to Firebase/Firestore since I created this. I also made some questionable design decisions on this project that I would advise against these days. I intend to write a post-mortem on my site eventually. Stay tuned.
+
+___
+
 [Demo Instance](https://fireblog.now.sh/)
 
 Fireblog is a minimal, clean, blogging solution powered by [Google Firebase](https://firebase.google.com/) Realtime Database and [Mithril.js](https://mithril.js.org). Among the features are:
