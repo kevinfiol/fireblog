@@ -1,10 +1,10 @@
 const FIREBASE_CONFIG = {
-    apiKey: 'AIzaSyAico7GEIIIUML-XCjwlxZ3TSPfimZfN1E',
-    authDomain: 'botnet-profiles.firebaseapp.com',
-    databaseURL: 'https://botnet-profiles.firebaseio.com',
-    projectId: 'botnet-profiles',
-    storageBucket: 'botnet-profiles.appspot.com',
-    messagingSenderId: '112180117024'
+    apiKey: ' AIzaSyDblOqjUqnpSngePzmFgPIeJ9GNuJMG9R4 ',
+    authDomain: 'fireblog-3b758.firebaseapp.com',
+    databaseURL: 'https://fireblog-3b758.firebaseio.com',
+    projectId: 'fireblog-3b758',
+    storageBucket: 'fireblog-3b758.appspot.com',
+    messagingSenderId: '105146192310'
 };
 
 const RENDERER = (() => {

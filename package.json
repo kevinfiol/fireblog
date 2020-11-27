@@ -2,18 +2,17 @@
   "name": "fireblog",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "git@gitlab.com:kevinfiol/fireblog.git",
-  "author": "keb",
+  "repository": "git@github.com:kevinfiol/fireblog.git",
+  "author": "kevinfiol",
   "license": "MIT",
   "scripts": {
     "start": "rollup -c -w --environment DEV",
     "build": "rollup -c --environment PROD",
-    "test": "node -r esm tests/tests.js",
-    "deploy": "now ./public -A ../now.json && now alias && now rm fireblog --safe --yes"
+    "deploy": "vercel --prod"
   },
   "dependencies": {
     "deepmerge": "^2.1.1",
-    "firebase": "^5.3.0",
+    "firebase": "^8.1.1",
     "linkify-lite": "^1.0.0",
     "lozad": "^1.6.0",
     "marked": "^0.5.0",
@@ -22,9 +21,6 @@
   },
   "devDependencies": {
     "eslint": "^5.2.0",
-    "esm": "^3.0.76",
-    "firebase-admin": "^6.4.0",
-    "firebase-mock": "^2.2.4",
     "meiosis-tracer": "^2.0.2",
     "rollup": "^0.66.2",
     "rollup-plugin-alias": "^1.4.0",
